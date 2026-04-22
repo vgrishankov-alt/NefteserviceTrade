@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Карточка предприятия — Нефтесервис Трейд</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #111113;
+      --surface:   #18181c;
+      --surface-2: #1f1f24;
+      --surface-3: #26262d;
+      --border:    rgba(255,255,255,0.07);
+      --border-2:  rgba(255,255,255,0.13);
+      --green:     #2ecc71;
+      --green-dark:#25a95d;
+      --green-dim: rgba(46,204,113,0.12);
+      --text:      #ffffff;
+      --text-2:    rgba(255,255,255,0.65);
+      --text-3:    rgba(255,255,255,0.35);
+      --orange:    #f59e0b;
+      --red:       #ef4444;
+      --blue:      #3b82f6;
+      --radius:    10px; --radius-lg: 16px;
+      --tr: 0.18s ease;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+
+    /* ── HEADER ── */
+    header { position: sticky; top: 0; z-index: 200; background: rgba(17,17,19,0.94); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; height: 60px; display: flex; align-items: center; gap: 20px; }
+    .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
+    .logo-mark { width: 34px; height: 34px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #000; }
+    .logo-name { font-size: 15px; font-weight: 700; }
+    .logo-sub { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+    .header-r { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .btn-back { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); padding: 8px 14px; border-radius: 8px; font: 13px 'Inter',sans-serif; cursor: pointer; transition: all var(--tr); display: flex; align-items: center; gap: 6px; }
+    .btn-back:hover { border-color: var(--border-2); color: var(--text); }
+
+    /* ── PAGE ── */
+    .page { max-width: 1000px; margin: 0 auto; padding: 28px 32px; }
+
+    /* MODE BAR */
+    .mode-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .mode-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 8px; }
+    .mode-tabs { display: flex; gap: 4px; }
+    .mtab { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font: 600 13px 'Inter',sans-serif; cursor: pointer; transition: all var(--tr); }
+    .mtab:hover { border-color: var(--border-2); color: var(--text); }
+    .mtab.active { background: var(--green-dim); border-color: rgba(46,204,113,0.3); color: var(--green); }
+    .mode-actions { display: flex; gap: 8px; }
+
+    /* PROFILE HERO */
+    .profile-hero {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px;
+    }
+    .hero-body {
+      background: linear-gradient(135deg, var(--surface-2) 0%, #1a1f2e 100%);
+      padding: 28px 28px 22px; display: flex; align-items: flex-start; gap: 20px;
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .hero-body::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(46,204,113,0.08) 0%, transparent 70%);
+    }
+    .ava-lg {
+      width: 68px; height: 68px; border-radius: 14px;
+      background: var(--green-dim); border: 2px solid rgba(46,204,113,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 900; color: var(--green); flex-shrink: 0;
+      letter-spacing: -1px;
+    }
+    .hero-info { flex: 1; }
+    .hero-name { font-size: 22px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.3px; }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+    .bv { background: rgba(46,204,113,0.15); color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
+    .bc { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+    .bn { background: var(--surface-3); color: var(--text-3); border: 1px solid var(--border); }
+    .bt { background: var(--surface-3); color: var(--text-3); border: 1px solid var(--border); }
+
+    /* Completeness */
+    .compl-row { padding: 14px 28px; border-bottom: 1px solid var(--border); }
+    .compl-head { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
+    .compl-label { color: var(--text-3); }
+    .compl-pct { font-weight: 800; color: var(--green); }
+    .compl-bar { height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+    .compl-fill { height: 100%; background: linear-gradient(90deg, var(--green-dark), var(--green)); border-radius: 2px; transition: width 0.8s ease; }
+
+    /* Stats row */
+    .hero-stats { display: grid; grid-template-columns: repeat(4,1fr); }
+    .hs { text-align: center; padding: 14px 8px; border-right: 1px solid var(--border); }
+    .hs:last-child { border-right: none; }
+    .hs-num { font-size: 20px; font-weight: 800; color: var(--text); }
+    .hs-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+    /* TABS NAV */
+    .tabs-nav { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
+    .tnav { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 13px 10px; cursor: pointer; border-right: 1px solid var(--border); transition: all var(--tr); }
+    .tnav:last-child { border-right: none; }
+    .tnav:hover { background: var(--surface-2); }
+    .tnav.active { background: var(--green-dim); }
+    .tnav-icon { font-size: 18px; }
+    .tnav-label { font-size: 12px; font-weight: 600; color: var(--text-2); text-align: center; }
+    .tnav.active .tnav-label { color: var(--green); }
+    .tnav-ind { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
+    .ti-filled { background: rgba(46,204,113,0.2); color: var(--green); }
+    .ti-empty { background: var(--surface-3); color: var(--text-3); }
+
+    /* CARD */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; }
+    .card-head { padding: 14px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 13px; font-weight: 700; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+    .card-body { padding: 20px 22px; }
+
+    /* FORM */
+    .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .col2 { grid-column: 1/-1; }
+    .fg { margin-bottom: 0; }
+    .flabel { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); margin-bottom: 7px; }
+    .flabel .req { color: var(--green); }
+    .finput {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font: 14px 'Inter',sans-serif;
+      outline: none; transition: border-color var(--tr);
+    }
+    .finput:focus { border-color: var(--green); background: var(--surface-3); }
+    .finput::placeholder { color: var(--text-3); }
+    .finput[readonly] { opacity: 0.5; cursor: default; }
+    .fselect {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font: 14px 'Inter',sans-serif;
+      outline: none; cursor: pointer; transition: border-color var(--tr);
+    }
+    .fselect:focus { border-color: var(--green); }
+    .fhint { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+    .fdiv { height: 1px; background: var(--border); margin: 16px 0; }
+
+    /* INN lookup */
+    .inn-row { display: flex; gap: 8px; }
+    .btn-lookup { background: var(--green-dim); border: 1px solid rgba(46,204,113,0.3); color: var(--green); padding: 10px 14px; border-radius: 8px; font: 600 13px 'Inter',sans-serif; cursor: pointer; white-space: nowrap; transition: all var(--tr); flex-shrink: 0; }
+    .btn-lookup:hover { background: rgba(46,204,113,0.2); }
+
+    /* View mode info rows */
+    .irow { display: grid; grid-template-columns: 160px 1fr; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: start; }
+    .irow:last-child { border-bottom: none; }
+    .ikey { font-size: 12px; color: var(--text-3); }
+    .ival { font-size: 13px; color: var(--text-2); font-weight: 500; }
+    .ival.empty { color: var(--text-3); font-style: italic; font-weight: 400; }
+
+    /* Action buttons */
+    .btn-primary { background: var(--green); color: #000; font: 700 13px 'Inter',sans-serif; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; transition: background var(--tr); display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-secondary { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); font: 600 13px 'Inter',sans-serif; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all var(--tr); display: inline-flex; align-items: center; gap: 6px; }
+    .btn-secondary:hover { border-color: var(--border-2); color: var(--text); }
+    .actions-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; align-items: center; }
+
+    /* Chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip { background: var(--green-dim); border: 1px solid rgba(46,204,113,0.2); color: var(--green); padding: 3px 10px; border-radius: 6px; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+    .chip-x { cursor: pointer; color: rgba(46,204,113,0.5); transition: color var(--tr); }
+    .chip-x:hover { color: var(--red); }
+
+    /* POSITIONS */
+    .pos-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; transition: border-color var(--tr); }
+    .pos-card:hover { border-color: var(--border-2); }
+    .pos-ico { width: 38px; height: 38px; border-radius: 8px; background: var(--green-dim); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .pos-info { flex: 1; }
+    .pos-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .pos-meta { font-size: 11px; color: var(--text-3); display: flex; gap: 10px; flex-wrap: wrap; }
+    .pos-price { font-size: 14px; font-weight: 800; color: var(--green); white-space: nowrap; }
+    .pos-actions { display: flex; gap: 5px; }
+    .btn-icon { width: 28px; height: 28px; border: 1px solid var(--border); background: var(--surface-3); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all var(--tr); color: var(--text-3); }
+    .btn-icon:hover { border-color: var(--border-2); color: var(--text-2); }
+    .btn-icon.del:hover { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); color: var(--red); }
+
+    /* Add position form */
+    .add-form { border: 1px dashed rgba(46,204,113,0.25); border-radius: var(--radius-lg); padding: 20px; background: var(--green-dim); display: none; margin-top: 14px; }
+    .add-form.open { display: block; }
+    .add-form-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
+
+    /* Empty state */
+    .empty-pos { text-align: center; padding: 40px; color: var(--text-3); }
+    .empty-pos-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
+    .empty-pos h3 { font-size: 16px; color: var(--text-2); margin-bottom: 8px; }
+    .empty-pos p { font-size: 13px; max-width: 300px; margin: 0 auto 16px; }
+
+    /* VERIFICATION */
+    .ver-status { border-radius: var(--radius-lg); padding: 18px 22px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
+    .vs-v { background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.2); }
+    .vs-n { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+    .vs-c { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); }
+    .vs-r { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+    .vs-icon { font-size: 32px; }
+    .vs-title { font-size: 16px; font-weight: 800; margin-bottom: 3px; }
+    .vs-text { font-size: 13px; color: var(--text-2); }
+    .checklist { list-style: none; }
+    .cl-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .cl-item:last-child { border-bottom: none; }
+    .cl-ico { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .cl-ok { background: var(--green-dim); color: var(--green); }
+    .cl-no { background: var(--surface-3); color: var(--text-3); }
+
+    /* Upload */
+    .upload-area { border: 1px dashed rgba(255,255,255,0.15); border-radius: var(--radius-lg); padding: 28px; text-align: center; cursor: pointer; transition: all var(--tr); margin-bottom: 12px; }
+    .upload-area:hover { border-color: rgba(46,204,113,0.4); background: var(--green-dim); }
+    .upload-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.5; }
+    .upload-text { font-size: 14px; color: var(--text-2); }
+    .upload-hint { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+    .doc-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--surface-2); border-radius: 8px; margin-bottom: 6px; }
+    .doc-name { flex: 1; font-size: 13px; color: var(--text-2); }
+    .doc-ok { font-size: 11px; color: var(--green); font-weight: 700; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 600; background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; padding: 14px 18px; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); opacity: 0; transform: translateY(8px); transition: all 0.3s; max-width: 380px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.error { border-left: 3px solid var(--red); }
+    .toast.info { border-left: 3px solid var(--blue); }
+
+    @media (max-width: 700px) { .fg2,.fg3 { grid-template-columns: 1fr; } .hero-stats { grid-template-columns: repeat(2,1fr); } .tabs-nav { grid-template-columns: repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo" onclick="window.location.href='https://nefteservicetrade.com/'">
+      <div class="logo-mark">НТ</div>
+      <div><div class="logo-name">Нефтесервис Трейд</div><div class="logo-sub">Платформа сделок</div></div>
+    </div>
+    <div class="header-r">
+      <button class="btn-back" onclick="window.location.href='catalog.html'">← Каталог</button>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- MODE BAR -->
+  <div class="mode-bar">
+    <div>
+      <div class="mode-label">Режим работы</div>
+      <div class="mode-tabs">
+        <button class="mtab active" id="mView" onclick="setMode('view')">👁 Просмотр</button>
+        <button class="mtab" id="mEdit" onclick="setMode('edit')">✏️ Редактировать</button>
+        <button class="mtab" id="mNew" onclick="setMode('new')">+ Новая карточка</button>
+      </div>
+    </div>
+    <div class="mode-actions" id="modeActions" style="display:none;">
+      <button class="btn-secondary" onclick="cancelEdit()">Отмена</button>
+      <button class="btn-primary" onclick="saveCompany()">💾 Сохранить</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="profile-hero">
+    <div class="hero-body">
+      <div class="ava-lg" id="avaEl">НТ</div>
+      <div class="hero-info">
+        <div class="hero-name" id="heroName">Новая компания</div>
+        <div class="hero-badges" id="heroBadges"><span class="badge bn">○ Новый</span></div>
+      </div>
+    </div>
+    <div class="compl-row">
+      <div class="compl-head">
+        <span class="compl-label">Полнота профиля</span>
+        <span class="compl-pct" id="complPct">0%</span>
+      </div>
+      <div class="compl-bar"><div class="compl-fill" id="complFill" style="width:0%"></div></div>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-num" id="hsDeal">0</div><div class="hs-label">Сделок</div></div>
+      <div class="hs"><div class="hs-num" id="hsRat">—</div><div class="hs-label">Рейтинг</div></div>
+      <div class="hs"><div class="hs-num" id="hsOff">0</div><div class="hs-label">Позиций</div></div>
+      <div class="hs"><div class="hs-num" id="hsSt">Новый</div><div class="hs-label">Статус</div></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-nav">
+    <div class="tnav active" id="t0" onclick="switchTab(0)"><span class="tnav-icon">🏢</span><span class="tnav-label">Реквизиты</span><span class="tnav-ind ti-empty" id="ti0">—</span></div>
+    <div class="tnav" id="t1" onclick="switchTab(1)"><span class="tnav-icon">📞</span><span class="tnav-label">Контакты</span><span class="tnav-ind ti-empty" id="ti1">—</span></div>
+    <div class="tnav" id="t2" onclick="switchTab(2)"><span class="tnav-icon">📦</span><span class="tnav-label">Позиции</span><span class="tnav-ind ti-empty" id="ti2">0</span></div>
+    <div class="tnav" id="t3" onclick="switchTab(3)"><span class="tnav-icon">✅</span><span class="tnav-label">Верификация</span><span class="tnav-ind ti-empty" id="ti3">—</span></div>
+  </div>
+
+  <!-- TAB CONTENT -->
+  <div id="tabContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const URL_SB='https://eiwbcjausfeyzjysvubs.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd2JjamF1c2ZleXpqeXN2dWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDMyMzAsImV4cCI6MjA5MTIxOTIzMH0.5P0r5qApvRd3EdLuL9IlxOd1YLjDNHb5VAqRZvsUj_Q';
+const H={apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json'};
+const TYPES={manufacturer:'Производитель',supplier:'Поставщик',service_company:'Сервисная компания',operator:'Оператор'};
+const STATUS={new:'Новый',checked:'Проверен',verified:'Верифицирован',rejected:'Отклонён'};
+
+let st={mode:'view',tab:0,company:null,editData:{},offers:[],cats:[],cid:null};
+
+async function api(path,opts={}){
+  const r=await fetch(URL_SB+path,{headers:H,...opts});
+  if(!r.ok){const e=await r.text();throw new Error(e||'API '+r.status);}
+  if(r.status===204)return null;
+  return r.json();
+}
+
+function empty(){return{company_name:'',short_name:'',inn:'',ogrn:'',kpp:'',legal_form:'ООО',year_founded:null,ceo_name:'',legal_address:'',actual_address:'',address:'',region:'',city:'',country:'Россия',federal_district:'',company_type:'supplier',description:'',email:'',phone:'',phone_2:'',website:'',contact_person:'',contact_position:'',telegram:'',whatsapp:'',service_regions:[],certifications:[],verified_status:'new',profile_completeness:0,deals_completed:0,rating:null};}
+
+async function init(){
+  const p=new URLSearchParams(location.search);
+  st.cid=p.get('id');
+  await loadCats();
+  if(st.cid){setMode('view');await loadCompany(st.cid);}
+  else{setMode('new');st.company=empty();renderHero(st.company);renderTab(0);}
+}
+
+async function loadCats(){try{st.cats=await api('/rest/v1/categories?select=id,category_name,level&order=sort_order.asc,category_name.asc');}catch(e){st.cats=[];}}
+async function loadCompany(id){
+  try{
+    const d=await api(`/rest/v1/companies?id=eq.${id}&select=*&limit=1`);
+    if(!d||!d.length){toast('Компания не найдена','error');setMode('new');st.company=empty();renderHero(st.company);renderTab(0);return;}
+    st.company=d[0];st.editData={...d[0]};
+    renderHero(st.company);
+    await loadOffers(id);
+    renderTab(st.tab);
+  }catch(e){toast('Ошибка: '+e.message,'error');st.company=empty();renderHero(st.company);renderTab(0);}
+}
+async function loadOffers(cid){
+  try{const d=await api(`/rest/v1/supplier_offers?company_id=eq.${cid}&select=*,skus(sku_name,categories(category_name))&is_active=neq.false&order=created_at.desc`);st.offers=d||[];}
+  catch(e){st.offers=[];}
+  document.getElementById('hsOff').textContent=st.offers.length;
+  document.getElementById('ti2').textContent=st.offers.length;
+}
+
+function renderHero(c){
+  const name=c.company_name||'Новая компания';
+  const init=name.replace(/^(ООО|ОАО|ЗАО|ПАО|АО|ИП)\s*/i,'').trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'НК';
+  document.getElementById('avaEl').textContent=init;
+  document.getElementById('heroName').textContent=name;
+  const bmap={verified:`<span class="badge bv">✓ Верифицирован</span>`,checked:`<span class="badge bc">● Проверен</span>`,new:`<span class="badge bn">○ Новый</span>`,rejected:`<span class="badge" style="background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.25)">✕ Отклонён</span>`};
+  document.getElementById('heroBadges').innerHTML=(bmap[c.verified_status]||bmap.new)+`<span class="badge bt">${TYPES[c.company_type]||'Поставщик'}</span>`;
+  const pct=c.profile_completeness||0;
+  document.getElementById('complPct').textContent=pct+'%';
+  document.getElementById('complFill').style.width=pct+'%';
+  document.getElementById('hsDeal').textContent=c.deals_completed||0;
+  document.getElementById('hsRat').textContent=c.rating?c.rating.toFixed(1):'—';
+  document.getElementById('hsSt').textContent=STATUS[c.verified_status]||'Новый';
+  document.title=name+' — Нефтесервис Трейд';
+}
+
+function renderTab(idx){
+  const c=st.mode==='edit'?st.editData:(st.company||empty());
+  const edit=st.mode==='edit'||st.mode==='new';
+  const tc=document.getElementById('tabContent');
+  if(idx===0)tc.innerHTML=tabReq(c,edit);
+  else if(idx===1)tc.innerHTML=tabContacts(c,edit);
+  else if(idx===2)tc.innerHTML=tabPositions();
+  else if(idx===3)tc.innerHTML=tabVerification(c);
+}
+
+function fi(name,val,ph,type='text'){
+  const edit=st.mode==='edit'||st.mode==='new';
+  return edit?`<input class="finput" type="${type}" value="${esc(val||'')}" placeholder="${ph}" oninput="upd('${name}',this.value)">`:`<div class="ival ${!val?'empty':''}">${val||'Не указано'}</div>`;
+}
+function fs(name,val,opts){
+  const edit=st.mode==='edit'||st.mode==='new';
+  return edit?`<select class="fselect" onchange="upd('${name}',this.value)">${opts.map(o=>`<option value="${o.v}" ${val===o.v?'selected':''}>${o.l}</option>`).join('')}</select>`:`<div class="ival ${!val?'empty':''}">${opts.find(o=>o.v===val)?.l||val||'Не указано'}</div>`;
+}
+
+function tabReq(c,edit){
+  return `<div class="card">
+    <div class="card-head"><span class="card-title">🏢 Реквизиты компании</span></div>
+    <div class="card-body">
+    ${edit?`<div class="fg" style="margin-bottom:16px;">
+      <label class="flabel">Поиск по ИНН — автозаполнение</label>
+      <div class="inn-row">
+        <input class="finput" id="innInput" type="text" value="${esc(c.inn||'')}" placeholder="1234567890" oninput="upd('inn',this.value)">
+        <button class="btn-lookup" onclick="lookupINN()">🔍 Найти</button>
+      </div>
+      <div class="fhint">Введите ИНН — данные подтянутся из базы платформы</div>
+    </div><div class="fdiv"></div>`:``}
+    <div class="fg2" style="gap:14px;margin-bottom:14px;">
+      <div class="fg col2"><label class="flabel">Полное наименование <span class="req">*</span></label>${fi('company_name',c.company_name,'ООО "Нефтегаз Сервис"')}</div>
+      <div class="fg"><label class="flabel">Краткое наименование</label>${fi('short_name',c.short_name,'НГС')}</div>
+      <div class="fg"><label class="flabel">Тип организации</label>${fs('company_type',c.company_type,[{v:'supplier',l:'Поставщик'},{v:'manufacturer',l:'Производитель'},{v:'service_company',l:'Сервисная компания'},{v:'operator',l:'Оператор'}])}</div>
+    </div>
+    <div class="fdiv"></div>
+    <div class="fg3" style="gap:14px;margin-bottom:14px;">
+      <div class="fg"><label class="flabel">ИНН <span class="req">*</span></label>${fi('inn',c.inn,'7700000000')}</div>
+      <div class="fg"><label class="flabel">ОГРН</label>${fi('ogrn',c.ogrn,'1021234567890')}</div>
+      <div class="fg"><label class="flabel">КПП</label>${fi('kpp',c.kpp,'770100001')}</div>
+      <div class="fg"><label class="flabel">Правовая форма</label>${fs('legal_form',c.legal_form||'ООО',[{v:'ООО',l:'ООО'},{v:'ОАО',l:'ОАО'},{v:'ЗАО',l:'ЗАО'},{v:'ПАО',l:'ПАО'},{v:'АО',l:'АО'},{v:'ИП',l:'ИП'},{v:'ГУП',l:'ГУП'}])}</div>
+      <div class="fg"><label class="flabel">Год основания</label>${fi('year_founded',c.year_founded,'2010','number')}</div>
+      <div class="fg"><label class="flabel">Руководитель (ФИО)</label>${fi('ceo_name',c.ceo_name,'Иванов Иван Иванович')}</div>
+    </div>
+    <div class="fdiv"></div>
+    <div class="fg2" style="gap:14px;margin-bottom:14px;">
+      <div class="fg col2"><label class="flabel">Юридический адрес</label>${fi('legal_address',c.legal_address||c.address,'119000, г. Москва, ул. Примерная, д.1')}</div>
+      <div class="fg col2"><label class="flabel">Фактический адрес</label>${fi('actual_address',c.actual_address,'Если отличается от юридического...')}</div>
+      <div class="fg"><label class="flabel">Регион <span class="req">*</span></label>${fi('region',c.region,'Тюменская область')}</div>
+      <div class="fg"><label class="flabel">Город</label>${fi('city',c.city,'Тюмень')}</div>
+    </div>
+    <div class="fdiv"></div>
+    <div class="fg" style="margin-bottom:14px;"><label class="flabel">Описание деятельности</label>
+    ${(st.mode==='edit'||st.mode==='new')?`<textarea class="finput" rows="3" placeholder="Специализация, ключевые компетенции, рынки..." oninput="upd('description',this.value)">${esc(c.description||'')}</textarea>`:`<div class="ival ${!c.description?'empty':''}">${c.description||'Не указано'}</div>`}
+    </div>
+    <div class="actions-row">
+      ${(st.mode==='edit'||st.mode==='new')?`<button class="btn-primary" onclick="saveCompany()">💾 Сохранить</button><button class="btn-secondary" onclick="cancelEdit()">Отмена</button>`:`<button class="btn-secondary" onclick="setMode('edit')">✏️ Редактировать</button>`}
+    </div>
+    </div></div>`;
+}
+
+function tabContacts(c,edit){
+  const fli=(name,val,ph,type='text')=>fi(name,val,ph,type);
+  return `<div class="card">
+    <div class="card-head"><span class="card-title">📞 Контактная информация</span></div>
+    <div class="card-body">
+    <div class="fg2" style="gap:14px;margin-bottom:14px;">
+      <div class="fg"><label class="flabel">Email <span class="req">*</span></label>${fli('email',c.email,'info@company.ru','email')}</div>
+      <div class="fg"><label class="flabel">Телефон <span class="req">*</span></label>${fli('phone',c.phone,'+7 (___) ___-__-__','tel')}</div>
+      <div class="fg"><label class="flabel">Телефон 2</label>${fli('phone_2',c.phone_2,'+7 (___) ___-__-__','tel')}</div>
+      <div class="fg"><label class="flabel">Веб-сайт</label>${fli('website',c.website,'https://company.ru','url')}</div>
+      <div class="fg"><label class="flabel">Telegram</label>${fli('telegram',c.telegram,'@company')}</div>
+      <div class="fg"><label class="flabel">WhatsApp</label>${fli('whatsapp',c.whatsapp,'+7 900 000 00 00')}</div>
+    </div>
+    <div class="fdiv"></div>
+    <div class="fg2" style="gap:14px;margin-bottom:14px;">
+      <div class="fg"><label class="flabel">Контактное лицо</label>${fli('contact_person',c.contact_person,'Иванов Иван Иванович')}</div>
+      <div class="fg"><label class="flabel">Должность</label>${fli('contact_position',c.contact_position,'Менеджер по продажам')}</div>
+    </div>
+    <div class="fdiv"></div>
+    <div class="fg" style="margin-bottom:14px;"><label class="flabel">Регионы обслуживания</label>
+    ${edit?`<input class="finput" id="regIn" type="text" placeholder="Введите регион и нажмите Enter..." onkeydown="addRegion(event)">
+    <div class="fhint">Enter — добавить регион</div>
+    <div class="chips" id="regChips">${(c.service_regions||[]).map(r=>`<span class="chip">${r}<span class="chip-x" onclick="rmRegion('${r}')">✕</span></span>`).join('')}</div>`
+    :`<div class="chips">${(c.service_regions||[]).length?(c.service_regions).map(r=>`<span class="chip">${r}</span>`).join(''):'<div class="ival empty">Не указано</div>'}</div>`}
+    </div>
+    <div class="actions-row">
+      ${edit?`<button class="btn-primary" onclick="saveCompany()">💾 Сохранить</button><button class="btn-secondary" onclick="cancelEdit()">Отмена</button>`:`<button class="btn-secondary" onclick="setMode('edit');switchTab(1)">✏️ Редактировать</button>`}
+    </div>
+    </div></div>`;
+}
+
+function tabPositions(){
+  const offers=st.offers;
+  return `<div class="card">
+    <div class="card-head">
+      <span class="card-title">📦 Позиции в каталоге</span>
+      <button class="btn-primary" style="font-size:12px;padding:7px 14px;" onclick="toggleAddForm()">+ Добавить</button>
+    </div>
+    <div class="card-body">
+    ${offers.length?offers.map(o=>`
+      <div class="pos-card">
+        <div class="pos-ico">${o.condition_type==='new'?'🆕':o.condition_type==='used'?'♻️':'📦'}</div>
+        <div class="pos-info">
+          <div class="pos-title">${o.offer_title||o.skus?.sku_name||'Позиция'}</div>
+          <div class="pos-meta">
+            ${o.skus?.categories?.category_name?`<span>${o.skus.categories.category_name}</span>`:''}
+            ${o.region?`<span>📍 ${o.region}</span>`:''}
+            ${o.lead_time_days?`<span>⏱ ${o.lead_time_days} дн.</span>`:''}
+            <span style="color:${o.availability_status==='in_stock'?'var(--green)':'var(--text-3)'}">
+              ${o.availability_status==='in_stock'?'✓ В наличии':'○ Под заказ'}
+            </span>
+          </div>
+        </div>
+        <div class="pos-price">${o.price?priceStr(o.price):'По запросу'}</div>
+        <div class="pos-actions">
+          <button class="btn-icon del" title="Удалить" onclick="delOffer('${o.id}')">🗑</button>
+        </div>
+      </div>`).join(''):`
+      <div class="empty-pos">
+        <div class="empty-pos-icon">📦</div>
+        <h3>Позиции не добавлены</h3>
+        <p>Добавьте оборудование и услуги, которые ваша компания предлагает на рынке</p>
+      </div>`}
+    <div class="add-form" id="addForm">
+      <div class="add-form-title">➕ Новая позиция</div>
+      <div class="fg2" style="gap:12px;margin-bottom:12px;">
+        <div class="fg col2"><label class="flabel">Название <span class="req">*</span></label><input class="finput" id="pTitle" placeholder="Пакер гидравлический 146мм..."></div>
+        <div class="fg"><label class="flabel">Категория</label><select class="fselect" id="pCat"><option value="">Выберите...</option>${st.cats.map(c=>`<option value="${c.id}">${c.category_name}</option>`).join('')}</select></div>
+        <div class="fg"><label class="flabel">Состояние</label><select class="fselect" id="pCond"><option value="new">Новое</option><option value="used">Б/У</option><option value="refurbished">Восстановленное</option></select></div>
+        <div class="fg"><label class="flabel">Цена (₽)</label><input class="finput" id="pPrice" type="number" placeholder="0"></div>
+        <div class="fg"><label class="flabel">Срок поставки (дней)</label><input class="finput" id="pLead" type="number" placeholder="14"></div>
+        <div class="fg"><label class="flabel">Наличие</label><select class="fselect" id="pAvail"><option value="in_stock">В наличии</option><option value="on_order">Под заказ</option></select></div>
+        <div class="fg"><label class="flabel">Регион</label><input class="finput" id="pRegion" placeholder="Тюмень, ХМАО..."></div>
+        <div class="fg col2"><label class="flabel">Ссылка</label><input class="finput" id="pUrl" type="url" placeholder="https://..."></div>
+      </div>
+      <div class="actions-row">
+        <button class="btn-primary" onclick="saveOffer()">Добавить в каталог</button>
+        <button class="btn-secondary" onclick="toggleAddForm()">Отмена</button>
+      </div>
+    </div>
+    </div></div>`;
+}
+
+function tabVerification(c){
+  const v=c.verified_status||'new';
+  const cfg={verified:{cls:'vs-v',icon:'✅',title:'Верифицирована',text:'Данные проверены командой Нефтесервис Трейд. Компания имеет доверенный статус.'},checked:{cls:'vs-c',icon:'🔵',title:'Базовая проверка пройдена',text:'Для полной верификации загрузите подтверждающие документы.'},new:{cls:'vs-n',icon:'🟡',title:'Верификация не пройдена',text:'Заполните профиль и загрузите документы для прохождения верификации.'},rejected:{cls:'vs-r',icon:'❌',title:'Отказано в верификации',text:'Обратитесь в поддержку для уточнения причин.'}}[v]||{cls:'vs-n',icon:'🟡',title:'Статус неизвестен',text:''};
+  const checks=[
+    {ok:!!c.company_name,l:'Полное наименование компании'},
+    {ok:!!c.inn,l:'ИНН заполнен'},
+    {ok:!!c.ogrn,l:'ОГРН заполнен'},
+    {ok:!!(c.email||c.phone),l:'Контактная информация'},
+    {ok:!!(c.region||c.city),l:'Адрес или регион'},
+    {ok:(c.profile_completeness||0)>=50,l:'Профиль заполнен более чем на 50%'},
+    {ok:st.offers.length>0,l:'Добавлена хотя бы одна позиция в каталог'},
+  ];
+  const passed=checks.filter(ch=>ch.ok).length;
+  return `
+  <div class="ver-status ${cfg.cls}">
+    <div class="vs-icon">${cfg.icon}</div>
+    <div><div class="vs-title">${cfg.title}</div><div class="vs-text">${cfg.text}</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><span class="card-title">📋 Требования к верификации</span><span style="font-size:12px;color:var(--text-3);">${passed}/${checks.length} выполнено</span></div>
+    <div class="card-body">
+    <ul class="checklist">
+      ${checks.map(ch=>`<li class="cl-item"><span class="cl-ico ${ch.ok?'cl-ok':'cl-no'}">${ch.ok?'✓':'○'}</span><span style="${ch.ok?'':'color:var(--text-3);'}">${ch.l}</span></li>`).join('')}
+    </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><span class="card-title">📄 Документы</span></div>
+    <div class="card-body">
+    <div class="upload-area" onclick="document.getElementById('docUp').click()">
+      <input type="file" id="docUp" multiple accept=".pdf,.jpg,.png,.doc,.docx" style="display:none" onchange="handleUpload(event)">
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Нажмите или перетащите файлы</div>
+      <div class="upload-hint">Свидетельство ОГРН, ИНН, устав, лицензии · PDF, JPG до 10 МБ</div>
+    </div>
+    <div id="docList">
+      <div class="doc-item"><span>📄</span><span class="doc-name">Свидетельство ОГРН.pdf</span><span class="doc-ok">✓ Загружен</span></div>
+    </div>
+    ${v!=='verified'?`
+    <div style="background:var(--surface-2);border-radius:10px;padding:16px;margin:16px 0;">
+      <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px;">Процесс верификации:</div>
+      <div style="font-size:12px;color:var(--text-3);line-height:2;">1. Заполните реквизиты и контакты &nbsp;→&nbsp; 2. Загрузите документы &nbsp;→&nbsp; 3. Нажмите кнопку ниже &nbsp;→&nbsp; 4. Проверка 1–2 рабочих дня</div>
+    </div>
+    <button class="btn-primary" ${passed<4?'disabled style="opacity:0.4;cursor:not-allowed;"':''} onclick="requestVer()" style="width:100%;justify-content:center;padding:13px;">
+      🚀 Отправить на верификацию
+    </button>`:
+    `<div style="color:var(--green);font-weight:700;font-size:14px;margin-top:12px;">✅ Верификация успешно пройдена</div>`}
+    </div>
+  </div>`;
+}
+
+// Actions
+function setMode(mode){
+  st.mode=mode;
+  ['view','edit','new'].forEach(m=>document.getElementById('m'+m.charAt(0).toUpperCase()+m.slice(1))?.classList.remove('active'));
+  document.getElementById('m'+mode.charAt(0).toUpperCase()+mode.slice(1))?.classList.add('active');
+  document.getElementById('modeActions').style.display=(mode==='edit'||mode==='new')?'flex':'none';
+  if(mode==='edit') st.editData={...(st.company||empty())};
+  if(mode==='new'){st.company=empty();st.editData={...st.company};history.replaceState({},'','company-profile.html');st.cid=null;renderHero(st.company);}
+  renderTab(st.tab);
+}
+function cancelEdit(){st.editData={...(st.company||empty())};setMode('view');}
+function switchTab(idx){
+  st.tab=idx;
+  [0,1,2,3].forEach(i=>{document.getElementById('t'+i)?.classList.remove('active');});
+  document.getElementById('t'+idx)?.classList.add('active');
+  renderTab(idx);
+}
+function upd(k,v){st.editData[k]=v;}
+function addRegion(e){if(e.key!=='Enter')return;const v=e.target.value.trim();if(!v)return;if(!st.editData.service_regions)st.editData.service_regions=[];if(!st.editData.service_regions.includes(v)){st.editData.service_regions.push(v);const el=document.getElementById('regChips');if(el)el.innerHTML=st.editData.service_regions.map(r=>`<span class="chip">${r}<span class="chip-x" onclick="rmRegion('${r}')">✕</span></span>`).join('');}e.target.value='';}
+function rmRegion(r){if(!st.editData.service_regions)return;st.editData.service_regions=st.editData.service_regions.filter(x=>x!==r);const el=document.getElementById('regChips');if(el)el.innerHTML=st.editData.service_regions.map(r=>`<span class="chip">${r}<span class="chip-x" onclick="rmRegion('${r}')">✕</span></span>`).join('');}
+
+async function lookupINN(){
+  const inn=document.getElementById('innInput')?.value?.trim();
+  if(!inn||inn.length<10){toast('Введите корректный ИНН','error');return;}
+  toast('🔍 Поиск...','info');
+  try{const d=await api(`/rest/v1/companies?inn=eq.${inn}&select=*&limit=1`);
+  if(d&&d.length){st.editData={...st.editData,...d[0]};toast(`✅ Найдено: ${d[0].company_name}`,'success');renderTab(st.tab);renderHero(st.editData);}
+  else toast('ℹ️ Не найдено. Заполните вручную.','info');}
+  catch(e){toast('Ошибка: '+e.message,'error');}
+}
+
+function calcCompleteness(c){
+  const fields=['company_name','inn','ogrn','email','phone','website','region','city','description','contact_person','legal_address','ceo_name','year_founded'];
+  return Math.round(fields.filter(f=>c[f]&&String(c[f]).trim()).length/fields.length*100);
+}
+
+async function saveCompany(){
+  const d={...st.editData};
+  if(!d.company_name?.trim()){toast('Введите название компании','error');return;}
+  if(!d.inn?.trim()){toast('Введите ИНН','error');return;}
+  d.profile_completeness=calcCompleteness(d);
+  toast('💾 Сохранение...','info');
+  try{
+    if(st.cid){
+      await api(`/rest/v1/companies?id=eq.${st.cid}`,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(d)});
+      st.company={...st.company,...d};
+      toast('✅ Сохранено','success');
+    } else {
+      const r=await api('/rest/v1/companies',{method:'POST',headers:{...H,'Prefer':'return=representation'},body:JSON.stringify(d)});
+      if(r&&r.length){st.company=r[0];st.cid=r[0].id;history.replaceState({},'',`company-profile.html?id=${st.cid}`);toast('✅ Компания создана!','success');}
+    }
+    renderHero(st.company);setMode('view');
+  }catch(e){toast('Ошибка: '+e.message,'error');}
+}
+
+function toggleAddForm(){document.getElementById('addForm')?.classList.toggle('open');}
+async function saveOffer(){
+  if(!st.cid){toast('Сначала сохраните компанию','error');return;}
+  const title=document.getElementById('pTitle')?.value?.trim();
+  if(!title){toast('Введите название позиции','error');return;}
+  const body={company_id:st.cid,offer_title:title,price:parseFloat(document.getElementById('pPrice')?.value)||null,price_currency:'RUB',lead_time_days:parseInt(document.getElementById('pLead')?.value)||null,condition_type:document.getElementById('pCond')?.value||'new',availability_status:document.getElementById('pAvail')?.value||'in_stock',region:document.getElementById('pRegion')?.value?.trim()||null,source_url:document.getElementById('pUrl')?.value?.trim()||null,is_active:true};
+  toast('Добавление...','info');
+  try{await api('/rest/v1/supplier_offers',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(body)});await loadOffers(st.cid);toast('✅ Позиция добавлена','success');switchTab(2);}
+  catch(e){toast('Ошибка: '+e.message,'error');}
+}
+async function delOffer(id){
+  if(!confirm('Удалить позицию?'))return;
+  try{await api(`/rest/v1/supplier_offers?id=eq.${id}`,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({is_active:false})});await loadOffers(st.cid);toast('Удалено','success');switchTab(2);}
+  catch(e){toast('Ошибка: '+e.message,'error');}
+}
+async function requestVer(){
+  toast('📨 Запрос на верификацию отправлен! Проверим в течение 1–2 дней.','success');
+  if(st.cid)try{await api(`/rest/v1/companies?id=eq.${st.cid}`,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({manual_review_needed:true})});}catch(e){}
+}
+function handleUpload(e){
+  const list=document.getElementById('docList');
+  Array.from(e.target.files).forEach(f=>{const d=document.createElement('div');d.className='doc-item';d.innerHTML=`<span>📄</span><span class="doc-name">${f.name}</span><span class="doc-ok">✓ Добавлен</span>`;list?.appendChild(d);});
+  toast(`✅ Загружено ${e.target.files.length} файл(а)`,'success');
+}
+
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.className='toast',5000);}
+function esc(s){return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function priceStr(p){return p>=1e6?(p/1e6).toFixed(1)+' млн ₽':p>=1000?(p/1000).toFixed(0)+' тыс ₽':p+' ₽';}
+
+init();
+</script>
+</body>
+</html>
