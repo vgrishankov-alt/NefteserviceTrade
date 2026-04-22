@@ -294,6 +294,15 @@
       transition: all var(--transition);
     }
     .btn-view:hover { background: var(--green-dim); color: var(--green); }
+    .btn-rfq-card {
+      background: var(--green-dim); color: var(--green);
+      font: 600 12px 'Inter', sans-serif;
+      border: 1px solid rgba(46,204,113,0.25); padding: 6px 10px; border-radius: 6px; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .btn-rfq-card:hover { background: var(--green); color: #000; border-color: var(--green); }
+    .card-desc { font-size: 12px; color: var(--text-3); line-height: 1.45; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-footer-btns { display: flex; gap: 6px; }
 
     /* SKU card */
     .sku-card {
@@ -574,6 +583,8 @@
           <option value="name_desc">Я → А</option>
           <option value="verified">Верифицированные сначала</option>
           <option value="completeness">По полноте профиля</option>
+          <option value="rating">По рейтингу</option>
+          <option value="deals">По числу сделок</option>
         </select>
         <div class="view-toggle">
           <button class="view-btn active" id="vGrid" onclick="setView('grid')" title="Сетка">⊞</button>
@@ -681,13 +692,13 @@ async function load() {
 
 async function loadCompanies() {
   const search = document.getElementById('searchInput').value.trim();
-  let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,verified_status,email,phone,website,profile_completeness,deals_completed,rating&or=(is_active.eq.true,is_active.is.null)`;
+  let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,verified_status,email,phone,website,profile_completeness,deals_completed,rating,description&or=(is_active.eq.true,is_active.is.null)`;
   if(st.verified) q += '&verified_status=eq.verified';
   if(st.region) q += `&region=eq.${encodeURIComponent(st.region)}`;
   if(st.type) q += `&company_type=eq.${st.type}`;
   if(st.contacts) q += '&or=(email.not.is.null,phone.not.is.null)';
   if(search) q += `&company_name=ilike.*${encodeURIComponent(search)}*`;
-  const sorts = {name_asc:'company_name.asc',name_desc:'company_name.desc',verified:'verified_status.asc',completeness:'profile_completeness.desc.nullslast'};
+  const sorts = {name_asc:'company_name.asc',name_desc:'company_name.desc',verified:'verified_status.asc',completeness:'profile_completeness.desc.nullslast',rating:'rating.desc.nullslast',deals:'deals_completed.desc.nullslast'};
   q += `&order=${sorts[st.sort]||'company_name.asc'}&limit=${st.ps}&offset=${st.page*st.ps}`;
   const data = await api(q);
   renderCompanies(data);
@@ -719,6 +730,8 @@ function companyCard(c) {
   const badge = {verified:`<span class="badge badge-v">✓ Верифицирован</span>`,checked:`<span class="badge badge-c">● Проверен</span>`,new:`<span class="badge badge-n">○ Новый</span>`}[c.verified_status]||'<span class="badge badge-n">○ Новый</span>';
   const hasContact = c.email||c.phone?`<span class="tag">📞 Контакты</span>`:'';
   const pct = c.profile_completeness||0;
+  const desc = c.description ? `<div class="card-desc">${c.description.slice(0,100)}${c.description.length>100?'…':''}</div>` : '';
+  const safeCompany = (c.company_name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
   return `<div class="company-card" onclick="openCompany('${c.id}')">
     <div class="card-top">
       <div class="company-ava">${init}</div>
@@ -728,6 +741,7 @@ function companyCard(c) {
       </div>
     </div>
     ${c.inn?`<div class="card-inn">ИНН: ${c.inn}</div>`:''}
+    ${desc}
     <div class="card-tags">
       ${c.city||c.region?`<span class="tag">📍 ${c.city||c.region}</span>`:''}
       ${hasContact}
@@ -740,7 +754,10 @@ function companyCard(c) {
     </div>
     <div class="card-footer">
       <span class="card-location">📍 ${c.city||c.region||'—'}</span>
-      <button class="btn-view" onclick="event.stopPropagation();openCompany('${c.id}')">Открыть →</button>
+      <div class="card-footer-btns">
+        <button class="btn-rfq-card" onclick="event.stopPropagation();openRFQForCompany('${safeCompany}')">📋 RFQ</button>
+        <button class="btn-view" onclick="event.stopPropagation();openCompany('${c.id}')">Открыть →</button>
+      </div>
     </div>
   </div>`;
 }
@@ -823,6 +840,11 @@ document.getElementById('searchInput').addEventListener('input',()=>{clearTimeou
 // Modal
 function openModal() { document.getElementById('rfqModal').classList.add('open'); document.body.style.overflow='hidden'; }
 function openModalWith(item) { document.getElementById('rTitle').value=item; openModal(); }
+function openRFQForCompany(companyName) {
+  document.getElementById('rTitle').value = '';
+  document.getElementById('rDesc').value = 'Интересует сотрудничество с компанией: ' + companyName;
+  openModal();
+}
 function closeModal() { document.getElementById('rfqModal').classList.remove('open'); document.body.style.overflow=''; }
 function closeOutside(e) { if(e.target.id==='rfqModal') closeModal(); }
 
