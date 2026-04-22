@@ -439,7 +439,7 @@
     </nav>
 
     <div class="header-actions">
-      <button class="btn-rfq" onclick="openModal()">Подать RFQ</button>
+      <button class="btn-rfq" onclick="openModal()">Отправить заявку</button>
     </div>
   </div>
 </header>
@@ -447,7 +447,7 @@
 <!-- MTO QUICK BAR -->
 <div class="mto-bar">
   <div class="mto-inner">
-    <div class="mto-item hot"><span class="mto-dot"></span> Срочные RFQ <b id="mtoRfq">28</b></div>
+    <div class="mto-item hot"><span class="mto-dot"></span> Срочные заявки <b id="mtoRfq">28</b></div>
     <div class="mto-item" onclick="switchTab('companies')">🏢 Поставщики</div>
     <div class="mto-item" onclick="switchTab('skus')">📦 Оборудование</div>
     <div class="mto-item" onclick="switchTab('services')">⚙️ Услуги</div>
@@ -511,7 +511,7 @@
       <div class="feed-list">
         <div class="feed-item">
           <div class="feed-dot green"></div>
-          <div><div class="feed-text"><strong>Новый RFQ</strong>: ЭЦН 100 м³/сут, ХМАО</div><div class="feed-time">2 мин назад</div></div>
+          <div><div class="feed-text"><strong>Новая заявка</strong>: ЭЦН 100 м³/сут, ХМАО</div><div class="feed-time">2 мин назад</div></div>
         </div>
         <div class="feed-item">
           <div class="feed-dot orange"></div>
@@ -523,7 +523,7 @@
         </div>
         <div class="feed-item">
           <div class="feed-dot green"></div>
-          <div><div class="feed-text"><strong>Новый RFQ</strong>: Долото PDC 215.9</div><div class="feed-time">2 часа назад</div></div>
+          <div><div class="feed-text"><strong>Новая заявка</strong>: Долото PDC 215.9</div><div class="feed-time">2 часа назад</div></div>
         </div>
         <div class="feed-item">
           <div class="feed-dot orange"></div>
@@ -554,7 +554,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-num" id="st4">28</div>
-        <div class="stat-label">Активных RFQ</div>
+        <div class="stat-label">Активных заявок</div>
         <div class="stat-delta">▲ 5 сегодня</div>
       </div>
     </div>
@@ -607,7 +607,7 @@
   <div class="modal">
     <div class="modal-head">
       <div>
-        <div class="modal-title">Подать запрос (RFQ)</div>
+        <div class="modal-title">Отправить заявку</div>
         <div class="modal-sub">Мы подберём поставщиков и свяжемся в течение 24 ч</div>
       </div>
       <button class="btn-close" onclick="closeModal()">✕</button>
@@ -755,7 +755,7 @@ function companyCard(c) {
     <div class="card-footer">
       <span class="card-location">📍 ${c.city||c.region||'—'}</span>
       <div class="card-footer-btns">
-        <button class="btn-rfq-card" onclick="event.stopPropagation();openRFQForCompany('${safeCompany}')">📋 RFQ</button>
+        <button class="btn-rfq-card" onclick="event.stopPropagation();openRFQForCompany('${safeCompany}')">📋 Заявка</button>
         <button class="btn-view" onclick="event.stopPropagation();openCompany('${c.id}')">Открыть →</button>
       </div>
     </div>
