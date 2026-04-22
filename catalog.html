@@ -645,7 +645,7 @@ async function init() {
   showSkeletons();
   const [cats, cos, sks, vers] = await Promise.all([
     api('/rest/v1/categories?select=id,category_name,level,sort_order&parent_id=is.null&order=sort_order.asc,category_name.asc'),
-    api('/rest/v1/companies?select=id&is_active=neq.false'),
+    api('/rest/v1/companies?select=id&or=(is_active.eq.true,is_active.is.null)'),
     api('/rest/v1/skus?select=id&is_active=neq.false'),
     api('/rest/v1/companies?select=id&verified_status=eq.verified')
   ]);
@@ -681,7 +681,7 @@ async function load() {
 
 async function loadCompanies() {
   const search = document.getElementById('searchInput').value.trim();
-  let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,verified_status,email,phone,website,profile_completeness,deals_completed,rating&is_active=neq.false`;
+  let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,verified_status,email,phone,website,profile_completeness,deals_completed,rating&or=(is_active.eq.true,is_active.is.null)`;
   if(st.verified) q += '&verified_status=eq.verified';
   if(st.region) q += `&region=eq.${encodeURIComponent(st.region)}`;
   if(st.type) q += `&company_type=eq.${st.type}`;
