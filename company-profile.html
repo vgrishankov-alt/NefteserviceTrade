@@ -8,12 +8,12 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:        #F4F1EB;
+      --bg:        #F5F6F8;
       --surface:   #FFFFFF;
-      --surface-2: #EDE9E0;
-      --surface-3: #E3DDD2;
-      --border:    rgba(0,0,0,0.09);
-      --border-2:  rgba(0,0,0,0.18);
+      --surface-2: #EEF0F3;
+      --surface-3: #E4E7EC;
+      --border:    rgba(0,0,0,0.08);
+      --border-2:  rgba(0,0,0,0.14);
       --green:     #1a7c3e;
       --green-dark:#136130;
       --green-dim: rgba(26,124,62,0.09);
@@ -33,7 +33,7 @@
     ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
 
     /* ── HEADER ── */
-    header { position: sticky; top: 0; z-index: 200; background: rgba(244,241,235,0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    header { position: sticky; top: 0; z-index: 200; background: rgba(255,255,255,0.97); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
     .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; height: 60px; display: flex; align-items: center; gap: 20px; }
     .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
     .logo-mark { width: 34px; height: 34px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #fff; }
@@ -61,7 +61,7 @@
       border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px;
     }
     .hero-body {
-      background: linear-gradient(135deg, #EDE9E0 0%, #e8f0ea 100%);
+      background: #1A2535;
       padding: 28px 28px 22px; display: flex; align-items: flex-start; gap: 20px;
       border-bottom: 1px solid var(--border);
       position: relative; overflow: hidden;
@@ -79,7 +79,7 @@
       letter-spacing: -1px;
     }
     .hero-info { flex: 1; }
-    .hero-name { font-size: 22px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.3px; }
+    .hero-name { font-size: 22px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.3px; color: #FFFFFF; }
     .hero-badges { display: flex; flex-wrap: wrap; gap: 6px; }
     .badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
     .bv { background: rgba(26,124,62,0.12); color: var(--green); border: 1px solid rgba(26,124,62,0.22); }
@@ -101,6 +101,12 @@
     .hs:last-child { border-right: none; }
     .hs-num { font-size: 20px; font-weight: 800; color: var(--text); }
     .hs-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+    /* Hero dark bg — white text overrides */
+    .hero-body .hero-name, .hero-body .hero-info * { color: rgba(255,255,255,0.90); }
+    .hero-body .bv { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25); }
+    .hero-body .bc { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.20); }
+    .hero-body .bn, .hero-body .bt { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.70); border-color: rgba(255,255,255,0.15); }
+    .hero-body .ava-lg { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fff; }
 
     /* TABS NAV */
     .tabs-nav { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
