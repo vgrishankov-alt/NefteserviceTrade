@@ -1,0 +1,229 @@
+<!--
+  =============================================================
+  НЕФТЕСЕРВИС ТРЕЙД — Custom CSS для Tilda
+  =============================================================
+  КАК ВСТАВИТЬ:
+  1. Войдите в редактор Tilda
+  2. Перейдите: Настройки сайта → Ещё → Дополнительный HTML-код
+  3. Вставьте весь код ниже в поле "Код перед </head>"
+  4. Нажмите Сохранить → Опубликовать
+
+  ИЛИ для отдельной страницы:
+  1. Откройте страницу для редактирования
+  2. Настройки страницы → Дополнительный HTML → перед </head>
+  =============================================================
+-->
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════════
+   НЕФТЕСЕРВИС ТРЕЙД — Дизайн-система
+   Палитра: кремово-бежевый + тёмно-зелёный профессиональный
+   ══════════════════════════════════════════════════════════ */
+
+/* ─── 1. ШРИФТ ─── */
+body, .t-body, .t-text, .t-heading, .t-title,
+.t-btn, input, textarea, select, .t-form__inputbox {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* ─── 2. ОБЩИЙ ФОН САЙТА — меняем с чёрного на кремовый ─── */
+.t-body { background-color: #F4F1EB !important; }
+
+/* ─── 3. СЕКЦИИ — светлые (кремовый фон) ─── */
+/* Все секции по умолчанию делаем кремовыми */
+.t-rec { color: #1C1A17 !important; }
+
+/* Принудительно меняем фон ТЁМНЫХ секций на кремовый
+   (кроме первой hero-секции) */
+.t-rec:not(:first-of-type) .t-section__bgimg,
+.t-rec:not(:first-of-type) > div[data-bgcolor] {
+  background-color: #F4F1EB !important;
+}
+
+/* Хак для смены всех фонов: переопределяем тёмный цвет фона */
+[style*="background-color: #1a1a"] { background-color: #F4F1EB !important; }
+[style*="background-color: rgb(26, 26"] { background-color: #F4F1EB !important; }
+[style*="background-color: #000"] { background-color: #F4F1EB !important; }
+[style*="background-color: #111"] { background-color: #F4F1EB !important; }
+[style*="background-color: #222"] { background-color: #F4F1EB !important; }
+[style*="background-color: #333"] { background-color: #F4F1EB !important; }
+[style*="background-color: rgb(0, 0, 0)"] { background-color: #F4F1EB !important; }
+
+/* ─── 4. ТЕКСТ — меняем белый на тёмный ─── */
+/* Заголовки */
+.t-heading, h1, h2, h3, h4, h5, h6,
+.t-title, .uc-title {
+  color: #1C1A17 !important;
+  font-weight: 700 !important;
+}
+
+/* Основной текст */
+.t-text, .t-descr, p, li, span:not(.t-btn-text) {
+  color: #1C1A17 !important;
+}
+
+/* Вторичный текст */
+.t-subheader, .t-uptitle {
+  color: rgba(28,26,23,0.60) !important;
+}
+
+/* ─── 5. АКЦЕНТНЫЙ ЦВЕТ — неоновый → профессиональный зелёный ─── */
+/* Меняем #00CF91 и #2ecc71 и их вариации на #1A7C3E */
+[style*="color: #00cf91"],
+[style*="color: rgb(0, 207, 145)"],
+[style*="color: #2ecc71"],
+[style*="color: rgb(46, 204, 113)"] {
+  color: #1A7C3E !important;
+}
+
+/* ─── 6. КНОПКИ ─── */
+.t-btn {
+  background-color: #1A7C3E !important;
+  border-color: #1A7C3E !important;
+  color: #FFFFFF !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  transition: background-color 0.18s ease !important;
+}
+.t-btn:hover {
+  background-color: #136130 !important;
+  border-color: #136130 !important;
+  color: #FFFFFF !important;
+}
+
+/* Вторичные кнопки (outline) */
+.t-btn_outline {
+  background-color: transparent !important;
+  border: 2px solid #1A7C3E !important;
+  color: #1A7C3E !important;
+}
+.t-btn_outline:hover {
+  background-color: #1A7C3E !important;
+  color: #FFFFFF !important;
+}
+
+/* Тёмные кнопки (на светлом фоне) */
+.t-btn_bk {
+  background-color: #1A2535 !important;
+  border-color: #1A2535 !important;
+  color: #FFFFFF !important;
+}
+
+/* ─── 7. НАВИГАЦИЯ / МЕНЮ ─── */
+.t-menu, .t-header, .t-menusocial,
+[class*="t-menu-base"] {
+  background-color: rgba(244,241,235,0.97) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.09) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+/* Ссылки меню */
+.t-menu__link, .t-menu-base__link,
+[class*="t-menu"] a, [class*="t-menu"] .t-menu__link-item {
+  color: rgba(28,26,23,0.65) !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}
+.t-menu__link:hover, .t-menu-base__link:hover {
+  color: #1A7C3E !important;
+}
+
+/* Логотип в меню */
+.t-menu-base__textlogo, .t-menu-base__logo {
+  color: #1C1A17 !important;
+}
+
+/* ─── 8. ФОРМЫ / ИНПУТЫ ─── */
+.t-input, .t-form__inputbox, input[type="text"],
+input[type="email"], input[type="tel"], textarea, select,
+.t-form__inputsbox .t-input {
+  background-color: #FFFFFF !important;
+  border: 1px solid rgba(0,0,0,0.14) !important;
+  border-radius: 8px !important;
+  color: #1C1A17 !important;
+  font-size: 14px !important;
+}
+.t-input:focus, .t-form__inputbox:focus-within {
+  border-color: #1A7C3E !important;
+  outline: none !important;
+}
+.t-input::placeholder { color: rgba(28,26,23,0.38) !important; }
+
+/* Форма-контейнер */
+.t-form__inputsbox, .t-form {
+  background-color: #FFFFFF !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  border-radius: 14px !important;
+  padding: 24px !important;
+}
+
+/* ─── 9. HERO-СЕКЦИЯ (оставляем тёмной, но меняем на нейви) ─── */
+/* Первый экран остаётся тёмным — меняем цвет с чёрного на тёмно-синий */
+.t-rec:first-of-type,
+.t-cover, [data-record-type="cover"],
+.t-cover__carrier {
+  background: linear-gradient(135deg, #1A2535 0%, #1E3A2A 100%) !important;
+}
+
+/* Текст в Hero — оставляем белым */
+.t-cover h1, .t-cover h2, .t-cover .t-heading,
+.t-cover .t-text, .t-cover p, .t-cover .t-descr {
+  color: #FFFFFF !important;
+}
+
+/* ─── 10. КАРТОЧКИ / КОЛОНКИ ─── */
+.t-card, .t-col, .t-column,
+[class*="t-card__col"] {
+  background-color: #FFFFFF !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  border-radius: 14px !important;
+}
+
+/* ─── 11. РАЗДЕЛИТЕЛИ ─── */
+.t-separator, hr { border-color: rgba(0,0,0,0.09) !important; }
+
+/* ─── 12. ФУТЕР ─── */
+.t-footer, [data-record-type="footer"] {
+  background-color: #1A2535 !important;
+  color: rgba(255,255,255,0.70) !important;
+}
+.t-footer a, .t-footer .t-text {
+  color: rgba(255,255,255,0.70) !important;
+}
+.t-footer a:hover { color: #FFFFFF !important; }
+
+/* ─── 13. ГАЛОЧКИ / ИКОНКИ ─── */
+.t-list__marker, .t-list-item__marker {
+  background-color: #1A7C3E !important;
+  border-color: #1A7C3E !important;
+}
+[style*="color: #00cf91"] { color: #1A7C3E !important; }
+
+/* ─── 14. ЧЕКБОКСЫ / РАДИО-КНОПКИ ─── */
+input[type="checkbox"]:checked, input[type="radio"]:checked {
+  accent-color: #1A7C3E !important;
+}
+
+/* ─── 15. ТЕГИ / МЕТКИ ─── */
+.t-tag, .uc-tag {
+  background-color: rgba(26,124,62,0.09) !important;
+  color: #1A7C3E !important;
+  border-radius: 20px !important;
+}
+
+/* ─── 16. СВЕТЛЫЕ СЕКЦИИ (альтернатива кремовому) ─── */
+/* Каждая вторая секция немного светлее для ритма */
+.t-rec:nth-child(even):not(:first-of-type) {
+  background-color: #FFFFFF !important;
+}
+
+/* ─── 17. СКРОЛЛБАР ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F4F1EB; }
+::-webkit-scrollbar-thumb { background: #E3DDD2; border-radius: 3px; }
+</style>
