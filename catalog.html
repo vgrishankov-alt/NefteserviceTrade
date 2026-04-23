@@ -352,8 +352,7 @@
 
 <!-- TOP BAR -->
 <div class="top-bar">
-  <span>Найдите нужного поставщика среди участников каталога РФ и СНГ</span>
-  <a href="https://nefteservicetrade.com/">Подать заявку на участие →</a>
+  <span>Каталог нефтесервисных поставщиков · РФ и СНГ · 2 800+ компаний</span>
 </div>
 
 <!-- HEADER -->
@@ -367,18 +366,16 @@
       </div>
     </div>
     <nav class="h-nav">
-      <span class="h-nav-a active">Каталог</span>
-      <span class="h-nav-a" onclick="goRoot()">Категории</span>
+      <span class="h-nav-a active" onclick="goRoot()">Категории</span>
       <span class="h-nav-a" onclick="showAllSuppliers()">Поставщики</span>
-      <span class="h-nav-a" onclick="window.location.href='https://nefteservicetrade.com/'">О сервисе</span>
     </nav>
     <div class="search-wrap">
       <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input id="searchInput" type="text" placeholder="Поиск оборудования, услуг, компаний..." autocomplete="off">
     </div>
     <div class="h-right">
-      <button class="btn-login" onclick="window.location.href='https://nefteservicetrade.com/'">Войти / Регистрация</button>
-      <button class="btn-rfq" onclick="openModal()">Отправить заявку</button>
+      <span id="authUserBtn" style="display:none;font-size:13px;font-weight:600;color:var(--green);cursor:pointer;" onclick="openAuthModal()"></span>
+      <button class="btn-login" id="loginBtn" onclick="openAuthModal()">Войти / Регистрация</button>
     </div>
   </div>
 </header>
@@ -445,13 +442,8 @@
     <div class="pagination" id="pag"></div>
   </div>
 
-  <!-- CTA BANNER -->
-  <div class="cta-banner" id="ctaBanner">
-    <div>
-      <h3>Разместите вашу компанию в каталоге</h3>
-      <p>Получайте входящие запросы от квалифицированных покупателей нефтегазовой отрасли</p>
-    </div>
-    <button class="btn-cta" onclick="window.location.href='https://nefteservicetrade.com/'">Подать заявку на участие →</button>
+  <!-- CTA BANNER (скрыт — вход через личный кабинет) -->
+  <div id="ctaBanner" style="display:none;">
   </div>
 </div>
 
@@ -484,6 +476,48 @@
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- AUTH MODAL -->
+<div class="overlay" id="authModal" onclick="if(event.target===this)closeAuthModal()">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="authTitle">Войти в личный кабинет</div>
+        <div class="modal-sub">Для управления карточкой компании</div>
+      </div>
+      <button class="btn-close" onclick="closeAuthModal()">✕</button>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border);">
+      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:10px;border:none;background:none;font:600 13px Inter,sans-serif;cursor:pointer;border-bottom:2px solid var(--green);margin-bottom:-2px;color:var(--green);">Войти</button>
+      <button id="tabReg" onclick="switchAuthTab('register')" style="flex:1;padding:10px;border:none;background:none;font:600 13px Inter,sans-serif;cursor:pointer;color:var(--text-3);">Регистрация</button>
+    </div>
+    <!-- Login form -->
+    <div id="formLogin">
+      <div class="fg"><label>Email <span>*</span></label><input class="fi" id="authEmail" type="email" placeholder="your@company.ru"></div>
+      <div class="fg"><label>Пароль <span>*</span></label><input class="fi" id="authPass" type="password" placeholder="••••••••"></div>
+      <div id="authError" style="color:#c0392b;font-size:13px;margin-bottom:12px;display:none;"></div>
+      <button class="btn-submit" onclick="doLogin()">Войти →</button>
+      <p style="text-align:center;font-size:12px;color:var(--text-3);margin-top:12px;">Забыли пароль? <a href="mailto:info@nefteservicetrade.com" style="color:var(--green);">Напишите нам</a></p>
+    </div>
+    <!-- Register form -->
+    <div id="formRegister" style="display:none;">
+      <div class="fg"><label>Название компании <span>*</span></label><input class="fi" id="regCompany" placeholder="ООО Нефтегаз..."></div>
+      <div class="form-row">
+        <div class="fg"><label>ИНН <span>*</span></label><input class="fi" id="regInn" placeholder="1234567890"></div>
+        <div class="fg"><label>ФИО руководителя</label><input class="fi" id="regCeo" placeholder="Иванов Иван Иванович"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Email <span>*</span></label><input class="fi" id="regEmail" type="email" placeholder="your@company.ru"></div>
+        <div class="fg"><label>Телефон <span>*</span></label><input class="fi" id="regPhone" type="tel" placeholder="+7 (___) ___-__-__"></div>
+      </div>
+      <div class="fg"><label>Пароль <span>*</span></label><input class="fi" id="regPass" type="password" placeholder="Минимум 8 символов"></div>
+      <div id="regError" style="color:#c0392b;font-size:13px;margin-bottom:12px;display:none;"></div>
+      <button class="btn-submit" onclick="doRegister()">Отправить заявку на размещение →</button>
+      <p style="text-align:center;font-size:12px;color:var(--text-3);margin-top:12px;">После регистрации менеджер НТ проверит данные и активирует доступ в течение 24 ч</p>
+    </div>
+  </div>
+</div>
+
 <script>
 const URL_SB = 'https://eiwbcjausfeyzjysvubs.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd2JjamF1c2ZleXpqeXN2dWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDMyMzAsImV4cCI6MjA5MTIxOTIzMH0.5P0r5qApvRd3EdLuL9IlxOd1YLjDNHb5VAqRZvsUj_Q';
@@ -506,7 +540,7 @@ let st = {
   path: [],           // breadcrumb: [{id, name}]
   sort: 'name_asc',
   region: '',
-  page: 0, ps: 12,
+  page: 0, ps: 48, allLoaded: false, loading: false,
   searchMode: false
 };
 
@@ -532,6 +566,7 @@ async function init() {
   document.getElementById('hs_cats').textContent = cats.filter(c=>!c.parent_id).length;
   renderRootCats();
   hideSup();
+  updateAuthUI();
 }
 
 // ── CATEGORY NAVIGATION ──
@@ -660,14 +695,17 @@ function showAllSuppliers() {
   loadCompanies();
 }
 
-async function loadCompaniesForCat(catIds) {
-  showSkeletons();
+// catCompanyIds cache for pagination
+let _catCompanyIds = [];
+
+async function loadCompaniesForCat(catIds, append) {
+  if(!append) { showSkeletons(); _catCompanyIds = []; }
   try {
-    // Get company IDs that belong to any of these categories
-    const inClause = catIds.map(id=>`"${id}"`).join(',');
-    const ccData = await api(`/rest/v1/company_categories?select=company_id&category_id=in.(${catIds.join(',')})&limit=500`);
-    const companyIds = [...new Set(ccData.map(r=>r.company_id))];
-    if(!companyIds.length) {
+    if(!_catCompanyIds.length) {
+      const ccData = await api(`/rest/v1/company_categories?select=company_id&category_id=in.(${catIds.join(',')})&limit=2000`);
+      _catCompanyIds = [...new Set(ccData.map(r=>r.company_id))];
+    }
+    if(!_catCompanyIds.length) {
       document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Поставщики не найдены</h3><p>В этой категории пока нет зарегистрированных участников</p><button class="btn-rfq" onclick="openModal()">Отправить заявку →</button></div>`;
       document.getElementById('pag').innerHTML = '';
       document.getElementById('resultsText').textContent = '0 компаний';
@@ -675,20 +713,20 @@ async function loadCompaniesForCat(catIds) {
     }
     const search = document.getElementById('searchInput').value.trim();
     let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,email,phone,website,profile_completeness,description`;
-    q += `&id=in.(${companyIds.join(',')})`;
+    q += `&id=in.(${_catCompanyIds.join(',')})`;
     if(st.region) q += `&region=eq.${encodeURIComponent(st.region)}`;
     if(search) q += `&company_name=ilike.*${encodeURIComponent(search)}*`;
     const sorts = { name_asc:'company_name.asc', name_desc:'company_name.desc', completeness:'profile_completeness.desc.nullslast' };
     q += `&order=${sorts[st.sort]||'company_name.asc'}&limit=${st.ps}&offset=${st.page*st.ps}`;
     const data = await api(q);
-    renderCompanies(data, companyIds.length);
+    renderCompanies(data, _catCompanyIds.length, append);
   } catch(e) {
     document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Ошибка загрузки</h3><p>${e.message}</p></div>`;
   }
 }
 
-async function loadCompanies() {
-  showSkeletons();
+async function loadCompanies(append) {
+  if(!append) showSkeletons();
   try {
     const search = (document.getElementById('searchInput').value || '').trim();
     let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,email,phone,website,profile_completeness,description`;
@@ -697,23 +735,29 @@ async function loadCompanies() {
     const sorts = { name_asc:'company_name.asc', name_desc:'company_name.desc', completeness:'profile_completeness.desc.nullslast' };
     q += `&order=${sorts[st.sort]||'company_name.asc'}&limit=${st.ps}&offset=${st.page*st.ps}`;
     const data = await api(q);
-    renderCompanies(data);
+    renderCompanies(data, null, append);
   } catch(e) {
-    document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Ошибка</h3><p>${e.message}</p></div>`;
+    if(!append) document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Ошибка</h3><p>${e.message}</p></div>`;
   }
 }
 
-function renderCompanies(data, total) {
+function renderCompanies(data, total, append) {
   const grid = document.getElementById('cardsGrid');
-  const shown = total !== undefined ? `${data.length} из ${total}` : data.length;
-  document.getElementById('resultsText').textContent = `${shown} компаний`;
-  if(!data.length) {
-    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Ничего не найдено</h3><p>Попробуйте изменить параметры поиска или отправьте заявку — мы найдём нужного поставщика</p><button class="btn-rfq" onclick="openModal()">Отправить заявку</button></div>`;
-    document.getElementById('pag').innerHTML = '';
-    return;
+  if(!append) {
+    if(!data.length) {
+      grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Ничего не найдено</h3><p>Попробуйте изменить параметры поиска или отправьте заявку — мы найдём нужного поставщика</p><button class="btn-rfq" onclick="openModal()">Отправить заявку</button></div>`;
+      document.getElementById('pag').innerHTML = '';
+      document.getElementById('resultsText').textContent = '0 компаний';
+      return;
+    }
+    grid.innerHTML = data.map(c => companyCard(c)).join('');
+  } else {
+    data.forEach(c => { const div=document.createElement('div'); div.innerHTML=companyCard(c); grid.appendChild(div.firstChild); });
   }
-  grid.innerHTML = data.map(c => companyCard(c)).join('');
-  renderPag(total || data.length);
+  const totalCount = total || (st.page * st.ps + data.length);
+  document.getElementById('resultsText').textContent = `${grid.querySelectorAll('.company-card').length} компаний${total ? ' из '+total : ''}`;
+  st.allLoaded = data.length < st.ps;
+  renderLoadMore();
 }
 
 function companyCard(c) {
@@ -759,19 +803,23 @@ function showSkeletons() {
   document.getElementById('resultsText').textContent = 'Загрузка...';
 }
 
-function renderPag(count) {
-  const pages = Math.ceil(count / st.ps);
+function renderLoadMore() {
   const pag = document.getElementById('pag');
-  if(pages <= 1) { pag.innerHTML=''; return; }
-  let html = `<button class="page-btn" ${st.page===0?'disabled':''} onclick="goPage(${st.page-1})">‹</button>`;
-  for(let i=0;i<Math.min(pages,8);i++) html+=`<button class="page-btn ${i===st.page?'active':''}" onclick="goPage(${i})">${i+1}</button>`;
-  html += `<button class="page-btn" ${st.page>=pages-1?'disabled':''} onclick="goPage(${st.page+1})">›</button>`;
-  pag.innerHTML = html;
+  if(st.allLoaded) { pag.innerHTML = `<p style="color:var(--text-3);font-size:13px;text-align:center;padding:16px 0;">Показаны все компании</p>`; return; }
+  pag.innerHTML = `<button class="page-btn" style="width:auto;padding:0 24px;height:40px;font-size:13px;" onclick="loadMore()">Загрузить ещё →</button>`;
 }
 
-function applyFilters() { st.region=document.getElementById('fRegion').value; st.page=0; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); }
-function applySort()    { st.sort=document.getElementById('sortSel').value; st.page=0; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); }
-function goPage(p)      { st.page=p; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); window.scrollTo({top:0,behavior:'smooth'}); }
+async function loadMore() {
+  if(st.loading || st.allLoaded) return;
+  st.loading = true; st.page++;
+  document.getElementById('pag').innerHTML = `<p style="color:var(--text-3);font-size:13px;text-align:center;padding:8px 0;">Загрузка...</p>`;
+  if(st.activeCatId) await loadCompaniesForCat(getAllDescendantIds(st.activeCatId), true);
+  else await loadCompanies(true);
+  st.loading = false;
+}
+
+function applyFilters() { st.region=document.getElementById('fRegion').value; st.page=0; _catCompanyIds=[]; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); }
+function applySort()    { st.sort=document.getElementById('sortSel').value; st.page=0; _catCompanyIds=[]; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); }
 function openCompany(id){ window.location.href=`company-profile.html?id=${id}`; }
 
 function doHeroSearch() {
@@ -827,6 +875,106 @@ function toast(msg, type='') {
   const t=document.getElementById('toast');
   t.textContent=msg; t.className=`toast ${type} show`;
   setTimeout(()=>t.className='toast', 4500);
+}
+
+// ── AUTH ──
+let authUser = null;
+
+function openAuthModal() {
+  document.getElementById('authModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function switchAuthTab(tab) {
+  const isLogin = tab==='login';
+  document.getElementById('formLogin').style.display = isLogin ? '' : 'none';
+  document.getElementById('formRegister').style.display = isLogin ? 'none' : '';
+  document.getElementById('tabLogin').style.color = isLogin ? 'var(--green)' : 'var(--text-3)';
+  document.getElementById('tabLogin').style.borderBottomColor = isLogin ? 'var(--green)' : 'transparent';
+  document.getElementById('tabReg').style.color = isLogin ? 'var(--text-3)' : 'var(--green)';
+  document.getElementById('tabReg').style.borderBottomColor = isLogin ? 'transparent' : 'var(--green)';
+}
+
+async function doLogin() {
+  const email = document.getElementById('authEmail').value.trim();
+  const pass = document.getElementById('authPass').value;
+  const errEl = document.getElementById('authError');
+  if(!email||!pass) { errEl.textContent='Заполните все поля'; errEl.style.display=''; return; }
+  errEl.style.display='none';
+  try {
+    const r = await fetch(`${URL_SB}/auth/v1/token?grant_type=password`, {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':KEY},
+      body: JSON.stringify({email, password:pass})
+    });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error_description || data.msg || 'Ошибка входа');
+    sessionStorage.setItem('nt_token', data.access_token);
+    sessionStorage.setItem('nt_user', JSON.stringify(data.user));
+    authUser = data.user;
+    updateAuthUI();
+    closeAuthModal();
+    toast('✅ Вы вошли в личный кабинет','success');
+  } catch(e) {
+    errEl.textContent = e.message==='Invalid login credentials' ? 'Неверный email или пароль' : e.message;
+    errEl.style.display='';
+  }
+}
+
+async function doRegister() {
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const company = document.getElementById('regCompany').value.trim();
+  const inn = document.getElementById('regInn').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const ceo = document.getElementById('regCeo').value.trim();
+  const errEl = document.getElementById('regError');
+  if(!email||!pass||!company||!inn||!phone) { errEl.textContent='Заполните обязательные поля'; errEl.style.display=''; return; }
+  if(pass.length < 8) { errEl.textContent='Пароль должен быть не менее 8 символов'; errEl.style.display=''; return; }
+  errEl.style.display='none';
+  try {
+    const r = await fetch(`${URL_SB}/auth/v1/signup`, {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':KEY},
+      body: JSON.stringify({email, password:pass, data:{company_name:company, inn, phone, ceo_name:ceo}})
+    });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error_description || data.msg || 'Ошибка регистрации');
+    // Also save as pending request in rfqs table
+    await fetch(`${URL_SB}/rest/v1/rfqs`,{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({company_name:company,contact_name:ceo||email,phone,email,request_title:'Заявка на размещение в каталоге',request_description:`ИНН: ${inn}`,status:'new',source:'catalog_registration'})});
+    closeAuthModal();
+    toast('✅ Заявка отправлена! Менеджер свяжется с вами в течение 24 ч','success');
+  } catch(e) {
+    const msg = e.message.includes('already registered') ? 'Этот email уже зарегистрирован — войдите' : e.message;
+    errEl.textContent = msg; errEl.style.display='';
+  }
+}
+
+function updateAuthUI() {
+  const token = sessionStorage.getItem('nt_token');
+  const user = token ? JSON.parse(sessionStorage.getItem('nt_user')||'null') : null;
+  authUser = user;
+  const loginBtn = document.getElementById('loginBtn');
+  const userBtn = document.getElementById('authUserBtn');
+  if(user) {
+    const name = user.user_metadata?.company_name || user.email?.split('@')[0] || 'Кабинет';
+    loginBtn.style.display='none';
+    userBtn.style.display='';
+    userBtn.textContent = '👤 ' + name;
+  } else {
+    loginBtn.style.display='';
+    userBtn.style.display='none';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('nt_token');
+  sessionStorage.removeItem('nt_user');
+  authUser = null;
+  updateAuthUI();
+  toast('Вы вышли из кабинета','');
+}
 }
 
 init();
