@@ -248,6 +248,8 @@
     </div>
     <div class="header-r">
       <button class="btn-back" onclick="window.location.href='catalog.html'">← Каталог</button>
+      <button id="hdrLoginBtn" class="btn-back" onclick="openAuthModal()" style="border-color:var(--green);color:var(--green);">Войти</button>
+      <span id="hdrUserName" style="display:none;font-size:13px;font-weight:600;color:var(--green);cursor:pointer;" onclick="handleLogout()"></span>
     </div>
   </div>
 </header>
@@ -310,15 +312,24 @@
 
 <!-- AUTH MODAL -->
 <div id="authModal" onclick="if(event.target===this)closeAuthModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:16px;padding:36px;max-width:440px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
-    <div style="width:64px;height:64px;background:rgba(26,124,62,0.09);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;">🔒</div>
-    <div style="font-size:20px;font-weight:800;color:#1C1A17;margin-bottom:8px;">Требуется авторизация</div>
-    <div style="font-size:14px;color:rgba(28,26,23,0.55);line-height:1.6;margin-bottom:24px;">Редактирование карточки предприятия доступно только уполномоченным представителям компании через Личный кабинет на основном сайте.</div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <button onclick="window.location.href='https://nefteservicetrade.com/'" style="background:var(--green);color:#fff;border:none;padding:13px;border-radius:10px;font:700 14px Inter,sans-serif;cursor:pointer;">Войти / Зарегистрироваться →</button>
-      <button onclick="closeAuthModal()" style="background:none;border:1px solid rgba(0,0,0,0.12);padding:11px;border-radius:10px;font:600 13px Inter,sans-serif;cursor:pointer;color:rgba(28,26,23,0.6);">Закрыть</button>
+  <div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div style="font-size:20px;font-weight:800;color:#1C1A17;">Личный кабинет</div>
+      <button onclick="closeAuthModal()" style="width:30px;height:30px;background:#EEF0F3;border:none;border-radius:7px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
     </div>
-    <div style="margin-top:18px;font-size:11px;color:rgba(28,26,23,0.38);">Регистрация требует подтверждения полномочий: ГД или доверенность на осуществление закупочной деятельности</div>
+    <div style="font-size:13px;color:rgba(28,26,23,0.60);margin-bottom:20px;line-height:1.5;">Войдите чтобы редактировать карточку вашей компании, добавлять позиции, фото и цены.</div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:600;color:rgba(28,26,23,0.40);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Email *</label>
+      <input id="cpEmail" type="email" placeholder="your@company.ru" style="width:100%;padding:10px 14px;background:#EEF0F3;border:1px solid rgba(0,0,0,0.08);border-radius:8px;font:14px Inter,sans-serif;outline:none;color:#1C1A17;">
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:11px;font-weight:600;color:rgba(28,26,23,0.40);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Пароль *</label>
+      <input id="cpPass" type="password" placeholder="••••••••" style="width:100%;padding:10px 14px;background:#EEF0F3;border:1px solid rgba(0,0,0,0.08);border-radius:8px;font:14px Inter,sans-serif;outline:none;color:#1C1A17;">
+    </div>
+    <div id="cpAuthError" style="color:#c0392b;font-size:13px;margin-bottom:12px;display:none;"></div>
+    <button onclick="doLoginCP()" style="width:100%;background:#1A7C3E;color:#fff;border:none;padding:13px;border-radius:10px;font:700 14px Inter,sans-serif;cursor:pointer;margin-bottom:10px;">Войти →</button>
+    <div style="text-align:center;font-size:12px;color:rgba(28,26,23,0.40);">Нет аккаунта? <a href="catalog.html" style="color:#1A7C3E;font-weight:600;" onclick="closeAuthModal()">Зарегистрироваться в каталоге</a></div>
+    <div style="margin-top:14px;font-size:11px;color:rgba(28,26,23,0.35);text-align:center;">Доступ предоставляется после верификации компании менеджером НТ</div>
   </div>
 </div>
 
@@ -344,6 +355,7 @@ async function init(){
   const p=new URLSearchParams(location.search);
   st.cid=p.get('id');
   await loadCats();
+  initAuth();
   if(st.cid){setMode('view');await loadCompany(st.cid);}
   else{setMode('new');st.company=empty();renderHero(st.company);renderTab(0);}
 }
@@ -579,11 +591,116 @@ function tabVerification(c){
 }
 
 // Actions
+// ── SUPABASE AUTH ──
+const SB_KEY_CP = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd2JjamF1c2ZleXpqeXN2dWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDMyMzAsImV4cCI6MjA5MTIxOTIzMH0.5P0r5qApvRd3EdLuL9IlxOd1YLjDNHb5VAqRZvsUj_Q';
+const SB_URL_CP = 'https://eiwbcjausfeyzjysvubs.supabase.co';
+let cpAuthUser = null;
+
+function initAuth() {
+  const token = sessionStorage.getItem('nt_token');
+  const user = token ? JSON.parse(sessionStorage.getItem('nt_user')||'null') : null;
+  cpAuthUser = user;
+  updateAuthUIcp();
+}
+
+function updateAuthUIcp() {
+  const user = cpAuthUser;
+  const loginBtn = document.getElementById('hdrLoginBtn');
+  const userEl = document.getElementById('hdrUserName');
+  if(user) {
+    const name = user.user_metadata?.company_name || user.email?.split('@')[0] || 'Кабинет';
+    if(loginBtn) loginBtn.style.display='none';
+    if(userEl) { userEl.style.display=''; userEl.textContent='👤 '+name+' (Выйти)'; }
+    // Check if this company belongs to the user and unlock editing
+    checkCompanyOwnership(user);
+  } else {
+    if(loginBtn) loginBtn.style.display='';
+    if(userEl) userEl.style.display='none';
+  }
+}
+
+async function checkCompanyOwnership(user) {
+  if(!st.cid) return;
+  // Check if user's metadata inn matches the company inn, or if user_id is linked
+  const userInn = user.user_metadata?.inn;
+  const company = st.company;
+  if(company && userInn && company.inn === userInn) {
+    unlockEditing();
+  }
+  // Also check via user_companies table if it exists
+  try {
+    const r = await fetch(`${SB_URL_CP}/rest/v1/user_companies?user_id=eq.${user.id}&company_id=eq.${st.cid}&select=id`,
+      {headers:{apikey:SB_KEY_CP, Authorization:`Bearer ${sessionStorage.getItem('nt_token')}`}});
+    if(r.ok) {
+      const d = await r.json();
+      if(d.length) unlockEditing();
+    }
+  } catch(e) {}
+}
+
+function unlockEditing() {
+  const editBtn = document.getElementById('mEdit');
+  const newBtn = document.getElementById('mNew');
+  if(editBtn) { editBtn.onclick = ()=>setMode('edit'); editBtn.textContent='✏️ Редактировать'; }
+  if(newBtn) newBtn.style.display='none';
+  // Show notification
+  const bar = document.querySelector('.mode-bar');
+  if(bar && !document.getElementById('ownerNotice')) {
+    const n = document.createElement('div');
+    n.id='ownerNotice';
+    n.style.cssText='background:rgba(26,124,62,0.09);border:1px solid rgba(26,124,62,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--green);display:flex;align-items:center;gap:8px;';
+    n.innerHTML='✓ Вы авторизованы как представитель этой компании. Редактирование доступно.';
+    bar.appendChild(n);
+  }
+}
+
+function handleLogout() {
+  if(!confirm('Выйти из личного кабинета?')) return;
+  sessionStorage.removeItem('nt_token');
+  sessionStorage.removeItem('nt_user');
+  cpAuthUser = null;
+  updateAuthUIcp();
+  // Re-lock editing
+  const editBtn = document.getElementById('mEdit');
+  if(editBtn) { editBtn.onclick=showAuthNotice; editBtn.textContent='🔒 Редактировать'; }
+  const notice = document.getElementById('ownerNotice');
+  if(notice) notice.remove();
+}
+
 function showAuthNotice() {
   document.getElementById('authModal').style.display='flex';
 }
 function closeAuthModal() {
   document.getElementById('authModal').style.display='none';
+}
+
+function openAuthModal() {
+  document.getElementById('authModal').style.display='flex';
+}
+
+async function doLoginCP() {
+  const email = document.getElementById('cpEmail').value.trim();
+  const pass = document.getElementById('cpPass').value;
+  const errEl = document.getElementById('cpAuthError');
+  if(!email||!pass) { errEl.textContent='Введите email и пароль'; errEl.style.display=''; return; }
+  errEl.style.display='none';
+  try {
+    const r = await fetch(`${SB_URL_CP}/auth/v1/token?grant_type=password`, {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':SB_KEY_CP},
+      body: JSON.stringify({email, password:pass})
+    });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error_description || data.msg || 'Ошибка');
+    sessionStorage.setItem('nt_token', data.access_token);
+    sessionStorage.setItem('nt_user', JSON.stringify(data.user));
+    cpAuthUser = data.user;
+    updateAuthUIcp();
+    closeAuthModal();
+    toast('✅ Вы вошли в личный кабинет','success');
+  } catch(e) {
+    errEl.textContent = e.message.includes('credentials') ? 'Неверный email или пароль' : e.message;
+    errEl.style.display='';
+  }
 }
 
 function setMode(mode){
