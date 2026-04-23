@@ -8,22 +8,28 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy:      #1A2535;
-      --navy-2:    #243040;
-      --bg:        #F4F6F9;
+      /* ── WARM CREAM PALETTE (matching company-profile.html) ── */
+      --bg:        #F4F1EB;
       --surface:   #FFFFFF;
-      --surface-2: #F0F2F5;
-      --border:    rgba(0,0,0,0.08);
-      --border-2:  rgba(0,0,0,0.15);
+      --surface-2: #EDE9E0;
+      --surface-3: #E3DDD2;
+      --border:    rgba(0,0,0,0.09);
+      --border-2:  rgba(0,0,0,0.16);
+      /* Green accent */
       --green:     #1a7c3e;
       --green-dark:#136130;
       --green-dim: rgba(26,124,62,0.08);
-      --text:      #1A1A1A;
-      --text-2:    #4B5563;
-      --text-3:    #9CA3AF;
-      --orange:    #E87722;
-      --red:       #dc2626;
-      --blue:      #1e6fa6;
+      --green-mid: rgba(26,124,62,0.18);
+      /* Text */
+      --text:      #1C1A17;
+      --text-2:    rgba(28,26,23,0.62);
+      --text-3:    rgba(28,26,23,0.38);
+      /* Status colors */
+      --amber:     #b45309;
+      --amber-dim: rgba(180,83,9,0.09);
+      --blue:      #1e5fa6;
+      --blue-dim:  rgba(30,95,166,0.09);
+      /* Layout */
       --radius:    10px;
       --radius-lg: 14px;
       --tr:        0.17s ease;
@@ -33,194 +39,199 @@
     a { color: inherit; text-decoration: none; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
 
     /* ── TOP BAR ── */
     .top-bar {
-      background: var(--navy); color: rgba(255,255,255,0.80);
-      font-size: 13px; padding: 9px 32px;
-      display: flex; align-items: center; justify-content: center; gap: 12px;
+      background: var(--green); color: rgba(255,255,255,0.88);
+      font-size: 12px; font-weight: 500;
+      padding: 8px 32px; display: flex; align-items: center; justify-content: center; gap: 16px;
     }
     .top-bar a {
-      display: inline-block; border: 1px solid var(--green); color: #fff;
-      padding: 3px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;
-      transition: background var(--tr);
+      color: #fff; font-weight: 700; text-decoration: underline;
+      text-underline-offset: 2px; transition: opacity var(--tr);
     }
-    .top-bar a:hover { background: var(--green); }
+    .top-bar a:hover { opacity: 0.8; }
 
     /* ── HEADER ── */
     header {
       position: sticky; top: 0; z-index: 200;
-      background: var(--navy);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(244,241,235,0.97);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 0 var(--border);
     }
     .header-inner {
       max-width: 1380px; margin: 0 auto;
       padding: 0 32px; height: 62px;
-      display: flex; align-items: center; gap: 28px;
+      display: flex; align-items: center; gap: 24px;
     }
     .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; cursor: pointer; }
     .logo-mark {
       width: 36px; height: 36px; background: var(--green); border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 13px; color: #fff; letter-spacing: -0.5px;
+      font-weight: 800; font-size: 13px; color: #fff;
     }
-    .logo-name { font-size: 15px; font-weight: 700; color: #fff; }
-    .logo-sub  { font-size: 10px; color: rgba(255,255,255,0.40); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+    .logo-name { font-size: 15px; font-weight: 700; color: var(--text); }
+    .logo-sub  { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
 
-    .h-nav { display: flex; align-items: center; gap: 4px; }
+    .h-nav { display: flex; align-items: center; gap: 2px; margin-left: 8px; }
     .h-nav-a {
-      padding: 6px 14px; border-radius: 7px; font-size: 13px; font-weight: 500;
-      color: rgba(255,255,255,0.70); cursor: pointer; white-space: nowrap;
-      transition: color var(--tr), background var(--tr);
+      padding: 6px 12px; border-radius: 7px; font-size: 13px; font-weight: 500;
+      color: var(--text-2); cursor: pointer; transition: color var(--tr), background var(--tr);
     }
-    .h-nav-a:hover { color: #fff; background: rgba(255,255,255,0.08); }
-    .h-nav-a.active { color: #fff; }
+    .h-nav-a:hover { color: var(--text); background: var(--surface-2); }
+    .h-nav-a.active { color: var(--green); }
 
-    .search-wrap { flex: 1; max-width: 480px; position: relative; margin: 0 8px; }
+    .search-wrap { flex: 1; max-width: 480px; position: relative; }
     .search-wrap input {
       width: 100%; padding: 9px 16px 9px 38px;
-      background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 8px; color: #fff; font: 14px/1 'Inter', sans-serif; outline: none;
-      transition: border-color var(--tr), background var(--tr);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font: 14px/1 'Inter', sans-serif; outline: none;
+      transition: border-color var(--tr);
     }
-    .search-wrap input::placeholder { color: rgba(255,255,255,0.40); }
-    .search-wrap input:focus { border-color: rgba(255,255,255,0.30); background: rgba(255,255,255,0.14); }
-    .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.40); pointer-events: none; }
+    .search-wrap input::placeholder { color: var(--text-3); }
+    .search-wrap input:focus { border-color: var(--green); }
+    .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; }
 
-    .h-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .h-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
     .btn-login {
-      padding: 8px 16px; border-radius: 8px; font: 600 13px 'Inter', sans-serif;
-      color: rgba(255,255,255,0.80); border: 1px solid rgba(255,255,255,0.15);
-      background: transparent; cursor: pointer; transition: all var(--tr); white-space: nowrap;
+      padding: 8px 14px; border-radius: 8px; font: 600 13px 'Inter', sans-serif;
+      color: var(--text-2); border: 1px solid var(--border);
+      background: transparent; cursor: pointer; transition: all var(--tr);
     }
-    .btn-login:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .btn-login:hover { border-color: var(--border-2); color: var(--text); }
     .btn-rfq {
-      padding: 8px 18px; border-radius: 8px; font: 700 13px 'Inter', sans-serif;
+      padding: 8px 16px; border-radius: 8px; font: 700 13px 'Inter', sans-serif;
       background: var(--green); color: #fff; border: none; cursor: pointer;
-      transition: background var(--tr); white-space: nowrap;
+      transition: background var(--tr);
     }
     .btn-rfq:hover { background: var(--green-dark); }
 
     /* ── HERO ── */
     .hero {
-      background: var(--navy);
-      padding: 48px 32px 52px;
-      text-align: center;
+      background: linear-gradient(135deg, #1a2535 0%, #1e3a2a 100%);
+      padding: 52px 32px 56px; text-align: center;
     }
-    .hero h1 { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: -0.5px; }
-    .hero p  { font-size: 16px; color: rgba(255,255,255,0.55); margin-bottom: 28px; }
+    .hero h1 { font-size: 34px; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: -0.5px; line-height: 1.2; }
+    .hero p  { font-size: 15px; color: rgba(255,255,255,0.55); margin-bottom: 28px; }
     .hero-search {
-      max-width: 640px; margin: 0 auto;
-      display: flex; gap: 0; background: #fff; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+      max-width: 620px; margin: 0 auto;
+      display: flex; background: #fff; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
     .hero-search input {
-      flex: 1; padding: 14px 20px; border: none; outline: none;
-      font: 15px/1 'Inter', sans-serif; color: var(--text);
-      background: transparent;
+      flex: 1; padding: 15px 20px; border: none; outline: none;
+      font: 15px/1 'Inter', sans-serif; color: var(--text); background: transparent;
     }
     .hero-search input::placeholder { color: var(--text-3); }
     .hero-search button {
       background: var(--green); color: #fff; border: none;
-      padding: 14px 24px; font: 700 14px 'Inter', sans-serif; cursor: pointer;
+      padding: 15px 26px; font: 700 14px 'Inter', sans-serif; cursor: pointer;
       transition: background var(--tr); white-space: nowrap;
     }
     .hero-search button:hover { background: var(--green-dark); }
-    .hero-stats { display: flex; align-items: center; justify-content: center; gap: 32px; margin-top: 22px; }
-    .hero-stat { color: rgba(255,255,255,0.55); font-size: 13px; }
+    .hero-stats { display: flex; justify-content: center; gap: 36px; margin-top: 22px; }
+    .hero-stat { color: rgba(255,255,255,0.50); font-size: 13px; }
     .hero-stat strong { color: #fff; font-weight: 700; }
 
-    /* ── MAIN CONTAINER ── */
+    /* ── CONTAINER ── */
     .container { max-width: 1380px; margin: 0 auto; padding: 0 32px; }
 
-    /* ── CATEGORY SECTION ── */
-    .section { padding: 40px 0 32px; }
-    .section-head {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      padding: 18px 0 0; display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text-3);
     }
+    .bc-item { cursor: pointer; transition: color var(--tr); }
+    .bc-item:hover { color: var(--green); }
+    .bc-sep { color: var(--text-3); }
+    .bc-current { color: var(--text-2); font-weight: 600; cursor: default; }
+
+    /* ── SECTION HEADER ── */
+    .section { padding: 32px 0 24px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
     .section-title { font-size: 22px; font-weight: 800; color: var(--text); }
-    .section-link { font-size: 14px; font-weight: 600; color: var(--green); cursor: pointer; }
+    .section-sub { font-size: 14px; color: var(--text-3); margin-top: 2px; }
+    .section-link { font-size: 13px; font-weight: 600; color: var(--green); cursor: pointer; }
     .section-link:hover { text-decoration: underline; }
 
-    /* Category grid (OFMP style) */
-    .cat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
+    /* ── CATEGORY CARDS (OFMP style) ── */
+    .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
     .cat-card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 24px 20px 20px;
+      border-radius: var(--radius-lg); padding: 22px 18px 18px;
       cursor: pointer; transition: border-color var(--tr), box-shadow var(--tr), transform var(--tr);
+      position: relative; overflow: hidden;
     }
-    .cat-card:hover { border-color: var(--green); box-shadow: 0 4px 20px rgba(26,124,62,0.12); transform: translateY(-2px); }
-    .cat-card.active { border-color: var(--green); background: rgba(26,124,62,0.04); }
-    .cat-emoji { font-size: 36px; margin-bottom: 14px; display: block; }
-    .cat-card-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
-    .cat-card-count { font-size: 12px; color: var(--text-3); }
-    .cat-card-subs { margin-top: 10px; display: flex; flex-direction: column; gap: 3px; }
-    .cat-card-sub { font-size: 12px; color: var(--text-2); }
+    .cat-card:hover { border-color: rgba(26,124,62,0.35); box-shadow: 0 6px 20px rgba(26,124,62,0.10); transform: translateY(-2px); }
+    .cat-card.active { border-color: var(--green); background: linear-gradient(135deg, #fff 0%, rgba(26,124,62,0.04) 100%); }
+    .cat-card.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--green); border-radius: 14px 14px 0 0; }
+    .cat-emoji { font-size: 32px; margin-bottom: 12px; display: block; }
+    .cat-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+    .cat-count { font-size: 11px; color: var(--text-3); }
+    .cat-subs { margin-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+    .cat-sub { font-size: 11px; color: var(--text-2); line-height: 1.4; }
+
+    /* Subcategory cards (smaller) */
+    .subcat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    .subcat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 14px;
+      cursor: pointer; transition: border-color var(--tr), background var(--tr);
+    }
+    .subcat-card:hover { border-color: rgba(26,124,62,0.30); background: var(--green-dim); }
+    .subcat-card.active { border-color: var(--green); background: var(--green-dim); }
+    .subcat-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .subcat-count { font-size: 11px; color: var(--text-3); margin-top: 4px; }
 
     /* ── SUPPLIER SECTION ── */
-    .sup-section { padding: 0 0 48px; }
+    .sup-section { padding-bottom: 56px; }
     .sup-head {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+      margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
     }
-    .sup-title-wrap { display: flex; align-items: center; gap: 12px; }
-    .sup-title { font-size: 20px; font-weight: 800; color: var(--text); }
-    .sup-badge {
-      background: var(--green-dim); color: var(--green);
-      border: 1px solid rgba(26,124,62,0.2); border-radius: 20px;
-      font-size: 12px; font-weight: 600; padding: 3px 10px;
-    }
-    .sup-controls { display: flex; align-items: center; gap: 10px; }
+    .sup-title { font-size: 18px; font-weight: 800; color: var(--text); }
+    .sup-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .results-text { font-size: 12px; color: var(--text-3); }
     .filter-sel {
-      padding: 8px 12px; background: var(--surface); border: 1px solid var(--border);
+      padding: 7px 11px; background: var(--surface); border: 1px solid var(--border);
       border-radius: 8px; color: var(--text-2); font: 13px 'Inter', sans-serif;
       outline: none; cursor: pointer; transition: border-color var(--tr);
     }
     .filter-sel:focus { border-color: var(--green); }
-    .results-text { font-size: 13px; color: var(--text-3); }
 
     /* Company cards */
-    .sup-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;
-    }
+    .sup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
     .company-card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 22px;
+      border-radius: var(--radius-lg); padding: 20px;
       cursor: pointer; transition: border-color var(--tr), box-shadow var(--tr);
     }
-    .company-card:hover { border-color: rgba(26,124,62,0.30); box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
-    .card-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .company-card:hover { border-color: rgba(26,124,62,0.28); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .card-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
     .company-ava {
-      width: 44px; height: 44px; border-radius: 10px;
+      width: 42px; height: 42px; border-radius: 10px;
       background: var(--green-dim); border: 1px solid rgba(26,124,62,0.15);
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 14px; color: var(--green); flex-shrink: 0;
     }
     .card-info { flex: 1; min-width: 0; }
-    .card-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
+    .card-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
     .card-badges { display: flex; gap: 5px; flex-wrap: wrap; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 3px;
-      padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600;
-    }
-    .badge-v   { background: rgba(26,124,62,0.10); color: var(--green); }
-    .badge-c   { background: rgba(30,111,166,0.10); color: #1e6fa6; }
-    .badge-n   { background: var(--surface-2); color: var(--text-3); }
-    .badge-type{ background: var(--surface-2); color: var(--text-2); }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-cat  { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-mid); }
+    .badge-type { background: var(--surface-2); color: var(--text-2); }
+    .badge-inn  { background: var(--surface-2); color: var(--text-3); }
     .card-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
     .tag { background: var(--surface-2); color: var(--text-2); padding: 3px 9px; border-radius: 20px; font-size: 11px; }
-    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border); }
-    .card-loc { font-size: 12px; color: var(--text-3); }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); }
+    .card-loc { font-size: 11px; color: var(--text-3); }
     .card-btns { display: flex; gap: 6px; }
     .btn-view {
       background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border);
-      font: 600 12px 'Inter', sans-serif; padding: 6px 12px; border-radius: 7px; cursor: pointer;
+      font: 600 12px 'Inter', sans-serif; padding: 6px 11px; border-radius: 7px; cursor: pointer;
       transition: all var(--tr);
     }
     .btn-view:hover { background: var(--green-dim); color: var(--green); border-color: rgba(26,124,62,0.25); }
@@ -232,20 +243,20 @@
     .btn-rfq-card:hover { background: var(--green-dark); }
 
     /* Skeleton */
-    .skel { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+    .skel { background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
     @keyframes shimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
-    .skel-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; }
+    .skel-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
 
     /* Empty */
-    .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; }
-    .empty-icon { font-size: 44px; margin-bottom: 16px; opacity: 0.4; }
-    .empty h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .empty { grid-column: 1/-1; text-align: center; padding: 56px 20px; }
+    .empty-icon { font-size: 40px; margin-bottom: 14px; opacity: 0.4; }
+    .empty h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
     .empty p { font-size: 14px; color: var(--text-3); max-width: 320px; margin: 0 auto 20px; }
 
     /* Pagination */
-    .pagination { display: flex; justify-content: center; gap: 4px; margin-top: 32px; padding-bottom: 48px; }
+    .pagination { display: flex; justify-content: center; gap: 4px; margin-top: 28px; padding-bottom: 8px; }
     .page-btn {
-      width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+      width: 34px; height: 34px; background: var(--surface); border: 1px solid var(--border);
       border-radius: 8px; color: var(--text-2); font: 13px 'Inter', sans-serif;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: all var(--tr);
@@ -253,6 +264,22 @@
     .page-btn:hover { border-color: var(--green); color: var(--green); }
     .page-btn.active { background: var(--green); border-color: var(--green); color: #fff; font-weight: 700; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: linear-gradient(135deg, #1a2535 0%, #1e3a2a 100%);
+      border-radius: var(--radius-lg); padding: 32px 36px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      margin-bottom: 48px; flex-wrap: wrap;
+    }
+    .cta-banner h3 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .cta-banner p { font-size: 14px; color: rgba(255,255,255,0.55); }
+    .btn-cta {
+      background: var(--green); color: #fff; border: none;
+      font: 700 14px 'Inter', sans-serif; padding: 12px 24px; border-radius: 10px;
+      cursor: pointer; white-space: nowrap; transition: background var(--tr);
+    }
+    .btn-cta:hover { background: var(--green-dark); }
 
     /* RFQ Modal */
     .overlay {
@@ -263,12 +290,11 @@
     .modal {
       background: var(--surface); border: 1px solid var(--border-2);
       border-radius: 18px; padding: 32px; width: 100%; max-width: 540px;
-      animation: fadeUp 0.22s ease;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: fadeUp 0.22s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.12);
     }
     @keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
     .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
-    .modal-title { font-size: 20px; font-weight: 800; color: var(--text); }
+    .modal-title { font-size: 20px; font-weight: 800; }
     .modal-sub { font-size: 12px; color: var(--text-3); margin-top: 3px; }
     .btn-close {
       width: 32px; height: 32px; background: var(--surface-2); border: 1px solid var(--border);
@@ -286,7 +312,7 @@
       color: var(--text); font: 14px 'Inter', sans-serif; outline: none;
       transition: border-color var(--tr);
     }
-    .fi:focus { border-color: var(--green); background: #fff; }
+    .fi:focus { border-color: var(--green); background: var(--surface); }
     .fi::placeholder { color: var(--text-3); }
     .btn-submit {
       width: 100%; background: var(--green); color: #fff;
@@ -295,46 +321,30 @@
     }
     .btn-submit:hover { background: var(--green-dark); }
 
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 600;
       background: var(--surface); border: 1px solid var(--border-2);
-      border-radius: 10px; padding: 14px 18px;
-      font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border-radius: 10px; padding: 14px 18px; font-size: 14px; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
       opacity: 0; transform: translateY(8px); transition: all 0.3s; max-width: 380px;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast.success { border-left: 3px solid var(--green); }
-    .toast.error { border-left: 3px solid var(--red); }
+    .toast.error   { border-left: 3px solid #c0392b; }
 
-    /* SKU cards */
-    .sku-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 20px;
-      cursor: pointer; transition: border-color var(--tr), box-shadow var(--tr);
-    }
-    .sku-card:hover { border-color: rgba(26,124,62,0.3); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-    .sku-code { font-size: 10px; font-family: monospace; color: var(--text-3); margin-bottom: 6px; letter-spacing: 0.05em; }
-    .sku-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
-    .sku-cat { display: inline-block; font-size: 11px; color: var(--green); background: var(--green-dim); padding: 2px 8px; border-radius: 20px; margin-bottom: 12px; }
-    .sku-bottom { display: flex; align-items: flex-end; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); margin-top: 12px; }
-    .price-val { font-size: 15px; font-weight: 800; color: var(--text); }
-    .price-label { font-size: 10px; color: var(--text-3); margin-top: 2px; }
-    .suppliers-num { font-size: 12px; color: var(--text-3); }
-    .btn-rfq-sm {
-      width: 100%; margin-top: 12px; background: var(--green); color: #fff;
-      font: 700 12px 'Inter', sans-serif; border: none; padding: 10px; border-radius: 8px;
-      cursor: pointer; transition: background var(--tr);
-    }
-    .btn-rfq-sm:hover { background: var(--green-dark); }
-
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 22px; }
+    @media (max-width: 900px) {
       .cat-grid { grid-template-columns: repeat(2, 1fr); }
       .sup-grid { grid-template-columns: 1fr; }
-      .header-inner { padding: 0 16px; gap: 12px; }
+      .hero h1 { font-size: 24px; }
       .h-nav { display: none; }
+      .hero-stats { gap: 16px; flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      .header-inner { padding: 0 16px; }
+      .container { padding: 0 16px; }
+      .hero { padding: 36px 16px 40px; }
+      .form-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -342,8 +352,8 @@
 
 <!-- TOP BAR -->
 <div class="top-bar">
-  <span>Получайте запросы от тысяч квалифицированных покупателей</span>
-  <a href="https://nefteservicetrade.com/">Стать поставщиком →</a>
+  <span>Найдите нужного поставщика среди участников каталога РФ и СНГ</span>
+  <a href="https://nefteservicetrade.com/">Подать заявку на участие →</a>
 </div>
 
 <!-- HEADER -->
@@ -356,19 +366,16 @@
         <div class="logo-sub">Маркетплейс</div>
       </div>
     </div>
-
     <nav class="h-nav">
-      <span class="h-nav-a active" onclick="switchSection('cats')">Каталог</span>
-      <span class="h-nav-a" onclick="switchSection('suppliers')">Поставщики</span>
-      <span class="h-nav-a" onclick="switchTab('skus');scrollToSup()">Оборудование</span>
-      <span class="h-nav-a" onclick="switchTab('services');scrollToSup()">Услуги</span>
+      <span class="h-nav-a active">Каталог</span>
+      <span class="h-nav-a" onclick="goRoot()">Категории</span>
+      <span class="h-nav-a" onclick="showAllSuppliers()">Поставщики</span>
+      <span class="h-nav-a" onclick="window.location.href='https://nefteservicetrade.com/'">О сервисе</span>
     </nav>
-
     <div class="search-wrap">
       <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="searchInput" type="text" placeholder="Поиск: ЭЦН, пакер, ГРП, компания..." autocomplete="off">
+      <input id="searchInput" type="text" placeholder="Поиск оборудования, услуг, компаний..." autocomplete="off">
     </div>
-
     <div class="h-right">
       <button class="btn-login" onclick="window.location.href='https://nefteservicetrade.com/'">Войти</button>
       <button class="btn-rfq" onclick="openModal()">Отправить заявку</button>
@@ -378,44 +385,48 @@
 
 <!-- HERO -->
 <div class="hero">
-  <h1>Каталог нефтесервисного оборудования и поставщиков</h1>
-  <p>Только верифицированные компании · РФ и СНГ</p>
+  <h1>Каталог нефтесервисного<br>оборудования и поставщиков</h1>
+  <p>Более <span id="hc">2 800</span> компаний · Оборудование, услуги, химия · РФ и СНГ</p>
   <div class="hero-search">
-    <input id="heroSearch" type="text" placeholder="Введите наименование оборудования, услуги или компании...">
-    <button onclick="doHeroSearch()">Найти</button>
+    <input id="heroSearch" type="text" placeholder="Долота PDC, ЭЦН, ГРП, буровой раствор...">
+    <button onclick="doHeroSearch()">Найти поставщика</button>
   </div>
   <div class="hero-stats">
-    <div class="hero-stat"><strong id="hv">—</strong> верифицированных поставщиков</div>
-    <div class="hero-stat" style="color:rgba(255,255,255,0.25)">|</div>
-    <div class="hero-stat"><strong id="hs">—</strong> позиций каталога</div>
-    <div class="hero-stat" style="color:rgba(255,255,255,0.25)">|</div>
-    <div class="hero-stat"><strong>11</strong> отраслевых сегментов</div>
+    <div class="hero-stat"><strong id="hs_comp">—</strong> компаний</div>
+    <div class="hero-stat" style="color:rgba(255,255,255,0.2)">|</div>
+    <div class="hero-stat"><strong id="hs_sku">—</strong> позиций каталога</div>
+    <div class="hero-stat" style="color:rgba(255,255,255,0.2)">|</div>
+    <div class="hero-stat"><strong id="hs_cats">11</strong> отраслей</div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="container">
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb" id="breadcrumb">
+    <span class="bc-item" onclick="goRoot()">Каталог</span>
+  </div>
 
-  <!-- CATEGORIES SECTION -->
+  <!-- CATEGORY SECTION -->
   <div class="section" id="catSection">
     <div class="section-head">
-      <div class="section-title">Обзор по категориям</div>
-      <span class="section-link" onclick="switchSection('suppliers');scrollToSup()">Все поставщики →</span>
+      <div>
+        <div class="section-title" id="catSectionTitle">Обзор по категориям</div>
+        <div class="section-sub" id="catSectionSub">Выберите категорию для поиска поставщиков</div>
+      </div>
+      <span class="section-link" onclick="showAllSuppliers()">Все поставщики →</span>
     </div>
-    <div class="cat-grid" id="catGrid">
-      <!-- loaded by JS -->
+    <div id="catGrid" class="cat-grid">
+      <!-- JS rendered -->
     </div>
   </div>
 
-  <!-- SUPPLIERS SECTION -->
-  <div class="sup-section" id="supSection">
+  <!-- SUPPLIER SECTION -->
+  <div class="sup-section" id="supSection" style="display:none;">
     <div class="sup-head">
-      <div class="sup-title-wrap">
-        <div class="sup-title" id="supTitle">Все поставщики</div>
-        <span class="sup-badge" id="supBadge">✓ Только верифицированные</span>
-      </div>
+      <div class="sup-title" id="supTitle">Поставщики</div>
       <div class="sup-controls">
-        <span class="results-text" id="resultsText">Загрузка...</span>
+        <span class="results-text" id="resultsText"></span>
         <select class="filter-sel" id="sortSel" onchange="applySort()">
           <option value="name_asc">А → Я</option>
           <option value="name_desc">Я → А</option>
@@ -425,14 +436,8 @@
           <option value="">Все регионы</option>
           <option>Москва</option><option>Тюменская область</option>
           <option>ХМАО — Югра</option><option>ЯНАО</option>
-          <option>Пермский край</option><option>Татарстан</option>
-          <option>Санкт-Петербург</option><option>Краснодарский край</option>
-        </select>
-        <select class="filter-sel" id="fType" onchange="applyFilters()">
-          <option value="">Все типы</option>
-          <option value="manufacturer">Производитель</option>
-          <option value="supplier">Поставщик</option>
-          <option value="service_company">Сервисная компания</option>
+          <option>Пермский край</option><option>Санкт-Петербург</option>
+          <option>Татарстан</option><option>Краснодарский край</option>
         </select>
       </div>
     </div>
@@ -440,6 +445,14 @@
     <div class="pagination" id="pag"></div>
   </div>
 
+  <!-- CTA BANNER -->
+  <div class="cta-banner" id="ctaBanner">
+    <div>
+      <h3>Разместите вашу компанию в каталоге</h3>
+      <p>Получайте входящие запросы от квалифицированных покупателей нефтегазовой отрасли</p>
+    </div>
+    <button class="btn-cta" onclick="window.location.href='https://nefteservicetrade.com/'">Подать заявку на участие →</button>
+  </div>
 </div>
 
 <!-- RFQ MODAL -->
@@ -469,34 +482,35 @@
     <button class="btn-submit" onclick="submitRFQ()">Отправить запрос →</button>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 const URL_SB = 'https://eiwbcjausfeyzjysvubs.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd2JjamF1c2ZleXpqeXN2dWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDMyMzAsImV4cCI6MjA5MTIxOTIzMH0.5P0r5qApvRd3EdLuL9IlxOd1YLjDNHb5VAqRZvsUj_Q';
-const H = { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' };
+const H = { apikey: KEY, Authorization: 'Bearer '+KEY, 'Content-Type': 'application/json' };
 
 const TYPES = { manufacturer:'Производитель', supplier:'Поставщик', service_company:'Сервис', operator:'Оператор' };
-const CATS = {
-  'Бурение':              { emoji:'⛏️',  subs:['Буровые долота','Буровые растворы','Буровое оборудование'] },
-  'Геофизика и исследования':{ emoji:'📡', subs:['Каротаж','Сейсморазведка','Интерпретация данных'] },
-  'Добыча':               { emoji:'🛢️',  subs:['ЭЦН','ШГН','Газлифт','Запорная арматура'] },
-  'Заканчивание':         { emoji:'🔩',  subs:['Обсадные трубы','Пакеры','Цементирование'] },
-  'Интенсификация':       { emoji:'💥',  subs:['ГРП','Кислотная обработка','ГТМ'] },
-  'КРС и ремонт':         { emoji:'🔧',  subs:['Капитальный ремонт','Ловильные работы','Промывка'] },
-  'Нефтепромысловая химия':{ emoji:'🧪', subs:['Ингибиторы коррозии','Деэмульгаторы','Биоциды'] },
-  'Персонал и HR':        { emoji:'👷',  subs:['Аренда персонала','Обучение','Охрана труда'] },
-  'Поверхностное оборудование':{ emoji:'🏗️', subs:['Насосы','Сепараторы','Теплообменники'] },
-  'Трубная продукция и металлы':{ emoji:'🔗', subs:['НКТ','Обсадные','Линейные трубы'] },
-  'Услуги нефтесервиса':  { emoji:'⚙️',  subs:['Транспорт','Логистика','Строительство объектов'] },
+const CAT_EMOJI = {
+  'Бурение':'⛏️','Геофизика и исследования':'📡','Добыча':'🛢️',
+  'Заканчивание':'🔩','Интенсификация':'💥','КРС и ремонт':'🔧',
+  'Нефтепромысловая химия':'🧪','Персонал и HR':'👷',
+  'Поверхностное оборудование':'🏗️','Трубная продукция и металлы':'🔗',
+  'Услуги нефтесервиса':'⚙️'
 };
 
+// ── STATE ──
+let allCats = [];     // all categories from DB
+let catMap = {};      // id → category object
 let st = {
-  tab:'companies', cat:null, catName:'Все', region:'', type:'',
-  sort:'name_asc', page:0, ps:12
+  activeCatId: null,  // current selected category
+  path: [],           // breadcrumb: [{id, name}]
+  sort: 'name_asc',
+  region: '',
+  page: 0, ps: 12,
+  searchMode: false
 };
 
+// ── INIT ──
 async function api(path) {
   const r = await fetch(URL_SB+path, {headers:H});
   if(!r.ok) throw new Error(r.status);
@@ -505,81 +519,220 @@ async function api(path) {
 
 async function init() {
   showSkeletons();
-  const [sks, vers] = await Promise.all([
-    api('/rest/v1/skus?select=id&is_active=neq.false'),
-    api('/rest/v1/companies?select=id&verified_status=eq.verified')
+  const [cats, cos, sks] = await Promise.all([
+    api('/rest/v1/categories?select=id,category_name,parent_id,level,sort_order&order=level.asc,sort_order.asc,category_name.asc'),
+    api('/rest/v1/companies?select=id'),
+    api('/rest/v1/skus?select=id&is_active=neq.false')
   ]);
-  const nv = vers.length, ns = sks.length;
-  document.getElementById('hv').textContent = nv;
-  document.getElementById('hs').textContent = ns;
-  renderCatGrid();
-  await loadCompanies();
+  allCats = cats;
+  cats.forEach(c => { catMap[c.id] = c; c.children = []; });
+  cats.forEach(c => { if(c.parent_id && catMap[c.parent_id]) catMap[c.parent_id].children.push(c); });
+  document.getElementById('hs_comp').textContent = cos.length;
+  document.getElementById('hs_sku').textContent = sks.length;
+  document.getElementById('hs_cats').textContent = cats.filter(c=>!c.parent_id).length;
+  renderRootCats();
+  hideSup();
 }
 
-function renderCatGrid() {
+// ── CATEGORY NAVIGATION ──
+function getRoots() { return allCats.filter(c => !c.parent_id); }
+function getChildren(parentId) { return allCats.filter(c => c.parent_id === parentId); }
+function hasChildren(catId) { return allCats.some(c => c.parent_id === catId); }
+
+// Collect all descendant category IDs (for company filtering)
+function getAllDescendantIds(catId) {
+  const ids = [catId];
+  const queue = [catId];
+  while(queue.length) {
+    const cur = queue.shift();
+    const children = getChildren(cur);
+    children.forEach(ch => { ids.push(ch.id); queue.push(ch.id); });
+  }
+  return ids;
+}
+
+function goRoot() {
+  st.activeCatId = null; st.path = []; st.page = 0; st.searchMode = false;
+  document.getElementById('searchInput').value = '';
+  document.getElementById('heroSearch').value = '';
+  renderRootCats();
+  hideSup();
+  renderBreadcrumb();
+  document.getElementById('catSection').style.display = '';
+  document.getElementById('ctaBanner').style.display = '';
+  document.getElementById('catSectionTitle').textContent = 'Обзор по категориям';
+  document.getElementById('catSectionSub').textContent = 'Выберите категорию для поиска поставщиков';
+}
+
+function renderRootCats() {
+  const roots = getRoots();
   const grid = document.getElementById('catGrid');
-  const entries = Object.entries(CATS);
-  grid.innerHTML = entries.map(([name, data]) => `
-    <div class="cat-card ${st.cat===name?'active':''}" onclick="filterByCat('${name}')">
-      <span class="cat-emoji">${data.emoji}</span>
-      <div class="cat-card-name">${name}</div>
-      <div class="cat-card-subs">
-        ${data.subs.slice(0,3).map(s=>`<div class="cat-card-sub">· ${s}</div>`).join('')}
-      </div>
-    </div>
-  `).join('');
+  grid.className = 'cat-grid';
+  grid.innerHTML = roots.map(c => {
+    const children = getChildren(c.id);
+    const subNames = children.slice(0,3).map(ch=>`<div class="cat-sub">· ${ch.category_name}</div>`).join('');
+    const more = children.length > 3 ? `<div class="cat-sub" style="color:var(--text-3)">+${children.length-3} ещё</div>` : '';
+    return `<div class="cat-card" onclick="selectCategory('${c.id}')">
+      <span class="cat-emoji">${CAT_EMOJI[c.category_name]||'📁'}</span>
+      <div class="cat-name">${c.category_name}</div>
+      <div class="cat-count">${children.length ? children.length+' подкатегорий' : 'Поставщики'}</div>
+      ${children.length ? `<div class="cat-subs">${subNames}${more}</div>` : ''}
+    </div>`;
+  }).join('');
 }
 
-function filterByCat(name) {
-  st.cat = (st.cat===name) ? null : name;
+function selectCategory(catId) {
+  const cat = catMap[catId];
+  if(!cat) return;
+  const children = getChildren(catId);
+
+  // Push to path
+  if(!st.path.find(p=>p.id===catId)) {
+    // If switching from root, reset path; if drilling down, append
+    const isChild = st.path.length && st.path[st.path.length-1].id !== cat.parent_id;
+    if(!cat.parent_id) st.path = [{id: catId, name: cat.category_name}];
+    else {
+      const parentIdx = st.path.findIndex(p=>p.id===cat.parent_id);
+      if(parentIdx >= 0) st.path = [...st.path.slice(0, parentIdx+1), {id: catId, name: cat.category_name}];
+      else st.path.push({id: catId, name: cat.category_name});
+    }
+  }
+  st.activeCatId = catId;
   st.page = 0;
-  renderCatGrid();
-  const title = st.cat ? `Поставщики · ${st.cat}` : 'Все поставщики';
-  document.getElementById('supTitle').textContent = title;
-  scrollToSup();
+
+  renderBreadcrumb();
+
+  if(children.length > 0) {
+    // Show subcategories
+    document.getElementById('catSection').style.display = '';
+    document.getElementById('catSectionTitle').textContent = cat.category_name;
+    document.getElementById('catSectionSub').textContent = `${children.length} подкатегорий`;
+    const grid = document.getElementById('catGrid');
+    grid.className = 'subcat-grid';
+    grid.innerHTML = children.map(ch => {
+      const grandChildren = getChildren(ch.id);
+      return `<div class="subcat-card" onclick="selectCategory('${ch.id}')">
+        <div class="subcat-name">${ch.category_name}</div>
+        ${grandChildren.length ? `<div class="subcat-count">${grandChildren.length} подкатегорий →</div>` : `<div class="subcat-count">Поставщики →</div>`}
+      </div>`;
+    }).join('');
+
+    // Also show companies for this category + descendants
+    showSup();
+    loadCompaniesForCat(getAllDescendantIds(catId));
+  } else {
+    // Leaf node — show companies only
+    document.getElementById('catSection').style.display = 'none';
+    showSup();
+    loadCompaniesForCat(getAllDescendantIds(catId));
+  }
+
+  document.getElementById('supTitle').textContent = cat.category_name;
+  document.getElementById('ctaBanner').style.display = 'none';
+  window.scrollTo({top: document.getElementById('catSection').offsetTop - 80, behavior:'smooth'});
+}
+
+function renderBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  let html = `<span class="bc-item" onclick="goRoot()">Каталог</span>`;
+  st.path.forEach((item, i) => {
+    html += `<span class="bc-sep">›</span>`;
+    if(i < st.path.length - 1) {
+      html += `<span class="bc-item" onclick="selectCategory('${item.id}')">${item.name}</span>`;
+    } else {
+      html += `<span class="bc-current">${item.name}</span>`;
+    }
+  });
+  bc.innerHTML = html;
+}
+
+// ── SUPPLIERS ──
+function showSup() { document.getElementById('supSection').style.display = ''; }
+function hideSup() { document.getElementById('supSection').style.display = 'none'; }
+
+function showAllSuppliers() {
+  st.activeCatId = null; st.path = []; st.page = 0;
+  document.getElementById('catSection').style.display = 'none';
+  document.getElementById('ctaBanner').style.display = 'none';
+  showSup();
+  document.getElementById('supTitle').textContent = 'Все поставщики каталога';
+  renderBreadcrumb();
   loadCompanies();
+}
+
+async function loadCompaniesForCat(catIds) {
+  showSkeletons();
+  try {
+    // Get company IDs that belong to any of these categories
+    const inClause = catIds.map(id=>`"${id}"`).join(',');
+    const ccData = await api(`/rest/v1/company_categories?select=company_id&category_id=in.(${catIds.join(',')})&limit=500`);
+    const companyIds = [...new Set(ccData.map(r=>r.company_id))];
+    if(!companyIds.length) {
+      document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Поставщики не найдены</h3><p>В этой категории пока нет зарегистрированных участников</p><button class="btn-rfq" onclick="openModal()">Отправить заявку →</button></div>`;
+      document.getElementById('pag').innerHTML = '';
+      document.getElementById('resultsText').textContent = '0 компаний';
+      return;
+    }
+    const search = document.getElementById('searchInput').value.trim();
+    let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,email,phone,website,profile_completeness,description`;
+    q += `&id=in.(${companyIds.join(',')})`;
+    if(st.region) q += `&region=eq.${encodeURIComponent(st.region)}`;
+    if(search) q += `&company_name=ilike.*${encodeURIComponent(search)}*`;
+    const sorts = { name_asc:'company_name.asc', name_desc:'company_name.desc', completeness:'profile_completeness.desc.nullslast' };
+    q += `&order=${sorts[st.sort]||'company_name.asc'}&limit=${st.ps}&offset=${st.page*st.ps}`;
+    const data = await api(q);
+    renderCompanies(data, companyIds.length);
+  } catch(e) {
+    document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Ошибка загрузки</h3><p>${e.message}</p></div>`;
+  }
 }
 
 async function loadCompanies() {
   showSkeletons();
   try {
-    const search = (document.getElementById('searchInput').value || document.getElementById('heroSearch').value || '').trim();
-    let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,verified_status,email,phone,website,profile_completeness,description&verified_status=eq.verified`;
+    const search = (document.getElementById('searchInput').value || '').trim();
+    let q = `/rest/v1/companies?select=id,company_name,inn,region,city,company_type,email,phone,website,profile_completeness,description`;
     if(st.region) q += `&region=eq.${encodeURIComponent(st.region)}`;
-    if(st.type) q += `&company_type=eq.${st.type}`;
     if(search) q += `&company_name=ilike.*${encodeURIComponent(search)}*`;
     const sorts = { name_asc:'company_name.asc', name_desc:'company_name.desc', completeness:'profile_completeness.desc.nullslast' };
     q += `&order=${sorts[st.sort]||'company_name.asc'}&limit=${st.ps}&offset=${st.page*st.ps}`;
     const data = await api(q);
     renderCompanies(data);
   } catch(e) {
-    document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Ошибка загрузки</h3><p>${e.message}</p></div>`;
+    document.getElementById('cardsGrid').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Ошибка</h3><p>${e.message}</p></div>`;
   }
 }
 
-function renderCompanies(data) {
+function renderCompanies(data, total) {
   const grid = document.getElementById('cardsGrid');
-  document.getElementById('resultsText').textContent = `${data.length < st.ps ? data.length : st.ps+'+'} компаний`;
+  const shown = total !== undefined ? `${data.length} из ${total}` : data.length;
+  document.getElementById('resultsText').textContent = `${shown} компаний`;
   if(!data.length) {
-    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Ничего не найдено</h3><p>Попробуйте изменить параметры поиска</p></div>`;
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Ничего не найдено</h3><p>Попробуйте изменить параметры поиска или отправьте заявку — мы найдём нужного поставщика</p><button class="btn-rfq" onclick="openModal()">Отправить заявку</button></div>`;
     document.getElementById('pag').innerHTML = '';
     return;
   }
   grid.innerHTML = data.map(c => companyCard(c)).join('');
-  renderPag(data.length);
+  renderPag(total || data.length);
 }
 
 function companyCard(c) {
-  const init = (c.company_name||'НК').replace(/^(ООО|ОАО|ЗАО|ПАО|АО|ИП)\s*/i,'').trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'НК';
+  const init = (c.company_name||'НК').replace(/^(ООО|ОАО|ЗАО|ПАО|АО|ИП)\s*/i,'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'НК';
   const desc = c.description ? `<div class="card-desc">${c.description.slice(0,120)}${c.description.length>120?'…':''}</div>` : '';
   const safeCompany = (c.company_name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  const pct = c.profile_completeness || 0;
+  const statusBadge = pct >= 60
+    ? `<span class="badge badge-cat">✓ Полный профиль</span>`
+    : pct >= 30
+    ? `<span class="badge badge-type">В каталоге</span>`
+    : '';
   return `<div class="company-card" onclick="openCompany('${c.id}')">
     <div class="card-head">
       <div class="company-ava">${init}</div>
       <div class="card-info">
-        <div class="card-name" title="${c.company_name}">${c.company_name}</div>
+        <div class="card-name" title="${c.company_name||''}">${c.company_name||'—'}</div>
         <div class="card-badges">
-          <span class="badge badge-v">✓ Верифицирован</span>
+          ${statusBadge}
           <span class="badge badge-type">${TYPES[c.company_type]||'Поставщик'}</span>
         </div>
       </div>
@@ -601,7 +754,7 @@ function companyCard(c) {
 }
 
 function showSkeletons() {
-  document.getElementById('cardsGrid').innerHTML = Array(6).fill(`<div class="skel-card"><div class="skel" style="height:16px;width:55%;margin-bottom:10px;"></div><div class="skel" style="height:12px;width:35%;margin-bottom:16px;"></div><div class="skel" style="height:44px;margin-bottom:10px;"></div><div class="skel" style="height:12px;width:45%;"></div></div>`).join('');
+  document.getElementById('cardsGrid').innerHTML = Array(6).fill(`<div class="skel-card"><div style="display:flex;gap:12px;margin-bottom:12px;"><div class="skel" style="width:42px;height:42px;border-radius:10px;flex-shrink:0;"></div><div style="flex:1;"><div class="skel" style="height:14px;width:70%;margin-bottom:8px;"></div><div class="skel" style="height:12px;width:45%;"></div></div></div><div class="skel" style="height:40px;margin-bottom:10px;"></div><div class="skel" style="height:24px;width:60%;"></div></div>`).join('');
   document.getElementById('pag').innerHTML = '';
   document.getElementById('resultsText').textContent = 'Загрузка...';
 }
@@ -616,64 +769,63 @@ function renderPag(count) {
   pag.innerHTML = html;
 }
 
-// Navigation & filters
-function switchSection(s) {
-  if(s==='suppliers') { st.cat=null; renderCatGrid(); document.getElementById('supTitle').textContent='Все поставщики'; scrollToSup(); loadCompanies(); }
-}
-function switchTab(tab) { st.tab=tab; }
-function scrollToSup() { document.getElementById('supSection').scrollIntoView({behavior:'smooth', block:'start'}); }
-function applyFilters() {
-  st.region = document.getElementById('fRegion').value;
-  st.type = document.getElementById('fType').value;
-  st.page = 0; loadCompanies();
-}
-function applySort() { st.sort = document.getElementById('sortSel').value; st.page=0; loadCompanies(); }
-function goPage(p) { st.page=p; loadCompanies(); window.scrollTo({top:0,behavior:'smooth'}); }
-function openCompany(id) { window.location.href=`company-profile.html?id=${id}`; }
+function applyFilters() { st.region=document.getElementById('fRegion').value; st.page=0; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); }
+function applySort()    { st.sort=document.getElementById('sortSel').value; st.page=0; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); }
+function goPage(p)      { st.page=p; if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId)); else loadCompanies(); window.scrollTo({top:0,behavior:'smooth'}); }
+function openCompany(id){ window.location.href=`company-profile.html?id=${id}`; }
+
 function doHeroSearch() {
-  const v = document.getElementById('heroSearch').value;
+  const v = document.getElementById('heroSearch').value.trim();
   document.getElementById('searchInput').value = v;
-  st.page = 0; scrollToSup(); loadCompanies();
+  st.page = 0; st.activeCatId = null; st.path = [];
+  document.getElementById('catSection').style.display = 'none';
+  document.getElementById('ctaBanner').style.display = 'none';
+  showSup();
+  document.getElementById('supTitle').textContent = v ? `Результаты: «${v}»` : 'Все поставщики';
+  renderBreadcrumb();
+  loadCompanies();
+  document.getElementById('supSection').scrollIntoView({behavior:'smooth'});
 }
 
-// Search
 let searchTimer;
 document.getElementById('searchInput').addEventListener('input', () => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => { st.page=0; loadCompanies(); }, 350);
+  searchTimer = setTimeout(() => {
+    st.page = 0;
+    if(st.activeCatId) loadCompaniesForCat(getAllDescendantIds(st.activeCatId));
+    else { showSup(); loadCompanies(); }
+  }, 350);
 });
-document.getElementById('heroSearch').addEventListener('keydown', e => {
-  if(e.key==='Enter') doHeroSearch();
-});
+document.getElementById('heroSearch').addEventListener('keydown', e => { if(e.key==='Enter') doHeroSearch(); });
 
 // Modal
 function openModal() { document.getElementById('rfqModal').classList.add('open'); document.body.style.overflow='hidden'; }
 function openRFQForCompany(name) {
   document.getElementById('rTitle').value = '';
-  document.getElementById('rDesc').value = 'Интересует сотрудничество с компанией: ' + name;
+  document.getElementById('rDesc').value = 'Интересует сотрудничество с компанией: '+name;
   openModal();
 }
 function closeModal() { document.getElementById('rfqModal').classList.remove('open'); document.body.style.overflow=''; }
 function closeOutside(e) { if(e.target.id==='rfqModal') closeModal(); }
 
 async function submitRFQ() {
-  const company = document.getElementById('rCompany').value.trim();
-  const name = document.getElementById('rName').value.trim();
-  const phone = document.getElementById('rPhone').value.trim();
-  const title = document.getElementById('rTitle').value.trim();
-  if(!company||!name||!phone||!title){ toast('⚠️ Заполните обязательные поля','error'); return; }
+  const company=document.getElementById('rCompany').value.trim();
+  const name=document.getElementById('rName').value.trim();
+  const phone=document.getElementById('rPhone').value.trim();
+  const title=document.getElementById('rTitle').value.trim();
+  if(!company||!name||!phone||!title){toast('⚠️ Заполните обязательные поля','error');return;}
   try {
-    const r = await fetch(URL_SB+'/rest/v1/rfqs',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({company_name:company,contact_name:name,phone,email:document.getElementById('rEmail').value.trim()||null,request_title:title,request_description:document.getElementById('rDesc').value.trim()||null,region:document.getElementById('rRegion').value.trim()||null,status:'new',source:'catalog_page'})});
+    const r=await fetch(URL_SB+'/rest/v1/rfqs',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({company_name:company,contact_name:name,phone,email:document.getElementById('rEmail').value.trim()||null,request_title:title,request_description:document.getElementById('rDesc').value.trim()||null,region:document.getElementById('rRegion').value.trim()||null,status:'new',source:'catalog_page'})});
     if(!r.ok) throw new Error(r.status);
     closeModal();
     toast('✅ Запрос отправлен! Свяжемся в течение 24 часов','success');
     document.querySelectorAll('#rfqModal .fi').forEach(el=>el.value='');
-  } catch(e){ toast('❌ Ошибка: '+e.message,'error'); }
+  } catch(e){toast('❌ Ошибка: '+e.message,'error');}
 }
 
 function toast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${type} show`;
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
   setTimeout(()=>t.className='toast', 4500);
 }
 
