@@ -30,7 +30,12 @@ header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--border);po
 .btn-exit{padding:6px 12px;border:1px solid var(--border);border-radius:7px;font:500 12px Inter,sans-serif;cursor:pointer;background:transparent;color:var(--text-3);transition:all var(--tr)}
 .btn-exit:hover{border-color:var(--red);color:var(--red)}
 
-.layout{display:grid;grid-template-columns:240px 1fr;max-width:1380px;margin:0 auto;padding:24px 32px;gap:24px;min-height:calc(100vh - 130px)}
+/* Guest: full width, no sidebar */
+.layout{display:block;max-width:1380px;margin:0 auto;padding:24px 32px;min-height:calc(100vh - 130px)}
+/* Auth: sidebar + content */
+.layout.authenticated{display:grid;grid-template-columns:240px 1fr;gap:24px}
+/* Hide sidebar when guest */
+.layout:not(.authenticated) aside.sidebar{display:none}
 
 .sidebar{display:flex;flex-direction:column;gap:6px}
 .sidebar-section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);padding:6px 12px 4px}
@@ -244,7 +249,7 @@ textarea.fi{resize:vertical;min-height:90px}
   </div>
 </header>
 
-<div class="layout">
+<div class="layout" id="mainLayout">
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
@@ -462,36 +467,40 @@ textarea.fi{resize:vertical;min-height:90px}
 <div class="page" id="page-dashboard">
   <div class="page-header">
     <div class="page-title">📊 Дашборд</div>
-    <div class="page-sub">ООО ДемоБурТех · <span class="badge badge-pending">⏳ На проверке</span></div>
+    <div class="page-sub" id="dash-sub">—</div>
   </div>
+
+  <!-- Статус верификации -->
+  <div id="dash-verify-banner" style="display:none;background:rgba(194,113,10,.08);border:1px solid rgba(194,113,10,.2);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:14px">
+    <span style="font-size:24px">⏳</span>
+    <div>
+      <div style="font-weight:700;color:var(--amber)">Компания на проверке</div>
+      <div style="font-size:12px;color:var(--text-2);margin-top:2px">Менеджер Нефтесервис Трейд проверяет ваши документы. Доступ к входящим запросам откроется после верификации (обычно 24 часа).</div>
+    </div>
+  </div>
+
   <div class="stats-grid">
-    <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">SKU позиций</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--amber)">2</div><div class="stat-label">Входящих запроса</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--blue)">47</div><div class="stat-label">Просмотров профиля</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--text-3)">0</div><div class="stat-label">Сделок закрыто</div></div>
+    <div class="stat-box"><div class="stat-num" id="dash-sku-count">0</div><div class="stat-label">SKU позиций</div></div>
+    <div class="stat-box"><div class="stat-num" id="dash-rfq-count" style="color:var(--amber)">0</div><div class="stat-label">Входящих запросов</div></div>
+    <div class="stat-box"><div class="stat-num" id="dash-views-count" style="color:var(--blue)">0</div><div class="stat-label">Просмотров профиля</div></div>
+    <div class="stat-box"><div class="stat-num" id="dash-deals-count" style="color:var(--text-3)">0</div><div class="stat-label">Сделок закрыто</div></div>
   </div>
-  <div class="card">
-    <div class="card-title"><span>📋</span> Входящие запросы</div>
-    <div class="rfq-item">
-      <div class="rfq-dot"></div>
-      <div>
-        <div class="rfq-title">Долото PDC 215.9мм — 3 шт. · ХМАО</div>
-        <div class="rfq-meta">Сургутнефтегаз · 2 часа назад · до 15 мая</div>
-      </div>
-      <div class="rfq-actions">
-        <button class="btn btn-primary btn-sm" onclick="goPage('rfq')">Ответить</button>
+
+  <div class="card" id="dash-rfq-card">
+    <div class="card-title"><span>📋</span> Последние входящие запросы</div>
+    <div id="dash-rfq-list">
+      <div style="text-align:center;padding:32px;color:var(--text-3)">
+        <div style="font-size:36px;margin-bottom:10px">📭</div>
+        <div style="font-weight:600;margin-bottom:6px">Входящих запросов пока нет</div>
+        <div style="font-size:12px">После верификации компании вы начнёте получать запросы от покупателей через AI-матчинг платформы</div>
       </div>
     </div>
-    <div class="rfq-item">
-      <div class="rfq-dot" style="background:var(--amber)"></div>
-      <div>
-        <div class="rfq-title">Бурильные трубы 127мм — 1000м · Татарстан</div>
-        <div class="rfq-meta">ТНГ-Групп · вчера · до 20 мая</div>
-      </div>
-      <div class="rfq-actions">
-        <button class="btn btn-primary btn-sm" onclick="goPage('rfq')">Ответить</button>
-      </div>
-    </div>
+  </div>
+
+  <!-- Чек-лист верификации -->
+  <div class="card" id="dash-checklist">
+    <div class="card-title"><span>✅</span> Чек-лист готовности профиля</div>
+    <div id="dash-checklist-body" style="display:flex;flex-direction:column;gap:10px"></div>
   </div>
 </div>
 
@@ -854,68 +863,31 @@ textarea.fi{resize:vertical;min-height:90px}
 
 <!-- ══════════ RFQ ══════════ -->
 <div class="page" id="page-rfq">
-  <div class="page-header"><div class="page-title">📋 Входящие запросы</div><div class="page-sub">2 активных · Запросы поступают через AI-матчинг платформы</div></div>
+  <div class="page-header">
+    <div class="page-title">📋 Входящие запросы</div>
+    <div class="page-sub">Запросы поступают через AI-матчинг платформы после верификации</div>
+  </div>
 
   <!-- Схема роутинга -->
   <div class="card" style="background:var(--surface-2);border:none;padding:14px;margin-bottom:16px">
     <div style="font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <span style="font-weight:700">Как работает:</span>
-      <span>🔧 Покупатель → RFQ</span>
-      <span style="color:var(--border)">→</span>
-      <span>🤖 AI-матчинг (10 критериев)</span>
-      <span style="color:var(--border)">→</span>
-      <span style="color:var(--amber);font-weight:600">👤 Менеджер НТ одобряет</span>
-      <span style="color:var(--border)">→</span>
-      <span style="color:var(--green);font-weight:600">📩 Вы получаете запрос</span>
-      <span style="color:var(--border)">→</span>
+      <span>🔧 Покупатель → RFQ</span> <span style="color:var(--border)">→</span>
+      <span>🤖 AI-матчинг</span> <span style="color:var(--border)">→</span>
+      <span style="color:var(--amber);font-weight:600">👤 Менеджер НТ одобряет</span> <span style="color:var(--border)">→</span>
+      <span style="color:var(--green);font-weight:600">📩 Вы получаете запрос</span> <span style="color:var(--border)">→</span>
       <span>📋 КП → Сделка</span>
     </div>
   </div>
 
-  <!-- RFQ 1 -->
-  <div class="card" style="border-left:3px solid var(--green)">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <span class="badge" style="background:rgba(192,57,43,.1);color:var(--red)">🔴 Срочный</span>
-      <b>Запрос #RFQ-2847</b>
-      <span style="font-size:11px;color:var(--text-3)">· 2 часа назад · через НТ Platform ✓</span>
-    </div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:10px">Долото PDC 215.9мм — 3 шт. · <span class="sku-code">НТ-БУ-ДОЛ-0047</span></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--text-2);margin-bottom:14px">
-      <div><b>Покупатель:</b> Сургутнефтегаз <span class="badge badge-verified" style="font-size:10px">✓</span></div>
-      <div><b>Регион:</b> ХМАО — Югра</div>
-      <div><b>Срок поставки:</b> <span style="color:var(--red);font-weight:600">до 15 мая 2026</span></div>
-      <div><b>Цена покупателя:</b> до ₽320 000/шт</div>
-      <div><b>Требования:</b> API + ISO сертификаты</div>
-      <div><b>Доставка:</b> включена в цену</div>
-    </div>
-    <div style="background:var(--green-dim);border-radius:8px;padding:10px;font-size:11px;color:var(--text-2);margin-bottom:14px">
-      <b style="color:var(--green)">🤖 AI-рейтинг:</b> Вы #4 из 8 поставщиков (78%) · Отобраны менеджером НТ · Срок ответа: <b>24 часа</b>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="openKPForm('RFQ-2847','Долото PDC 215.9мм','3 шт','до 15 мая','Сургутнефтегаз')">📋 Сформировать КП</button>
-      <button class="btn btn-secondary" onclick="declineRFQ('RFQ-2847')">✗ Отказать</button>
-    </div>
-  </div>
-
-  <!-- RFQ 2 -->
-  <div class="card">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <span class="badge badge-pending">Обычный</span>
-      <b>Запрос #RFQ-2851</b>
-      <span style="font-size:11px;color:var(--text-3)">· вчера · через НТ Platform ✓</span>
-    </div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:10px">Бурильные трубы 127мм — 1000м · <span class="sku-code">НТ-БУ-ТРУ-0012</span></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--text-2);margin-bottom:14px">
-      <div><b>Покупатель:</b> ТНГ-Групп <span class="badge badge-verified" style="font-size:10px">✓</span></div>
-      <div><b>Регион:</b> Татарстан</div>
-      <div><b>Срок поставки:</b> <span style="color:var(--amber);font-weight:600">до 20 мая 2026</span></div>
-      <div><b>Группа прочности:</b> E или G</div>
-      <div><b>Получение:</b> Самовывоз</div>
-      <div><b>Документы:</b> Паспорт материала</div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="openKPForm('RFQ-2851','Бурильные трубы 127мм','1000 м','до 20 мая','ТНГ-Групп')">📋 Сформировать КП</button>
-      <button class="btn btn-secondary" onclick="declineRFQ('RFQ-2851')">✗ Отказать</button>
+  <div id="rfq-list-container">
+    <!-- Динамически заполняется из rfqData пользователя -->
+    <div style="text-align:center;padding:48px;color:var(--text-3)">
+      <div style="font-size:44px;margin-bottom:14px">📭</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">Входящих запросов пока нет</div>
+      <div style="font-size:13px;line-height:1.6;max-width:400px;margin:0 auto">
+        После верификации компании менеджер НТ будет направлять вам подходящие запросы от покупателей через AI-матчинг
+      </div>
     </div>
   </div>
 </div>
@@ -1104,7 +1076,15 @@ let currentPhotoTarget = 'reg';
 let skuSlot = null;
 
 // ── NAVIGATION ──
+// Pages accessible without login
+const PUBLIC_PAGES = ['landing', 'reg'];
+
 function goPage(id) {
+  // Auth guard: redirect to landing if not logged in
+  const isAuth = !!sessionStorage.getItem('nt_token');
+  if(!isAuth && !PUBLIC_PAGES.includes(id)) {
+    id = 'landing';
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const page = document.getElementById('page-'+id);
@@ -1376,6 +1356,9 @@ function doLogout() {
   document.getElementById('hdr-guest-info').style.display = '';
   document.getElementById('btn-logout').style.display = 'none';
   document.getElementById('btn-login-header').style.display = '';
+  // Hide sidebar
+  const layout = document.getElementById('mainLayout');
+  if(layout) layout.classList.remove('authenticated');
   showToast('Вы вышли из личного кабинета','');
   goPage('landing');
 }
@@ -1411,16 +1394,75 @@ async function doLandLogin() {
   }
 }
 
-// ── APPLY SESSION TO HEADER ──
+// ── APPLY SESSION TO HEADER + UNLOCK UI ──
 function applySession(user) {
   if(!user) return;
-  const companyName = user.user_metadata?.company_name || user.email?.split('@')[0] || 'Кабинет';
+  const meta = user.user_metadata || {};
+  const companyName = meta.company_name || user.email?.split('@')[0] || 'Личный кабинет';
+  const inn = meta.inn || '';
+
+  // Header
   document.getElementById('hdr-company-name').textContent = companyName;
   document.getElementById('hdr-user-email').textContent = user.email || '';
   document.getElementById('hdr-user-info').style.display = '';
   document.getElementById('hdr-guest-info').style.display = 'none';
   document.getElementById('btn-logout').style.display = '';
   document.getElementById('btn-login-header').style.display = 'none';
+
+  // Show sidebar (authenticated layout)
+  const layout = document.getElementById('mainLayout');
+  if(layout) layout.classList.add('authenticated');
+
+  // Update sidebar verify card
+  const vc = document.querySelector('.verify-card');
+  if(vc) vc.style.display = '';
+
+  // Update dashboard
+  const dashSub = document.getElementById('dash-sub');
+  if(dashSub) {
+    const statusBadge = '<span class="badge badge-pending">⏳ На проверке — ожидайте верификации</span>';
+    dashSub.innerHTML = (companyName ? '<b>'+companyName+'</b> · ' : '') + statusBadge;
+  }
+
+  // Show verify banner on dashboard
+  const banner = document.getElementById('dash-verify-banner');
+  if(banner) { banner.style.display='flex'; }
+
+  // Checklist
+  const cl = document.getElementById('dash-checklist-body');
+  if(cl) {
+    const checks = [
+      [true,  'Аккаунт зарегистрирован', user.email],
+      [!!inn, 'ИНН указан', inn || 'Добавьте ИНН в профиле'],
+      [false, 'Документы загружены', 'Загрузите в разделе Регистрация → Документы'],
+      [false, 'Верификация пройдена', 'Ожидается проверка менеджером НТ'],
+      [false, 'SKU-каталог заполнен', 'Добавьте позиции в Номенклатура'],
+    ];
+    cl.innerHTML = checks.map(([done, title, hint])=>`
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+        <span style="font-size:16px">${done?'✅':'⬜'}</span>
+        <div>
+          <span style="${done?'':'color:var(--text-3)'}">${title}</span>
+          ${hint?`<span style="font-size:11px;color:var(--text-3);margin-left:6px">· ${hint}</span>`:''}
+        </div>
+      </div>`).join('');
+  }
+
+  // Update profile form with user data
+  const rName = document.getElementById('reg_name');
+  if(rName && meta.company_name) rName.value = meta.company_name;
+  const rFio = document.getElementById('reg_fio');
+  if(rFio && meta.ceo_name) rFio.value = meta.ceo_name;
+  const rPhone = document.getElementById('reg_phone');
+  if(rPhone && meta.phone) rPhone.value = meta.phone;
+  const rEmail = document.getElementById('reg_email');
+  if(rEmail && user.email) rEmail.value = user.email;
+
+  // Update header ava in public view
+  const pubName = document.getElementById('pub-company-name');
+  if(pubName) pubName.textContent = companyName;
+  const pubINN = document.getElementById('pub-company-inn');
+  if(pubINN) pubINN.textContent = inn ? 'ИНН: '+inn : '';
 }
 
 // ── INIT ──
