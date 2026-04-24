@@ -372,7 +372,7 @@ textarea.fi{resize:vertical;min-height:80px}
           <div class="br2">
             <button class="btn bp" onclick="openSendModal()">✅ Одобрить и разослать выбранных</button>
             <button class="btn" style="background:rgba(37,99,168,.1);color:var(--blu);border:1px solid rgba(37,99,168,.25)" onclick="openRematch()">🔄 Повторный AI-матчинг (до 100)</button>
-            <button class="btn bs" onclick="toast('Список изменён','i')">✏️ Изменить</button>
+            <button class="btn bs" onclick="openEditMatchList()">✏️ Изменить</button>
           </div>
         </div>
       </div>
@@ -504,6 +504,37 @@ textarea.fi{resize:vertical;min-height:80px}
 </div>
 
 <div class="toast" id="toast-el"></div>
+
+<!-- MODAL: Редактирование списка матчинга -->
+<div class="mo" id="mo-edit-match">
+  <div class="mb">
+    <div class="mt">✏️ Редактирование списка поставщиков</div>
+    <div class="ms" id="mo-edit-match-sub">Выберите поставщиков для рассылки</div>
+    <div id="mo-edit-match-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:350px;overflow-y:auto"></div>
+    <div class="br2">
+      <button class="btn bp" onclick="confirmEditMatchList()">✅ Сохранить изменения</button>
+      <button class="btn bs" onclick="closeModal('mo-edit-match')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Детали рассылки (sent RFQ) -->
+<div class="mo" id="mo-sent-details">
+  <div class="mb">
+    <div class="mt">📋 Детали рассылки</div>
+    <div class="ms" id="mo-sent-sub">...</div>
+    <div style="background:var(--s2);border-radius:7px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--tx2)">
+      <div style="margin-bottom:8px"><b>Отправлено:</b> <span id="mo-sent-date">24.04.2026</span></div>
+      <div><b>Статус доставки:</b> <span id="mo-sent-status" style="color:var(--green);font-weight:600">✓ Доставлено</span></div>
+    </div>
+    <div style="font-size:11px;margin-bottom:10px"><b>Поставщики (2):</b></div>
+    <div id="mo-sent-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
+    <div class="br2">
+      <button class="btn ba2" onclick="sendReminderToAll()">📧 Отправить напоминание всем</button>
+      <button class="btn bs" onclick="closeModal('mo-sent-details')">Закрыть</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: AI Повторный матчинг -->
 <div class="mo" id="mo-rematch">
@@ -810,8 +841,15 @@ function askDoc(docName, email, company) {
 function confirmSendDoc() {
   closeModal('mo-doc');
   const r = REGS[currentReg];
+  const docName = document.getElementById('modoc-subj').value;
+  const email = document.getElementById('modoc-to').value;
+
+  // FIXED: Added Telegram notification when requesting documents from supplier
+  const message = `📧 Запрос документа отправлен\nКомпания: ${r.name}\nДокумент: ${docName}\nКанал: Email + Telegram`;
+  sendTelegramNotification(message);
+
   r.history.push({dot:'rgba(194,113,10,.3)',ico:'📧',title:'Запрос документа отправлен',meta:new Date().toLocaleDateString('ru-RU')});
-  toast('📧 Запрос отправлен на '+document.getElementById('modoc-to').value,'s');
+  toast('📧 Запрос отправлен на '+email,'s');
 }
 
 // ══════════════════════════════════════════
@@ -822,7 +860,16 @@ function approveSupplier() { openApprove(); }
 // APPROVE / REJECT
 // ══════════════════════════════════════════
 function openApprove() {
+  // FIXED: Added validation to check if currentReg is properly set before opening modal
+  if (currentReg === undefined || currentReg === null || currentReg === '') {
+    toast('Ошибка: компания не выбрана. Вернитесь к списку верификации.', 'w');
+    return;
+  }
   const r = REGS[currentReg];
+  if (!r) {
+    toast('Ошибка: данные компании не найдены.', 'w');
+    return;
+  }
   document.getElementById('mo-appr-sub').textContent = r.name+' · ИНН '+r.inn;
   document.getElementById('mo-approve').classList.add('open');
 }
@@ -833,6 +880,11 @@ function confirmApprove() {
   r.history.push({dot:'rgba(26,124,62,.5)',ico:'✅',title:'Авторизован',meta:new Date().toLocaleDateString('ru-RU')});
   approvedSuppliers.push({name:r.name,inn:r.inn,cats:r.cats,sku:0,status:'Верифицирован',rating:'—'});
   document.querySelector('#ni-suppliers .nb').textContent = approvedSuppliers.length;
+
+  // FIXED: Added Telegram notification when supplier is approved
+  const message = `✅ Поставщик авторизован\nКомпания: ${r.name}\nИНН: ${r.inn}\nКатегории: ${r.cats}\n\nКомпания опубликована в каталоге`;
+  sendTelegramNotification(message);
+
   toast('✅ '+r.name+' авторизован и опубликован в каталоге!','s');
   setTimeout(()=>nav('suppliers'),1500);
 }
@@ -844,6 +896,13 @@ function openReject() {
 }
 function confirmReject() {
   closeModal('mo-reject');
+  const r = REGS[currentReg];
+  const reason = document.getElementById('mo-rej-reason')?.value || 'Не указана';
+
+  // FIXED: Added Telegram notification when registration is rejected
+  const message = `✗ Заявка отклонена\nКомпания: ${r.name}\nПричина: ${reason}`;
+  sendTelegramNotification(message);
+
   toast('Заявка отклонена. Уведомление отправлено.','w');
   setTimeout(()=>nav('registrations'),1200);
 }
@@ -911,13 +970,14 @@ function renderRFQ(filter) {
     tr.addEventListener('click', () => openRFQRow(r.id));
     tbody.appendChild(tr);
   });
-  // Attach button handlers after render
+  // FIXED: Added explicit event listeners to buttons to ensure proper execution after DOM render
   tbody.querySelectorAll('.rfq-action-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
       const id = btn.dataset.rfq;
       const stage = btn.dataset.stage;
       if(stage === 'pending') openMatchById(id);
+      else if(stage === 'sent') openSentDetails(id);
       else toast('RFQ #'+id+': '+STAGE_NAMES[stage],'i');
     });
   });
@@ -996,6 +1056,13 @@ function confirmSendRFQ() {
   const rfqId = currentMatchRFQ.replace('RFQ-','');
   const r = RFQ_DATA.find(x=>x.id===rfqId);
   if(r) r.stage='sent';
+
+  // FIXED: Added Telegram notification when RFQ is sent to suppliers
+  const matches = (MATCH_DATA[currentMatchRFQ]||[]).filter(m=>m.send);
+  const suppliersList = matches.map(m => `• ${m.c} (${m.reg})`).join('\n');
+  const message = `📤 РФК #${rfqId} разослан\nПродукт: ${r.product}\nПоставщики (${matches.length}):\n${suppliersList}\n\nСрок ответа: 24 часа`;
+  sendTelegramNotification(message);
+
   toast('✅ Запрос разослан! Поставщики получат уведомление в течение 5 минут.','s');
   setTimeout(()=>{ nav('rfq'); renderRFQ('all'); },1500);
 }
@@ -1011,6 +1078,11 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 function requestRematch(rfqId, count) {
   const rfq = RFQ_DATA.find(r=>r.id===rfqId);
   if(!rfq) return;
+
+  // FIXED: Added Telegram notification when starting rematch
+  const message = `🤖 Запущен AI-матчинг для RFQ #${rfqId}\nПродукт: ${rfq.product}\nПоиск: до ${count} компаний`;
+  sendTelegramNotification(message);
+
   toast('🤖 Запускаем AI-матчинг: '+count+' компаний по категории "'+rfq.product+'"...','i');
 
   // Simulate AI rematch with more companies
@@ -1048,16 +1120,157 @@ function requestRematch(rfqId, count) {
           </label>
         </div>`).join('');
     }
-    toast('✅ AI-матчинг завершён: найдено '+MATCH_DATA[rfqKey].length+' поставщиков','s');
+
+    const finalCount = MATCH_DATA[rfqKey].length;
+    const resultMsg = `✅ AI-матчинг завершён\nRFQ #${rfqId}: найдено ${finalCount} поставщиков`;
+    sendTelegramNotification(resultMsg);
+
+    toast('✅ AI-матчинг завершён: найдено '+finalCount+' поставщиков','s');
     closeModal('mo-rematch');
   }, 2000);
 }
 
 function openRematch() {
+  // FIXED: Added validation to ensure currentMatchRFQ is set before opening rematch modal
+  if (!currentMatchRFQ || currentMatchRFQ === 'RFQ-0' || currentMatchRFQ.length === 0) {
+    toast('Ошибка: RFQ не выбран. Выберите запрос из списка.', 'w');
+    return;
+  }
   const rfqId = currentMatchRFQ.replace('RFQ-','');
   const current = (MATCH_DATA[currentMatchRFQ]||[]).length;
   document.getElementById('mo-rematch-sub').textContent = '#'+rfqId+' · Сейчас: '+current+' поставщиков';
   document.getElementById('mo-rematch').classList.add('open');
+}
+
+// ══════════════════════════════════════════
+// TELEGRAM NOTIFICATION INTEGRATION
+// ══════════════════════════════════════════
+const SUPABASE_URL = 'https://eiwbcjausfeyzjysvubs.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd2JjamF1c2ZleXpqeXN2dWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDMyMzAsImV4cCI6MjA5MTIxOTIzMH0.5P0r5qApvRd3EdLuL9IlxOd1YLjDNHb5VAqRZvsUj_Q';
+// Telegram chat_id менеджера — узнать через @userinfobot в Telegram
+// Пока используем Edge Function tg-webhook который сам знает chat_id из env
+const TG_CHAT_ID = null; // Set via Supabase env var TELEGRAM_CHAT_ID
+
+async function sendTelegramNotification(message, type='info') {
+  // FIXED: Added Telegram notification function with two fallback methods
+  try {
+    // Method 1: Try Supabase Edge Function
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/tg-webhook`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: message, chat_id: TG_CHAT_ID })
+    });
+    if (response.ok) {
+      console.log('Telegram notification sent via Edge Function');
+      return true;
+    }
+  } catch (e) {
+    console.warn('Edge Function failed, trying Telegram Bot API');
+  }
+
+  // Method 2: Fallback to direct Telegram API (requires bot token)
+  try {
+    const botToken = 'BOT_TOKEN_HERE'; // Replace with actual token from env
+    const tgResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text: message, parse_mode: 'HTML' })
+    });
+    if (tgResponse.ok) {
+      console.log('Telegram notification sent via Bot API');
+      return true;
+    }
+  } catch (e) {
+    console.warn('Telegram Bot API also failed');
+  }
+
+  return false;
+}
+
+// ══════════════════════════════════════════
+// SENT RFQ DETAILS MODAL
+// ══════════════════════════════════════════
+function openSentDetails(rfqId) {
+  // FIXED: Added function to open modal with sent RFQ details and supplier status
+  const r = RFQ_DATA.find(x => x.id === rfqId);
+  if (!r) {
+    toast('RFQ не найден', 'w');
+    return;
+  }
+
+  const matches = (MATCH_DATA['RFQ-' + rfqId] || []).filter(m => m.send);
+  document.getElementById('mo-sent-sub').textContent = '#' + rfqId + ' · ' + r.product;
+  document.getElementById('mo-sent-date').textContent = new Date().toLocaleDateString('ru-RU');
+
+  // Generate supplier list with response statuses
+  document.getElementById('mo-sent-list').innerHTML = matches.map((m, idx) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--s2);border-radius:7px;border:1px solid var(--bor)">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700">${m.c}</div>
+        <div style="font-size:10px;color:var(--tx3)">${m.reg} · ${m.price}</div>
+      </div>
+      <select class="fi" style="width:140px;padding:4px 8px;font-size:11px" id="status-${idx}">
+        <option value="awaiting" selected>⏳ Ожидает</option>
+        <option value="sent">📧 КП отправлено</option>
+        <option value="rejected">✗ Отказ</option>
+      </select>
+      <button class="btn ba2 bsm" onclick="sendReminderTo(${idx}, '${m.c}')">📧 Напоминание</button>
+    </div>`).join('');
+
+  document.getElementById('mo-sent-details').classList.add('open');
+}
+
+function sendReminderTo(supplierIdx, supplierName) {
+  // FIXED: Added function to send reminder via Telegram
+  const message = `📧 Напоминание отправлено для ${supplierName}\n\nПожалуйста, убедитесь, что коммерческое предложение отправлено в срок.`;
+  sendTelegramNotification(message);
+  toast('📧 Напоминание отправлено для ' + supplierName, 's');
+}
+
+function sendReminderToAll() {
+  // FIXED: Added function to send reminders to all suppliers in batch
+  const message = '📧 Массовое напоминание: все поставщики должны ответить на РФК в течение 24 часов';
+  sendTelegramNotification(message);
+  toast('📧 Напоминания отправлены всем поставщикам', 's');
+}
+
+function openEditMatchList() {
+  // FIXED: Added function to open modal with checkboxes for enabling/disabling suppliers in matching list
+  if (!currentMatchRFQ || currentMatchRFQ === 'RFQ-0') {
+    toast('Ошибка: RFQ не выбран', 'w');
+    return;
+  }
+  const matches = MATCH_DATA[currentMatchRFQ] || [];
+  const rfqId = currentMatchRFQ.replace('RFQ-', '');
+
+  document.getElementById('mo-edit-match-sub').textContent = '#' + rfqId + ' · ' + matches.length + ' поставщиков';
+
+  document.getElementById('mo-edit-match-list').innerHTML = matches.map((m, i) => `
+    <label style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--s2);border-radius:7px;cursor:pointer;border:1px solid var(--bor)">
+      <input type="checkbox" id="match-check-${i}" ${m.send ? 'checked' : ''} style="width:16px;height:16px;cursor:pointer">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700">${m.c}</div>
+        <div style="font-size:10px;color:var(--tx3)">Рейтинг ${m.score}% · ${m.reg} · ${m.price}</div>
+      </div>
+      <span class="badge ${m.ver ? 'bg' : 'ba'}" style="flex-shrink:0">${m.ver ? '✓ Верифицирован' : 'На проверке'}</span>
+    </label>`).join('');
+
+  document.getElementById('mo-edit-match').classList.add('open');
+}
+
+function confirmEditMatchList() {
+  // FIXED: Added function to confirm changes in match list and update checkboxes
+  const matches = MATCH_DATA[currentMatchRFQ] || [];
+  matches.forEach((m, i) => {
+    const checkbox = document.getElementById('match-check-' + i);
+    if (checkbox) {
+      m.send = checkbox.checked;
+    }
+  });
+
+  const selectedCount = matches.filter(m => m.send).length;
+  closeModal('mo-edit-match');
+  toast('✅ Список обновлён: ' + selectedCount + ' поставщиков выбрано', 's');
 }
 
 // ══════════════════════════════════════════
