@@ -496,6 +496,15 @@ textarea.fi{resize:vertical;min-height:80px}
 
 <script>
 // ══════════════════════════════════════════
+// CONSTANTS (must be before REGS)
+// ══════════════════════════════════════════
+const GREEN_dim = 'rgba(26,124,62,.3)';
+let currentReg = 0;
+let currentMatchRFQ = 'RFQ-2847';
+let rfqFilter = 'all';
+const approvedSuppliers = [];
+
+// ══════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════
 const REGS = [
@@ -547,7 +556,7 @@ const REGS = [
   },
 ];
 
-const GREEN_dim = 'rgba(26,124,62,.3)';
+// GREEN_dim declared above
 
 const RFQ_DATA = [
   {id:'2847', product:'Долото PDC 215.9мм', sku:'НТ-БУ-ДОЛ-0047', qty:'3 шт', buyer:'Сургутнефтегаз', region:'ХМАО', deadline:'до 15 мая', price:'до ₽320 000/шт', stage:'pending', matches:8},
@@ -573,10 +582,7 @@ const MATCH_DATA = {
   ],
 };
 
-let currentReg = 0;
-let currentMatchRFQ = 'RFQ-2847';
-let rfqFilter = 'all';
-const approvedSuppliers = [];
+// currentReg, currentMatchRFQ, rfqFilter, approvedSuppliers declared at top
 
 // ══════════════════════════════════════════
 // NAVIGATION
