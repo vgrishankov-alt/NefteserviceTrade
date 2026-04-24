@@ -352,6 +352,14 @@ textarea.fi{resize:vertical;min-height:90px}
             <div>📄 Нажмите для загрузки PDF/JPG</div>
             <div style="font-size:10px;color:var(--text-3);margin-top:4px">до 10 МБ</div>
           </div></div>
+        <div class="fg" style="grid-column:1/-1">
+          <label style="color:var(--red)">Доверенность от Генерального Директора <span>*</span> — ОБЯЗАТЕЛЬНО</label>
+          <div class="photo-zone" onclick="document.getElementById('docInput').click()" style="padding:14px;border-color:rgba(192,57,43,.4);background:rgba(192,57,43,.03)">
+            <div>📋 Доверенность уполномоченного лица</div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:4px">На осуществление закупочной деятельности · Нотариальная или с печатью ГД · PDF/JPG</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:5px">Без доверенности ГД верификация невозможна. Документ подтверждает полномочия контактного лица.</div>
+        </div>
         <div class="fg"><label>Сертификаты (API, ISO, ГОСТ)</label>
           <div class="photo-zone" onclick="document.getElementById('docInput').click()" style="padding:14px">
             <div>📑 Несколько файлов</div>
@@ -793,20 +801,178 @@ textarea.fi{resize:vertical;min-height:90px}
 
 <!-- ══════════ RFQ ══════════ -->
 <div class="page" id="page-rfq">
-  <div class="page-header"><div class="page-title">📋 Входящие запросы</div><div class="page-sub">2 активных</div></div>
+  <div class="page-header"><div class="page-title">📋 Входящие запросы</div><div class="page-sub">2 активных · Запросы поступают через AI-матчинг платформы</div></div>
+
+  <!-- Схема роутинга -->
+  <div class="card" style="background:var(--surface-2);border:none;padding:14px;margin-bottom:16px">
+    <div style="font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-weight:700">Как работает:</span>
+      <span>🔧 Покупатель → RFQ</span>
+      <span style="color:var(--border)">→</span>
+      <span>🤖 AI-матчинг (10 критериев)</span>
+      <span style="color:var(--border)">→</span>
+      <span style="color:var(--amber);font-weight:600">👤 Менеджер НТ одобряет</span>
+      <span style="color:var(--border)">→</span>
+      <span style="color:var(--green);font-weight:600">📩 Вы получаете запрос</span>
+      <span style="color:var(--border)">→</span>
+      <span>📋 КП → Сделка</span>
+    </div>
+  </div>
+
+  <!-- RFQ 1 -->
   <div class="card" style="border-left:3px solid var(--green)">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
       <span class="badge" style="background:rgba(192,57,43,.1);color:var(--red)">🔴 Срочный</span>
-      <b>Запрос #RFQ-2847</b> <span style="font-size:11px;color:var(--text-3)">· 2 часа назад</span>
+      <b>Запрос #RFQ-2847</b>
+      <span style="font-size:11px;color:var(--text-3)">· 2 часа назад · через НТ Platform ✓</span>
     </div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:8px">Долото PDC 215.9мм — 3 шт. · <span class="sku-code">НТ-БУ-ДОЛ-0047</span></div>
-    <div style="font-size:12px;color:var(--text-2);margin-bottom:14px;line-height:1.7">
-      <b>Покупатель:</b> Сургутнефтегаз ✓ <b>Регион:</b> ХМАО <b>Срок:</b> до 15 мая<br>
-      <b>Требования:</b> Сертификаты API · Доставка включена
+    <div style="font-size:16px;font-weight:700;margin-bottom:10px">Долото PDC 215.9мм — 3 шт. · <span class="sku-code">НТ-БУ-ДОЛ-0047</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--text-2);margin-bottom:14px">
+      <div><b>Покупатель:</b> Сургутнефтегаз <span class="badge badge-verified" style="font-size:10px">✓</span></div>
+      <div><b>Регион:</b> ХМАО — Югра</div>
+      <div><b>Срок поставки:</b> <span style="color:var(--red);font-weight:600">до 15 мая 2026</span></div>
+      <div><b>Цена покупателя:</b> до ₽320 000/шт</div>
+      <div><b>Требования:</b> API + ISO сертификаты</div>
+      <div><b>Доставка:</b> включена в цену</div>
+    </div>
+    <div style="background:var(--green-dim);border-radius:8px;padding:10px;font-size:11px;color:var(--text-2);margin-bottom:14px">
+      <b style="color:var(--green)">🤖 AI-рейтинг:</b> Вы #4 из 8 поставщиков (78%) · Отобраны менеджером НТ · Срок ответа: <b>24 часа</b>
     </div>
     <div class="btn-row">
-      <button class="btn btn-primary btn-sm" onclick="showToast('КП отправлено покупателю','success')">📤 Отправить КП</button>
-      <button class="btn btn-secondary btn-sm" onclick="showToast('Запрос отклонён','info')">Отказать</button>
+      <button class="btn btn-primary" onclick="openKPForm('RFQ-2847','Долото PDC 215.9мм','3 шт','до 15 мая','Сургутнефтегаз')">📋 Сформировать КП</button>
+      <button class="btn btn-secondary" onclick="declineRFQ('RFQ-2847')">✗ Отказать</button>
+    </div>
+  </div>
+
+  <!-- RFQ 2 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span class="badge badge-pending">Обычный</span>
+      <b>Запрос #RFQ-2851</b>
+      <span style="font-size:11px;color:var(--text-3)">· вчера · через НТ Platform ✓</span>
+    </div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:10px">Бурильные трубы 127мм — 1000м · <span class="sku-code">НТ-БУ-ТРУ-0012</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:var(--text-2);margin-bottom:14px">
+      <div><b>Покупатель:</b> ТНГ-Групп <span class="badge badge-verified" style="font-size:10px">✓</span></div>
+      <div><b>Регион:</b> Татарстан</div>
+      <div><b>Срок поставки:</b> <span style="color:var(--amber);font-weight:600">до 20 мая 2026</span></div>
+      <div><b>Группа прочности:</b> E или G</div>
+      <div><b>Получение:</b> Самовывоз</div>
+      <div><b>Документы:</b> Паспорт материала</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="openKPForm('RFQ-2851','Бурильные трубы 127мм','1000 м','до 20 мая','ТНГ-Групп')">📋 Сформировать КП</button>
+      <button class="btn btn-secondary" onclick="declineRFQ('RFQ-2851')">✗ Отказать</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ КП ФОРМА (модальное) ══════════ -->
+<div style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px;overflow-y:auto" id="kpModal" onclick="if(event.target===this)closeKP()">
+  <div style="background:#fff;border-radius:16px;padding:28px;width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;overflow-y:auto">
+
+    <!-- Step indicator -->
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:22px">
+      <div id="kp-s1" style="flex:1;padding:10px;text-align:center;font-size:12px;font-weight:700;background:var(--navy);color:#fff">1. Параметры КП</div>
+      <div id="kp-s2" style="flex:1;padding:10px;text-align:center;font-size:12px;color:var(--text-3);background:var(--surface-2)">2. Условия</div>
+      <div id="kp-s3" style="flex:1;padding:10px;text-align:center;font-size:12px;color:var(--text-3);background:var(--surface-2)">3. Превью и отправка</div>
+    </div>
+
+    <!-- KP Step 1 -->
+    <div id="kp-panel1">
+      <div style="font-size:16px;font-weight:800;margin-bottom:4px">📋 Коммерческое предложение</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:18px">Запрос <b id="kp-rfq-num">#RFQ-2847</b> · <span id="kp-product">Долото PDC 215.9мм</span></div>
+
+      <div style="background:var(--surface-2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px">
+        <div style="font-weight:700;margin-bottom:6px">Параметры запроса от покупателя:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;color:var(--text-2)">
+          <div>Количество: <b id="kp-qty">3 шт</b></div>
+          <div>Срок: <b id="kp-deadline" style="color:var(--red)">до 15 мая</b></div>
+          <div>Покупатель: <b id="kp-buyer">Сургутнефтегаз</b></div>
+          <div>Регион: ХМАО</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fg"><label>Цена за единицу (₽) <span>*</span></label><input class="fi" id="kp_price" value="280000" type="number"></div>
+        <div class="fg"><label>Единица измерения</label><select class="fi"><option selected>шт</option><option>м</option><option>кг</option></select></div>
+        <div class="fg"><label>Количество (доступно) <span>*</span></label><input class="fi" id="kp_qty" value="3" type="number"></div>
+        <div class="fg"><label>Итого (₽)</label><input class="fi" id="kp_total" value="840 000" readonly style="font-weight:700;color:var(--green)"></div>
+        <div class="fg"><label>Срок поставки <span>*</span></label>
+          <select class="fi" id="kp_delivery">
+            <option selected>3 рабочих дня</option><option>5 рабочих дней</option><option>7 рабочих дней</option><option>По согласованию</option>
+          </select></div>
+        <div class="fg"><label>Дата готовности</label><input class="fi" type="date" value="2026-05-08"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="kpStep(2)">Далее: Условия →</button>
+        <button class="btn btn-secondary" onclick="closeKP()">Отмена</button>
+      </div>
+    </div>
+
+    <!-- KP Step 2 -->
+    <div id="kp-panel2" style="display:none">
+      <div style="font-size:16px;font-weight:800;margin-bottom:16px">⚖️ Условия поставки</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fg"><label>Условия оплаты <span>*</span></label>
+          <select class="fi"><option selected>100% предоплата</option><option>50%+50%</option><option>Отсрочка 30 дней</option></select></div>
+        <div class="fg"><label>Условия доставки</label>
+          <select class="fi"><option selected>Включена в цену</option><option>Самовывоз</option><option>За счёт покупателя</option></select></div>
+        <div class="fg"><label>Гарантия</label><input class="fi" value="12 месяцев"></div>
+        <div class="fg"><label>Сертификаты</label>
+          <select class="fi"><option selected>API + ГОСТ Р 11059</option><option>Только ГОСТ</option><option>Нет</option></select></div>
+        <div class="fg" style="grid-column:1/-1"><label>Комментарий к КП</label>
+          <textarea class="fi" rows="3">Цена действительна 5 рабочих дней. Возможна доставка в ХМАО собственным транспортом. Полный комплект документов (паспорт, сертификат) прилагается при отгрузке.</textarea></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="kpStep(1)">← Назад</button>
+        <button class="btn btn-primary" onclick="kpStep(3)">Далее: Превью →</button>
+      </div>
+    </div>
+
+    <!-- KP Step 3 — Preview -->
+    <div id="kp-panel3" style="display:none">
+      <div style="font-size:16px;font-weight:800;margin-bottom:6px">👁 Предварительный просмотр КП</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:16px">Проверьте данные перед отправкой покупателю через менеджера НТ</div>
+
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">
+        <div style="background:var(--navy);color:#fff;padding:14px 18px">
+          <div style="font-size:14px;font-weight:800;margin-bottom:2px">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</div>
+          <div style="font-size:11px;opacity:.6">Нефтесервис Трейд Platform · <span id="kp-preview-num">#RFQ-2847</span></div>
+        </div>
+        <div style="padding:16px;font-size:13px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+            <div><span style="color:var(--text-3)">Поставщик:</span><br><b>ООО ДемоБурТех</b></div>
+            <div><span style="color:var(--text-3)">Покупатель:</span><br><b id="kp-prev-buyer">Сургутнефтегаз</b></div>
+            <div><span style="color:var(--text-3)">Дата КП:</span><br><b>24.04.2026</b></div>
+            <div><span style="color:var(--text-3)">Действительно до:</span><br><b>29.04.2026</b></div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px">
+            <thead><tr style="background:var(--surface-2)"><th style="padding:8px;text-align:left">Наименование</th><th style="padding:8px">SKU</th><th style="padding:8px">Кол-во</th><th style="padding:8px">Цена</th><th style="padding:8px">Итого</th></tr></thead>
+            <tbody><tr>
+              <td style="padding:8px;font-weight:600" id="kp-prev-product">Долото PDC 215.9мм</td>
+              <td style="padding:8px;font-family:monospace;font-size:11px;color:var(--green)">НТ-БУ-ДОЛ-0047</td>
+              <td style="padding:8px;text-align:center" id="kp-prev-qty">3 шт</td>
+              <td style="padding:8px;text-align:right" id="kp-prev-price">₽280 000</td>
+              <td style="padding:8px;text-align:right;font-weight:700;color:var(--green)" id="kp-prev-total">₽840 000</td>
+            </tr></tbody>
+          </table>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--text-2)">
+            <div>Срок поставки: <b>3 рабочих дня</b></div>
+            <div>Оплата: <b>100% предоплата</b></div>
+            <div>Доставка: <b>Включена</b></div>
+            <div>Гарантия: <b>12 месяцев</b></div>
+          </div>
+        </div>
+        <div style="background:var(--surface-2);padding:10px 16px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border)">
+          После отправки КП поступит менеджеру НТ → он перешлёт покупателю вместе с КП других поставщиков для сравнения
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="kpStep(2)">← Назад</button>
+        <button class="btn btn-primary" style="flex:1" onclick="sendKP()">✅ Подтвердить и отправить КП</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1082,6 +1248,68 @@ function showToast(msg, type='') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = `toast ${type} show`;
   setTimeout(()=>t.className='toast', 4000);
+}
+
+// ── KП ФЛОУ ──
+function openKPForm(rfq, product, qty, deadline, buyer) {
+  document.getElementById('kp-rfq-num').textContent = '#'+rfq;
+  document.getElementById('kp-product').textContent = product;
+  document.getElementById('kp-qty').textContent = qty;
+  document.getElementById('kp-deadline').textContent = deadline;
+  document.getElementById('kp-buyer').textContent = buyer;
+  document.getElementById('kp-preview-num').textContent = '#'+rfq;
+  document.getElementById('kp-prev-buyer').textContent = buyer;
+  document.getElementById('kp-prev-product').textContent = product;
+  document.getElementById('kp-prev-qty').textContent = qty;
+  const modal = document.getElementById('kpModal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  kpStep(1);
+}
+
+function closeKP() {
+  document.getElementById('kpModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function kpStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('kp-panel'+i).style.display = i===n ? 'block' : 'none';
+    const s = document.getElementById('kp-s'+i);
+    s.style.background = i===n ? 'var(--navy)' : 'var(--surface-2)';
+    s.style.color = i===n ? '#fff' : 'var(--text-3)';
+  });
+  // Update preview totals
+  if(n===3) {
+    const price = parseInt(document.getElementById('kp_price').value)||0;
+    const qty   = parseInt(document.getElementById('kp_qty').value)||1;
+    document.getElementById('kp-prev-price').textContent = '₽'+price.toLocaleString('ru-RU');
+    document.getElementById('kp-prev-total').textContent = '₽'+(price*qty).toLocaleString('ru-RU');
+    document.getElementById('kp-prev-qty').textContent = qty+' шт';
+  }
+}
+
+// Auto-calc total
+document.addEventListener('input', e => {
+  if(e.target.id==='kp_price'||e.target.id==='kp_qty') {
+    const p = parseInt(document.getElementById('kp_price')?.value)||0;
+    const q = parseInt(document.getElementById('kp_qty')?.value)||1;
+    const t = document.getElementById('kp_total');
+    if(t) t.value = (p*q).toLocaleString('ru-RU');
+  }
+});
+
+function sendKP() {
+  closeKP();
+  showToast('✅ КП отправлено менеджеру НТ! Покупатель получит его в течение 2 часов.','success');
+  // Mark rfq as answered
+  setTimeout(()=>showToast('📩 Менеджер НТ подтвердил получение КП','info'),3000);
+}
+
+function declineRFQ(rfq) {
+  if(confirm('Отказать по запросу '+rfq+'? Менеджер НТ будет уведомлён.')) {
+    showToast('Отказ по '+rfq+' передан менеджеру НТ','info');
+  }
 }
 
 // ── INIT ──

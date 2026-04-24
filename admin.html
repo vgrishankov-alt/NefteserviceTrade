@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рабочее место менеджера — Нефтесервис Трейд</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1A2535;--green:#1A7C3E;--green-d:#136130;--green-dim:rgba(26,124,62,.09);
+  --bg:#F5F6F8;--surface:#fff;--surface-2:#EEF0F3;--border:rgba(0,0,0,.09);
+  --text:#1C1A17;--text-2:rgba(28,26,23,.62);--text-3:rgba(28,26,23,.38);
+  --amber:#C2710A;--blue:#2563A8;--red:#C0392B;
+  --radius:10px;--radius-lg:14px;--tr:.17s ease;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+header{background:var(--navy);border-bottom:2px solid rgba(26,124,62,.4);position:sticky;top:0;z-index:200}
+.h-inner{max-width:1440px;margin:0 auto;padding:0 28px;height:56px;display:flex;align-items:center;gap:20px}
+.logo-mark{width:32px;height:32px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff}
+.logo-name{font-size:14px;font-weight:700;color:#fff}
+.admin-badge{background:rgba(194,113,10,.25);color:var(--amber);border:1px solid rgba(194,113,10,.35);border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:.06em}
+.h-user{margin-left:auto;color:rgba(255,255,255,.7);font-size:12px;display:flex;align-items:center;gap:8px}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:220px 1fr;max-width:1440px;margin:0 auto;padding:20px 28px;gap:22px;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:4px}
+.sidebar-section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:10px 12px 4px}
+.sidebar{background:var(--navy);border-radius:var(--radius-lg);padding:12px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all var(--tr);font-size:13px;font-weight:500;color:rgba(255,255,255,.6)}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:var(--green-dim);color:var(--green);font-weight:600}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.nav-badge.amber{background:var(--amber)}
+.nav-badge.green{background:var(--green)}
+.sidebar-sep{height:1px;background:rgba(255,255,255,.08);margin:8px 0}
+
+/* MAIN */
+.main{min-width:0}
+.page{display:none}
+.page.active{display:block}
+
+.page-header{margin-bottom:20px}
+.page-title{font-size:20px;font-weight:800;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text-3)}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:800;margin-bottom:3px}
+.stat-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-new{background:var(--surface-2);color:var(--text-3)}
+.badge-review{background:rgba(37,99,168,.1);color:var(--blue)}
+.badge-ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(26,124,62,.2)}
+.badge-rejected{background:rgba(192,57,43,.1);color:var(--red)}
+.badge-pending{background:rgba(194,113,10,.1);color:var(--amber)}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;padding:10px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);border-bottom:2px solid var(--border);background:var(--surface-2);white-space:nowrap}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--surface-2);cursor:pointer}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:8px;font:600 12px Inter,sans-serif;cursor:pointer;border:none;transition:all var(--tr)}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:var(--green-d)}
+.btn-secondary{background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}.btn-secondary:hover{color:var(--text)}
+.btn-danger{background:rgba(192,57,43,.1);color:var(--red);border:1px solid rgba(192,57,43,.2)}.btn-danger:hover{background:var(--red);color:#fff}
+.btn-amber{background:var(--amber);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+
+/* VERIFICATION DETAIL */
+.doc-check{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);margin-bottom:8px}
+.doc-status{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.doc-status.ok{background:var(--green-dim);color:var(--green)}
+.doc-status.warn{background:rgba(194,113,10,.15);color:var(--amber)}
+.doc-status.req{background:rgba(192,57,43,.1);color:var(--red)}
+.doc-info{flex:1}
+.doc-name{font-size:13px;font-weight:600}
+.doc-meta{font-size:11px;color:var(--text-3)}
+
+/* RFQ PIPELINE */
+.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.pipe-stage{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;text-align:center}
+.pipe-count{font-size:28px;font-weight:800;margin-bottom:4px}
+.pipe-label{font-size:11px;color:var(--text-3)}
+.pipe-arrow{display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--border)}
+
+/* MATCH LIST */
+.match-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);transition:background var(--tr)}
+.match-item:hover{background:var(--surface-2)}
+.match-rank{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.match-score{font-size:18px;font-weight:800;color:var(--green);min-width:40px;text-align:right}
+.score-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;flex:1}
+.score-fill{height:100%;background:var(--green);border-radius:3px}
+.match-info{flex:1;min-width:0}
+.match-company{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.match-meta{font-size:11px;color:var(--text-3)}
+.match-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:16px;padding:28px;width:100%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:6px}
+.modal-sub{font-size:12px;color:var(--text-3);margin-bottom:20px}
+.fi{width:100%;padding:9px 13px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;font:14px Inter,sans-serif;color:var(--text);outline:none}
+.fi:focus{border-color:var(--green);background:#fff}
+textarea.fi{resize:vertical;min-height:80px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.1);opacity:0;transform:translateY(8px);transition:all .3s;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-left:3px solid var(--green)}
+.toast.info{border-left:3px solid var(--blue)}
+.toast.warn{border-left:3px solid var(--amber)}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:14px;padding-bottom:16px;position:relative}
+.tl-item::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:1px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;z-index:1}
+.tl-content{flex:1;padding-top:2px}
+.tl-title{font-size:13px;font-weight:700;margin-bottom:2px}
+.tl-meta{font-size:11px;color:var(--text-3)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="h-inner">
+    <div class="logo-mark">НТ</div>
+    <div class="logo-name">Нефтесервис Трейд</div>
+    <div class="admin-badge">МЕНЕДЖЕР</div>
+    <div class="h-user">
+      <span>👤 Вячеслав Гришанков</span>
+      <a href="catalog.html" style="color:rgba(255,255,255,.5);font-size:11px;margin-left:8px">← Каталог</a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div style="color:rgba(255,255,255,.4);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 12px 8px">Управление</div>
+
+  <div class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard">📊 Дашборд</div>
+  <div class="sidebar-sep"></div>
+
+  <div style="color:rgba(255,255,255,.4);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:8px 12px 4px">Поставщики</div>
+  <div class="nav-item" onclick="goPage('registrations')" id="nav-registrations">
+    📝 Заявки на регистрацию <span class="nav-badge">3</span>
+  </div>
+  <div class="nav-item" onclick="goPage('verification')" id="nav-verification">
+    🔍 Верификация <span class="nav-badge amber">2</span>
+  </div>
+  <div class="nav-item" onclick="goPage('suppliers')" id="nav-suppliers">
+    🏭 Поставщики <span class="nav-badge green">12</span>
+  </div>
+  <div class="sidebar-sep"></div>
+
+  <div style="color:rgba(255,255,255,.4);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:8px 12px 4px">RFQ / Сделки</div>
+  <div class="nav-item" onclick="goPage('rfq-pipeline')" id="nav-rfq-pipeline">
+    📋 RFQ Пайплайн <span class="nav-badge">4</span>
+  </div>
+  <div class="nav-item" onclick="goPage('matching')" id="nav-matching">
+    🤖 AI Матчинг
+  </div>
+  <div class="nav-item" onclick="goPage('deals')" id="nav-deals">
+    🤝 Сделки
+  </div>
+  <div class="sidebar-sep"></div>
+
+  <div class="nav-item" onclick="goPage('settings')" id="nav-settings">⚙️ Настройки</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ══ ДАШБОРД ══ -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div class="page-title">📊 Дашборд менеджера</div>
+    <div class="page-sub">Нефтесервис Трейд · Апрель 2026 · <span style="color:var(--green);font-weight:600">Платформа в тестовом режиме</span></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--red)">3</div>
+      <div class="stat-label">Заявки на регистрацию</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--amber)">2</div>
+      <div class="stat-label">На верификации</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--green)">12</div>
+      <div class="stat-label">Поставщиков</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--blue)">4</div>
+      <div class="stat-label">Активных RFQ</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--text-3)">0</div>
+      <div class="stat-label">Сделок закрыто</div>
+    </div>
+  </div>
+
+  <!-- RFQ Pipeline overview -->
+  <div class="card">
+    <div class="card-title"><span>🔄</span> Схема обработки запросов</div>
+    <div style="display:flex;align-items:center;gap:8px;overflow-x:auto;padding-bottom:8px">
+      <div style="background:var(--surface-2);border-radius:10px;padding:12px 16px;text-align:center;min-width:130px;border:1px solid var(--border)">
+        <div style="font-size:20px;margin-bottom:4px">🔧</div>
+        <div style="font-size:12px;font-weight:700">Покупатель</div>
+        <div style="font-size:10px;color:var(--text-3)">Отправляет RFQ</div>
+      </div>
+      <div style="font-size:20px;color:var(--border)">→</div>
+      <div style="background:rgba(37,99,168,.08);border-radius:10px;padding:12px 16px;text-align:center;min-width:130px;border:1px solid rgba(37,99,168,.2)">
+        <div style="font-size:20px;margin-bottom:4px">🤖</div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue)">AI-матчинг</div>
+        <div style="font-size:10px;color:var(--text-3)">10 критериев</div>
+      </div>
+      <div style="font-size:20px;color:var(--border)">→</div>
+      <div style="background:rgba(194,113,10,.08);border-radius:10px;padding:12px 16px;text-align:center;min-width:150px;border:2px solid var(--amber)">
+        <div style="font-size:20px;margin-bottom:4px">👤</div>
+        <div style="font-size:12px;font-weight:700;color:var(--amber)">Менеджер НТ</div>
+        <div style="font-size:10px;color:var(--text-3)">Проверяет и одобряет</div>
+      </div>
+      <div style="font-size:20px;color:var(--border)">→</div>
+      <div style="background:var(--green-dim);border-radius:10px;padding:12px 16px;text-align:center;min-width:130px;border:1px solid rgba(26,124,62,.2)">
+        <div style="font-size:20px;margin-bottom:4px">📤</div>
+        <div style="font-size:12px;font-weight:700;color:var(--green)">Рассылка</div>
+        <div style="font-size:10px;color:var(--text-3)">Поставщики получают</div>
+      </div>
+      <div style="font-size:20px;color:var(--border)">→</div>
+      <div style="background:var(--surface-2);border-radius:10px;padding:12px 16px;text-align:center;min-width:130px;border:1px solid var(--border)">
+        <div style="font-size:20px;margin-bottom:4px">📋</div>
+        <div style="font-size:12px;font-weight:700">КП → Сделка</div>
+        <div style="font-size:10px;color:var(--text-3)">Закрытие</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card" style="border-left:3px solid var(--red)">
+      <div class="card-title"><span>📝</span> Новые заявки</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">3 компании ожидают рассмотрения</div>
+      <button class="btn btn-primary btn-sm" onclick="goPage('registrations')">Рассмотреть →</button>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue)">
+      <div class="card-title"><span>📋</span> RFQ без матчинга</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">2 запроса ждут одобрения рассылки</div>
+      <button class="btn btn-blue btn-sm" onclick="goPage('rfq-pipeline')">В пайплайн →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЗАЯВКИ НА РЕГИСТРАЦИЮ ══ -->
+<div class="page" id="page-registrations">
+  <div class="page-header">
+    <div class="page-title">📝 Заявки на регистрацию поставщиков</div>
+    <div class="page-sub">Рассмотрите заявку, проверьте документы и авторизуйте или отклоните</div>
+  </div>
+
+  <div class="card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Компания</th><th>ИНН</th><th>Категории</th><th>Дата заявки</th>
+          <th>Документы</th><th>Статус</th><th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="openRegDetail(0)">
+          <td><b>ООО ДемоБурТех</b><br><span style="font-size:11px;color:var(--text-3)">Иванов И.И. · +7 495 123-45-67</span></td>
+          <td style="font-family:monospace">7701234567</td>
+          <td>Бурение, КРС</td>
+          <td>24.04.2026<br><span style="font-size:11px;color:var(--text-3)">2 ч. назад</span></td>
+          <td>
+            <div style="font-size:11px">
+              <span style="color:var(--green)">✓ ОГРН</span> ·
+              <span style="color:var(--green)">✓ ИНН</span> ·
+              <span style="color:var(--amber)">⚠ ISO</span> ·
+              <span style="color:var(--red)">✗ Довер.</span>
+            </div>
+          </td>
+          <td><span class="badge badge-review">На рассмотрении</span></td>
+          <td>
+            <div style="display:flex;gap:4px">
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openRegDetail(0)">Открыть</button>
+            </div>
+          </td>
+        </tr>
+        <tr onclick="openRegDetail(1)">
+          <td><b>ИП Смирнов А.В.</b><br><span style="font-size:11px;color:var(--text-3)">Смирнов А.В. · +7 917 000-11-22</span></td>
+          <td style="font-family:monospace">631234567890</td>
+          <td>Нефтепромысловая химия</td>
+          <td>23.04.2026<br><span style="font-size:11px;color:var(--text-3)">вчера</span></td>
+          <td>
+            <div style="font-size:11px">
+              <span style="color:var(--green)">✓ ОГРН</span> ·
+              <span style="color:var(--green)">✓ ИНН</span> ·
+              <span style="color:var(--green)">✓ Лиц.</span> ·
+              <span style="color:var(--green)">✓ Довер.</span>
+            </div>
+          </td>
+          <td><span class="badge badge-review">На рассмотрении</span></td>
+          <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openRegDetail(1)">Открыть</button></td>
+        </tr>
+        <tr>
+          <td><b>ООО НефтеХимСервис</b><br><span style="font-size:11px;color:var(--text-3)">Петров К.В. · +7 812 111-22-33</span></td>
+          <td style="font-family:monospace">7807654321</td>
+          <td>Нефтепромысловая химия, Услуги</td>
+          <td>22.04.2026</td>
+          <td><span style="font-size:11px;color:var(--amber)">⚠ 2 документа не загружены</span></td>
+          <td><span class="badge badge-pending">Ожидает документов</span></td>
+          <td><button class="btn btn-secondary btn-sm" onclick="requestDocs()">📧 Запросить</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ ВЕРИФИКАЦИЯ (DETAIL) ══ -->
+<div class="page" id="page-verification">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <button class="btn btn-secondary btn-sm" onclick="goPage('registrations')">← Назад</button>
+      <div class="page-title" style="margin:0">Верификация: ООО ДемоБурТех</div>
+      <span class="badge badge-review">На рассмотрении</span>
+    </div>
+    <div class="page-sub">ИНН: 7701234567 · ОГРН: 1027700000000 · Заявка от 24.04.2026</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+    <div>
+      <!-- COMPANY INFO -->
+      <div class="card">
+        <div class="card-title"><span>🏢</span> Данные компании</div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse">
+          <tr><td style="color:var(--text-3);padding:5px 0;width:40%">Полное название</td><td style="font-weight:600">ООО «ДемоБурТех»</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">ИНН</td><td style="font-family:monospace">7701234567</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">ОГРН</td><td style="font-family:monospace">1027700000000</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">Директор</td><td>Иванов Иван Иванович</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">Контактное лицо</td><td>Иванов И.И. · +7 495 123-45-67</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">Email</td><td>info@demoburtech.ru</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">Адрес</td><td>115054, Москва, ул. Бакунинская, 4-6</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">Категории</td><td>Бурение · КРС и ремонт</td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">СПАРК-проверка</td><td><span style="color:var(--green);font-weight:600">✓ Активна · Нет арбитражей · Нет долгов</span></td></tr>
+          <tr><td style="color:var(--text-3);padding:5px 0">ЕГРЮЛ</td><td><span style="color:var(--green);font-weight:600">✓ ИНН/ОГРН подтверждены автоматически</span></td></tr>
+        </table>
+      </div>
+
+      <!-- DOCUMENTS -->
+      <div class="card">
+        <div class="card-title"><span>📄</span> Проверка документов</div>
+
+        <div class="doc-check">
+          <div class="doc-status ok">✓</div>
+          <div class="doc-info"><div class="doc-name">Свидетельство ОГРН / Лист записи ЕГРЮЛ</div><div class="doc-meta">PDF · 1.2 МБ · Загружен 24.04.2026</div></div>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Документ открыт','info')">👁 Просмотр</button>
+          <span class="badge badge-ok">✓ Верно</span>
+        </div>
+
+        <div class="doc-check">
+          <div class="doc-status ok">✓</div>
+          <div class="doc-info"><div class="doc-name">Свидетельство ИНН</div><div class="doc-meta">PDF · 0.8 МБ · Загружен 24.04.2026</div></div>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Документ открыт','info')">👁 Просмотр</button>
+          <span class="badge badge-ok">✓ Верно</span>
+        </div>
+
+        <div class="doc-check" style="border:1px solid rgba(194,113,10,.3)">
+          <div class="doc-status warn">⚠</div>
+          <div class="doc-info"><div class="doc-name">Сертификат ISO 9001</div><div class="doc-meta">PDF · 2.1 МБ · Действителен до 31.12.2026 — <span style="color:var(--amber)">Уточнить область аккредитации</span></div></div>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Документ открыт','info')">👁 Просмотр</button>
+          <span class="badge badge-pending">⚠ Уточнить</span>
+        </div>
+
+        <div class="doc-check" style="border:1px solid rgba(192,57,43,.3);background:rgba(192,57,43,.03)">
+          <div class="doc-status req">✗</div>
+          <div class="doc-info">
+            <div class="doc-name" style="color:var(--red)">Доверенность от Генерального Директора</div>
+            <div class="doc-meta">Документ не загружен · <b>ОБЯЗАТЕЛЬНЫЙ</b> · Доверенность уполномоченного лица на осуществление закупочной деятельности</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="requestDoверенность()">📧 Запросить</button>
+          <span class="badge badge-rejected">✗ Отсутствует</span>
+        </div>
+
+        <div class="doc-check">
+          <div class="doc-status warn">—</div>
+          <div class="doc-info"><div class="doc-name">Карточка предприятия (реквизиты)</div><div class="doc-meta">Не загружена</div></div>
+          <button class="btn btn-secondary btn-sm" onclick="requestDocs()">📧 Запросить</button>
+          <span class="badge badge-new">Не загружена</span>
+        </div>
+
+        <div style="background:rgba(192,57,43,.05);border:1px solid rgba(192,57,43,.2);border-radius:8px;padding:12px;margin-top:12px;font-size:12px;color:var(--text-2)">
+          <b style="color:var(--red)">⚠ Верификация невозможна:</b> отсутствует доверенность Генерального Директора. Необходимо запросить документ у заявителя.
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDE ACTIONS -->
+    <div>
+      <div class="card" style="border:2px solid var(--amber)">
+        <div class="card-title" style="color:var(--amber)"><span>⚠️</span> Требуются действия</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:14px;line-height:1.6">
+          Для авторизации поставщика необходимо:<br>
+          <span style="color:var(--red)">✗</span> Доверенность ГД (обязательно)<br>
+          <span style="color:var(--amber)">⚠</span> Уточнить область ISO<br>
+          <span style="color:var(--green)">✓</span> ОГРН, ИНН проверены
+        </div>
+        <button class="btn btn-amber" style="width:100%;margin-bottom:8px" onclick="requestДоверенность()">
+          📧 Запросить доверенность
+        </button>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:8px" onclick="approveSupplier()">
+          ✅ Авторизовать (после получения)
+        </button>
+        <button class="btn btn-danger" style="width:100%" onclick="rejectSupplier()">
+          ✗ Отклонить заявку
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📋</span> Комментарий менеджера</div>
+        <textarea class="fi" rows="4" placeholder="Введите комментарий для заявителя или внутренний комментарий..."></textarea>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Комментарий сохранён','success')">💾 Сохранить</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Комментарий отправлен заявителю','success')">📧 Отправить заявителю</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>🕐</span> История действий</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--blue);color:#fff;font-size:10px">📝</div>
+            <div class="tl-content"><div class="tl-title">Заявка подана</div><div class="tl-meta">24.04.2026 · 10:23</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--green-dim);color:var(--green);font-size:10px">🤖</div>
+            <div class="tl-content"><div class="tl-title">ЕГРЮЛ проверен автоматически</div><div class="tl-meta">24.04.2026 · 10:23 · ИНН/ОГРН подтверждены</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:rgba(194,113,10,.2);color:var(--amber);font-size:10px">👤</div>
+            <div class="tl-content"><div class="tl-title">Передана менеджеру</div><div class="tl-meta">24.04.2026 · 10:25 · На рассмотрении</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RFQ ПАЙПЛАЙН ══ -->
+<div class="page" id="page-rfq-pipeline">
+  <div class="page-header">
+    <div class="page-title">📋 RFQ Пайплайн</div>
+    <div class="page-sub">Управление входящими запросами · AI-матчинг → одобрение → рассылка поставщикам</div>
+  </div>
+
+  <!-- Stage counters -->
+  <div class="pipeline">
+    <div class="pipe-stage"><div class="pipe-count" style="color:var(--blue)">4</div><div class="pipe-label">Новые RFQ</div></div>
+    <div class="pipe-stage"><div class="pipe-count" style="color:var(--green)">4</div><div class="pipe-label">AI обработан</div></div>
+    <div class="pipe-stage" style="border:2px solid var(--amber)"><div class="pipe-count" style="color:var(--amber)">2</div><div class="pipe-label">⚠ Ожидают менеджера</div></div>
+    <div class="pipe-stage"><div class="pipe-count" style="color:var(--green)">1</div><div class="pipe-label">Разослано</div></div>
+    <div class="pipe-stage"><div class="pipe-count" style="color:var(--text-3)">0</div><div class="pipe-label">Закрыто</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📋</span> Запросы требующие одобрения</div>
+    <table class="data-table">
+      <thead><tr><th>#RFQ</th><th>Запрос</th><th>Покупатель</th><th>Регион</th><th>Срок</th><th>AI-матч</th><th>Статус</th><th></th></tr></thead>
+      <tbody>
+        <tr onclick="openRFQDetail('RFQ-2847')">
+          <td style="font-family:monospace;font-weight:700">#2847</td>
+          <td><b>Долото PDC 215.9мм</b><br><span style="font-size:11px;color:var(--text-3)">3 шт · SKU: НТ-БУ-ДОЛ-0047</span></td>
+          <td>Сургутнефтегаз<br><span style="font-size:11px;color:var(--green)">✓ Верифицирован</span></td>
+          <td>ХМАО</td>
+          <td style="color:var(--red);font-weight:600">до 15 мая</td>
+          <td><span class="badge badge-ok">✓ 8 совпадений</span></td>
+          <td><span class="badge badge-pending">⏳ Ждёт одобрения</span></td>
+          <td><button class="btn btn-blue btn-sm" onclick="event.stopPropagation();openRFQDetail('RFQ-2847')">Рассмотреть</button></td>
+        </tr>
+        <tr onclick="openRFQDetail('RFQ-2851')">
+          <td style="font-family:monospace;font-weight:700">#2851</td>
+          <td><b>Бурильные трубы 127мм</b><br><span style="font-size:11px;color:var(--text-3)">1000м · SKU: НТ-БУ-ТРУ-0012</span></td>
+          <td>ТНГ-Групп<br><span style="font-size:11px;color:var(--green)">✓ Верифицирован</span></td>
+          <td>Татарстан</td>
+          <td style="color:var(--amber);font-weight:600">до 20 мая</td>
+          <td><span class="badge badge-ok">✓ 5 совпадений</span></td>
+          <td><span class="badge badge-pending">⏳ Ждёт одобрения</span></td>
+          <td><button class="btn btn-blue btn-sm" onclick="event.stopPropagation();openRFQDetail('RFQ-2851')">Рассмотреть</button></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace;font-weight:700">#2844</td>
+          <td><b>Промывка скважин</b></td>
+          <td>Татнефть</td><td>Татарстан</td><td>до 10 мая</td>
+          <td><span class="badge badge-ok">✓ Разослано</span></td>
+          <td><span class="badge badge-ok">✅ Разослано 3 КП</span></td>
+          <td><button class="btn btn-secondary btn-sm">Просмотр</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ AI МАТЧИНГ (RFQ DETAIL) ══ -->
+<div class="page" id="page-matching">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <button class="btn btn-secondary btn-sm" onclick="goPage('rfq-pipeline')">← Пайплайн</button>
+      <div class="page-title" style="margin:0">#RFQ-2847 · Долото PDC 215.9мм</div>
+      <span class="badge badge-pending">⏳ Ожидает одобрения</span>
+    </div>
+    <div class="page-sub">Покупатель: Сургутнефтегаз · 3 шт · ХМАО · до 15 мая · SKU: НТ-БУ-ДОЛ-0047</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:16px">
+    <div>
+      <div class="card">
+        <div class="card-title"><span>🤖</span> Результаты AI-матчинга · 8 поставщиков</div>
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:14px">
+          Критерии: Категория (25%) · Регион (15%) · Наличие (15%) · Цена (12%) · Срок (10%) · Верификация (8%) · Рейтинг (5%) · Отклик (4%) · Полнота профиля (3%) · Сертификаты (3%)
+        </div>
+
+        <div id="matchList">
+          <!-- Dynamically rendered matches -->
+        </div>
+
+        <div style="margin-top:14px;padding:12px;background:var(--surface-2);border-radius:8px;font-size:12px;color:var(--text-2)">
+          <b>Рекомендация менеджера:</b> Отправить топ-3 поставщика с рейтингом ≥87%. Компания №4 (ООО ДемоБурТех) включена как новый верифицированный участник.
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="approveAndSend()">✅ Одобрить и разослать топ-5</button>
+          <button class="btn btn-secondary" onclick="showToast('Редактирование списка','info')">✏️ Изменить список</button>
+          <button class="btn btn-secondary" onclick="showToast('Запрос возвращён покупателю','info')">↩ Вернуть покупателю</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title"><span>📋</span> Детали запроса</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse">
+          <tr><td style="color:var(--text-3);padding:4px 0">SKU</td><td style="font-family:monospace;font-weight:600">НТ-БУ-ДОЛ-0047</td></tr>
+          <tr><td style="color:var(--text-3);padding:4px 0">Количество</td><td>3 шт</td></tr>
+          <tr><td style="color:var(--text-3);padding:4px 0">Срок поставки</td><td style="color:var(--red);font-weight:600">до 15 мая</td></tr>
+          <tr><td style="color:var(--text-3);padding:4px 0">Регион</td><td>ХМАО — Югра</td></tr>
+          <tr><td style="color:var(--text-3);padding:4px 0">Цена покупателя</td><td>до ₽320 000/шт</td></tr>
+          <tr><td style="color:var(--text-3);padding:4px 0">Сертификаты</td><td>API, ISO</td></tr>
+          <tr><td style="color:var(--text-3);padding:4px 0">Доставка</td><td>Включена</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📧</span> Уведомление поставщикам</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:10px;line-height:1.6">После одобрения выбранным поставщикам будет отправлено уведомление:</div>
+        <div style="background:var(--surface-2);border-radius:8px;padding:10px;font-size:11px;color:var(--text-2);line-height:1.6">
+          <b>Тема:</b> Запрос на КП · Долото PDC 215.9мм<br>
+          <b>Канал:</b> Email + Telegram-бот<br>
+          <b>Срок ответа:</b> 24 часа<br>
+          <b>Шаблон КП:</b> прилагается автоматически
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ПОСТАВЩИКИ ══ -->
+<div class="page" id="page-suppliers">
+  <div class="page-header"><div class="page-title">🏭 Верифицированные поставщики</div><div class="page-sub">12 активных компаний в каталоге</div></div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th>Компания</th><th>ИНН</th><th>Категории</th><th>SKU</th><th>Статус</th><th>Рейтинг</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>ООО НефтеСервисХолдинг</b></td><td style="font-family:monospace">7700000001</td>
+          <td>Бурение · Добыча</td><td>24</td>
+          <td><span class="badge badge-ok">✓ Верифицирован</span></td>
+          <td>⭐ 9.2</td>
+          <td><button class="btn btn-secondary btn-sm">Профиль</button></td>
+        </tr>
+        <tr>
+          <td><b>ООО МАШТЕХСЕРВИС</b></td><td style="font-family:monospace">7700000002</td>
+          <td>Бурение · КРС</td><td>18</td>
+          <td><span class="badge badge-ok">✓ Верифицирован</span></td>
+          <td>⭐ 8.7</td>
+          <td><button class="btn btn-secondary btn-sm">Профиль</button></td>
+        </tr>
+        <tr>
+          <td><b>ООО ДемоБурТех</b></td><td style="font-family:monospace">7701234567</td>
+          <td>Бурение · КРС</td><td>3</td>
+          <td><span class="badge badge-pending">⏳ На проверке</span></td>
+          <td>—</td>
+          <td><button class="btn btn-secondary btn-sm" onclick="goPage('verification')">Верифицировать</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ DEALS ══ -->
+<div class="page" id="page-deals">
+  <div class="page-header"><div class="page-title">🤝 Сделки</div></div>
+  <div class="card" style="text-align:center;padding:40px">
+    <div style="font-size:48px;margin-bottom:12px;opacity:.4">🤝</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px">Сделок пока нет</div>
+    <div style="font-size:13px;color:var(--text-3)">Запустите первый RFQ через пайплайн</div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="goPage('rfq-pipeline')">К пайплайну →</button>
+  </div>
+</div>
+
+<!-- ══ НАСТРОЙКИ ══ -->
+<div class="page" id="page-settings">
+  <div class="page-header"><div class="page-title">⚙️ Настройки платформы</div></div>
+  <div class="card">
+    <div class="card-title"><span>📄</span> Обязательные документы при регистрации</div>
+    <div class="doc-check"><div class="doc-status ok">✓</div><div class="doc-info"><div class="doc-name">Свидетельство ОГРН / Лист ЕГРЮЛ</div><div class="doc-meta">Обязательный · Проверяется автоматически через ЕГРЮЛ API</div></div><span class="badge badge-ok">Обязательный</span></div>
+    <div class="doc-check"><div class="doc-status ok">✓</div><div class="doc-info"><div class="doc-name">Свидетельство ИНН</div><div class="doc-meta">Обязательный</div></div><span class="badge badge-ok">Обязательный</span></div>
+    <div class="doc-check" style="border:1px solid rgba(192,57,43,.3)"><div class="doc-status req">!</div><div class="doc-info"><div class="doc-name">Доверенность от Генерального Директора</div><div class="doc-meta">Обязательный · Уполномоченное лицо на осуществление закупочной деятельности · Нотариально заверенная или с печатью организации</div></div><span class="badge badge-ok">Обязательный</span></div>
+    <div class="doc-check"><div class="doc-status warn">○</div><div class="doc-info"><div class="doc-name">Сертификаты (API, ISO, ТР ЕАЭС)</div><div class="doc-meta">Рекомендуемый · Влияет на рейтинг и матчинг</div></div><span class="badge badge-pending">Рекомендуемый</span></div>
+    <div class="doc-check"><div class="doc-status warn">○</div><div class="doc-info"><div class="doc-name">Карточка предприятия</div><div class="doc-meta">Рекомендуемый</div></div><span class="badge badge-pending">Рекомендуемый</span></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- MODAL: approve -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal">
+    <div class="modal-title">✅ Авторизация поставщика</div>
+    <div class="modal-sub">ООО ДемоБурТех · ИНН 7701234567</div>
+    <div class="fg"><label>Комментарий для поставщика</label>
+      <textarea class="fi" rows="3">Ваша компания верифицирована и опубликована в каталоге Нефтесервис Трейд. Вы можете начать получать запросы от покупателей.</textarea></div>
+    <div class="fg"><label>Присвоить статус</label>
+      <select class="fi"><option selected>✓ Верифицирован</option><option>● Проверен (после первых сделок)</option></select></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="confirmApprove()">✅ Подтвердить авторизацию</button>
+      <button class="btn btn-secondary" onclick="closeModal('approveModal')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: send RFQ -->
+<div class="modal-overlay" id="sendRFQModal">
+  <div class="modal">
+    <div class="modal-title">📤 Рассылка запроса поставщикам</div>
+    <div class="modal-sub">#RFQ-2847 · Долото PDC 215.9мм · 3 шт</div>
+    <div style="margin-bottom:14px;font-size:13px;color:var(--text-2)">Выбранные поставщики получат уведомление по email и в Telegram-боте:</div>
+    <div id="selectedSuppliers" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+    <div class="fg"><label>Срок ответа поставщика</label>
+      <select class="fi"><option selected>24 часа</option><option>48 часов</option><option>72 часа</option></select></div>
+    <div class="fg"><label>Дополнительные требования</label>
+      <textarea class="fi" rows="2" placeholder="Сертификаты API, доставка включена...">Требуются сертификаты API. Доставка включена в цену. Форма оплаты: 50% предоплата.</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="confirmSend()">📤 Разослать запрос</button>
+      <button class="btn btn-secondary" onclick="closeModal('sendRFQModal')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// DATA
+const matchData = [
+  {rank:1, company:'ООО НефтеСервисХолдинг', score:96, region:'Москва', avail:'✓ В наличии 5 шт', price:'₽265 000', verified:true, send:true},
+  {rank:2, company:'ООО МАШТЕХСЕРВИС', score:91, region:'Москва', avail:'✓ В наличии 8 шт', price:'₽278 000', verified:true, send:true},
+  {rank:3, company:'ООО НефтебурСервис', score:87, region:'Тюмень', avail:'✓ В наличии 3 шт', price:'₽290 000', verified:true, send:true},
+  {rank:4, company:'ООО ДемоБурТех', score:78, region:'Москва', avail:'✓ В наличии 12 шт', price:'₽280 000', verified:false, send:true},
+  {rank:5, company:'ООО Буринтех', score:72, region:'ХМАО', avail:'Под заказ 7 дн', price:'₽310 000', verified:true, send:false},
+  {rank:6, company:'ООО ДолотоСнаб', score:65, region:'Казань', avail:'✓ В наличии 2 шт', price:'₽295 000', verified:false, send:false},
+];
+
+function renderMatches() {
+  const list = document.getElementById('matchList');
+  if(!list) return;
+  list.innerHTML = matchData.map(m => `
+    <div class="match-item">
+      <div class="match-rank">${m.rank}</div>
+      <div style="min-width:180px">
+        <div class="match-company">${m.company}</div>
+        <div class="match-meta">📍 ${m.region} · ${m.avail}</div>
+      </div>
+      <div style="width:100px;display:flex;align-items:center;gap:6px">
+        <div class="score-bar"><div class="score-fill" style="width:${m.score}%"></div></div>
+      </div>
+      <div class="match-score">${m.score}%</div>
+      <div style="min-width:100px;font-size:12px;font-weight:700">${m.price}/шт</div>
+      <div style="min-width:100px">
+        ${m.verified ? '<span class="badge badge-ok">✓ Верифицирован</span>' : '<span class="badge badge-pending">На проверке</span>'}
+      </div>
+      <div class="match-actions">
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+          <input type="checkbox" ${m.send?'checked':''} onchange="matchData[${m.rank-1}].send=this.checked"> Включить
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+
+// NAVIGATION
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const p = document.getElementById('page-'+id);
+  const n = document.getElementById('nav-'+id);
+  if(p) p.classList.add('active');
+  if(n) n.classList.add('active');
+  if(id==='matching') renderMatches();
+  window.scrollTo(0,0);
+}
+
+function openRegDetail(idx) { goPage('verification'); }
+function openRFQDetail(rfq) { goPage('matching'); }
+
+// ACTIONS
+function approveSupplier() {
+  document.getElementById('approveModal').classList.add('open');
+}
+function confirmApprove() {
+  closeModal('approveModal');
+  showToast('✅ Поставщик авторизован! Уведомление отправлено.','success');
+  setTimeout(()=>goPage('suppliers'),1500);
+}
+function rejectSupplier() {
+  if(confirm('Отклонить заявку ООО ДемоБурТех?')) {
+    showToast('Заявка отклонена. Уведомление отправлено заявителю.','warn');
+    goPage('registrations');
+  }
+}
+function requestDocs() { showToast('📧 Запрос документов отправлен заявителю','info'); }
+function requestДоверенность() {
+  showToast('📧 Запрос доверенности отправлен: info@demoburtech.ru + Telegram','info');
+}
+function requestDoверенность() { requestДоверенность(); }
+
+function approveAndSend() {
+  const selected = matchData.filter(m=>m.send);
+  const modal = document.getElementById('sendRFQModal');
+  document.getElementById('selectedSuppliers').innerHTML = selected.map(m=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface-2);border-radius:8px">
+      <span style="font-size:14px">🏭</span>
+      <div><div style="font-size:13px;font-weight:700">${m.company}</div>
+      <div style="font-size:11px;color:var(--text-3)">${m.region} · ${m.price} · Рейтинг: ${m.score}%</div></div>
+      <span class="badge ${m.verified?'badge-ok':'badge-pending'}" style="margin-left:auto">${m.verified?'✓ Верифицирован':'На проверке'}</span>
+    </div>
+  `).join('');
+  modal.classList.add('open');
+}
+
+function confirmSend() {
+  closeModal('sendRFQModal');
+  showToast('✅ Запрос разослан 4 поставщикам! Ожидаем КП в течение 24 часов.','success');
+  setTimeout(()=>goPage('rfq-pipeline'),2000);
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, type='') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
+  setTimeout(()=>t.className='toast',4500);
+}
+
+// INIT
+goPage('dashboard');
+</script>
+</body>
+</html>
