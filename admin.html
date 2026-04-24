@@ -371,6 +371,7 @@ textarea.fi{resize:vertical;min-height:80px}
           </div>
           <div class="br2">
             <button class="btn bp" onclick="openSendModal()">✅ Одобрить и разослать выбранных</button>
+            <button class="btn" style="background:rgba(37,99,168,.1);color:var(--blu);border:1px solid rgba(37,99,168,.25)" onclick="openRematch()">🔄 Повторный AI-матчинг (до 100)</button>
             <button class="btn bs" onclick="toast('Список изменён','i')">✏️ Изменить</button>
           </div>
         </div>
@@ -503,6 +504,45 @@ textarea.fi{resize:vertical;min-height:80px}
 </div>
 
 <div class="toast" id="toast-el"></div>
+
+<!-- MODAL: AI Повторный матчинг -->
+<div class="mo" id="mo-rematch">
+  <div class="mb">
+    <div class="mt">🤖 AI Повторный матчинг</div>
+    <div class="ms" id="mo-rematch-sub">Расширенный поиск поставщиков</div>
+    <div style="background:rgba(37,99,168,.06);border:1px solid rgba(37,99,168,.2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--tx2);line-height:1.6">
+      <b style="color:var(--blu)">🤖 AI-матчинг v2</b> расширяет поиск по:<br>
+      · Смежным категориям и подкатегориям<br>
+      · Всем регионам РФ и СНГ<br>
+      · Компаниям на проверке (не только верифицированным)<br>
+      · Дополнительным критериям: наличие документов, отклик
+    </div>
+    <div class="fg"><label>Количество компаний для поиска</label>
+      <select class="fi" id="rematch-count">
+        <option value="20">20 компаний (быстро, ~30 сек)</option>
+        <option value="50" selected>50 компаний (стандарт, ~1 мин)</option>
+        <option value="100">100 компаний (расширенный, ~2 мин)</option>
+      </select></div>
+    <div class="fg"><label>Расширить поиск на категории</label>
+      <select class="fi">
+        <option selected>Только текущая категория</option>
+        <option>Категория + смежные (рекомендуется)</option>
+        <option>Все категории (долото, буровое оборудование, КРС)</option>
+      </select></div>
+    <div class="fg"><label>Включить компании</label>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--s2);border-radius:7px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Верифицированные поставщики</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Компании на проверке (не верифицированы)</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox"> Новые заявки (ещё не обработаны)</label>
+      </div></div>
+    <div class="br2">
+      <button class="btn bp" onclick="requestRematch(currentMatchRFQ.replace('RFQ-',''), parseInt(document.getElementById('rematch-count').value))">
+        🚀 Запустить матчинг
+      </button>
+      <button class="btn bs" onclick="closeModal('mo-rematch')">Отмена</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════
@@ -683,14 +723,29 @@ function openReg(idx) {
   const hasKardMissing  = r.docs.some(d=>d.ok==='no'&&d.name.includes('Карточка'));
   const allOk = r.docs.every(d=>d.ok==='ok');
 
-  document.getElementById('vf-docs').innerHTML = r.docs.map(d=>`
-    <div class="dc" style="${d.ok==='no'?'border-color:rgba(192,57,43,.3);background:rgba(192,57,43,.02)':''}">
+  const docEl = document.getElementById('vf-docs');
+  docEl.innerHTML = '';
+  r.docs.forEach((d, di) => {
+    const div = document.createElement('div');
+    div.className = 'dc';
+    if(d.ok==='no') div.style.cssText='border-color:rgba(192,57,43,.3);background:rgba(192,57,43,.02)';
+    div.innerHTML = `
       <div class="ds ${d.ok==='ok'?'dok':d.ok==='warn'?'dw':'dno'}">${d.ok==='ok'?'✓':d.ok==='warn'?'⚠':'✗'}</div>
       <div class="di"><div class="dn" style="${d.ok==='no'?'color:var(--red)':''}">${d.name}</div><div class="dm">${d.meta}</div></div>
-      ${d.ok!=='no'?`<button class="btn bs bsm" onclick="toast('Документ открыт','i')">👁</button>`:''}
-      ${d.ok==='no'?`<button class="btn bd bsm" onclick="askDoc('${d.name}','${r.email}','${r.name}')">📧 Запросить</button>`:''}
-      <span class="badge ${d.badge==='ok'?'bg':d.badge==='warn'?'ba':'br'}">${d.badge==='ok'?'✓ OK':d.badge==='warn'?'⚠ Уточнить':'✗ Нет'}</span>
-    </div>`).join('');
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        ${d.ok!=='no'?`<button class="btn bs bsm doc-view-btn">👁 Открыть</button>`:''}
+        <button class="btn ${d.ok==='no'?'bd':'bs'} bsm doc-upload-btn">📎 Загрузить</button>
+        ${d.ok==='no'?`<button class="btn bd bsm doc-ask-btn">📧 Запросить</button>`:''}
+      </div>
+      <span class="badge ${d.badge==='ok'?'bg':d.badge==='warn'?'ba':'br'}" style="flex-shrink:0">${d.badge==='ok'?'✓ OK':d.badge==='warn'?'⚠ Уточнить':'✗ Нет'}</span>`;
+    // Button handlers (no onclick strings — avoid encoding issues)
+    const viewBtn = div.querySelector('.doc-view-btn');
+    if(viewBtn) viewBtn.addEventListener('click', () => viewDoc(d.name));
+    div.querySelector('.doc-upload-btn').addEventListener('click', () => uploadDocForReg(di));
+    const askBtn = div.querySelector('.doc-ask-btn');
+    if(askBtn) askBtn.addEventListener('click', () => askDoc(d.name, r.email, r.name));
+    docEl.appendChild(div);
+  });
 
   // Block message
   const bm = document.getElementById('vf-block-msg');
@@ -949,6 +1004,105 @@ function confirmSendRFQ() {
 // UTILS
 // ══════════════════════════════════════════
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ══════════════════════════════════════════
+// AI ПОВТОРНЫЙ МАТЧИНГ (до 100 компаний)
+// ══════════════════════════════════════════
+function requestRematch(rfqId, count) {
+  const rfq = RFQ_DATA.find(r=>r.id===rfqId);
+  if(!rfq) return;
+  toast('🤖 Запускаем AI-матчинг: '+count+' компаний по категории "'+rfq.product+'"...','i');
+
+  // Simulate AI rematch with more companies
+  setTimeout(()=>{
+    const rfqKey = 'RFQ-'+rfqId;
+    const existing = MATCH_DATA[rfqKey] || [];
+    // Add more simulated matches
+    const newMatches = [
+      {r:existing.length+1, c:'ООО НефтеТехСервис', score:61, reg:'Уфа', avail:'✓ 4 шт', price:'₽305 000', ver:false, send:false},
+      {r:existing.length+2, c:'ООО УралПромСнаб', score:58, reg:'Екатеринбург', avail:'Под заказ 10 дн', price:'₽315 000', ver:false, send:false},
+      {r:existing.length+3, c:'ООО СибБурСервис', score:55, reg:'Томск', avail:'✓ 7 шт', price:'₽285 000', ver:false, send:false},
+      {r:existing.length+4, c:'ООО ВолгаТехПоставка', score:52, reg:'Казань', avail:'✓ 2 шт', price:'₽298 000', ver:false, send:false},
+      {r:existing.length+5, c:'ИП Краснов Д.В.', score:49, reg:'Тюмень', avail:'Под заказ 14 дн', price:'₽270 000', ver:false, send:false},
+    ].slice(0, Math.max(0, count - existing.length));
+
+    MATCH_DATA[rfqKey] = [...existing, ...newMatches];
+    // Re-render if currently viewing this RFQ
+    if(currentMatchRFQ === rfqKey) {
+      const matches = MATCH_DATA[rfqKey];
+      document.getElementById('match-items').innerHTML = matches.map((m,i)=>`
+        <div class="mi-item">
+          <div class="mi-rank">${m.r}</div>
+          <div style="min-width:170px">
+            <div style="font-size:12px;font-weight:700">${m.c}</div>
+            <div style="font-size:10px;color:var(--tx3)">📍 ${m.reg} · ${m.avail}</div>
+          </div>
+          <div style="width:90px;display:flex;align-items:center;gap:5px">
+            <div class="sb-bar"><div class="sf" style="width:${m.score}%"></div></div>
+          </div>
+          <div class="mi-score">${m.score}%</div>
+          <div style="min-width:90px;font-size:12px;font-weight:700">${m.price}/шт</div>
+          <div style="min-width:95px">${m.ver?'<span class="badge bg">✓ Верифицирован</span>':'<span class="badge ba">На проверке</span>'}</div>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;white-space:nowrap">
+            <input type="checkbox" ${m.send?'checked':''} onchange="MATCH_DATA['${rfqKey}'][${i}].send=this.checked"> Включить
+          </label>
+        </div>`).join('');
+    }
+    toast('✅ AI-матчинг завершён: найдено '+MATCH_DATA[rfqKey].length+' поставщиков','s');
+    closeModal('mo-rematch');
+  }, 2000);
+}
+
+function openRematch() {
+  const rfqId = currentMatchRFQ.replace('RFQ-','');
+  const current = (MATCH_DATA[currentMatchRFQ]||[]).length;
+  document.getElementById('mo-rematch-sub').textContent = '#'+rfqId+' · Сейчас: '+current+' поставщиков';
+  document.getElementById('mo-rematch').classList.add('open');
+}
+
+// ══════════════════════════════════════════
+// ПРОСМОТР/ЗАГРУЗКА ДОКУМЕНТОВ
+// ══════════════════════════════════════════
+function viewDoc(docName) {
+  toast('📄 Документ открыт: '+docName,'i');
+  // In production: open from Supabase Storage URL
+  window.open('data:text/plain;charset=utf-8,Документ: '+encodeURIComponent(docName), '_blank');
+}
+
+function uploadDocForReg(docIndex) {
+  const input = document.createElement('input');
+  input.type='file'; input.accept='.pdf,.jpg,.png,.docx';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const r = REGS[currentReg];
+    if(r.docs[docIndex]) {
+      r.docs[docIndex].ok = 'ok';
+      r.docs[docIndex].badge = 'ok';
+      r.docs[docIndex].meta = file.name+' · '+Math.round(file.size/1024)+' КБ · загружен '+new Date().toLocaleDateString('ru-RU');
+      r.history.push({dot:'rgba(26,124,62,.5)',ico:'📄',title:'Загружен: '+file.name,meta:new Date().toLocaleDateString('ru-RU')});
+    }
+    openReg(currentReg); // re-render
+    toast('✅ "'+file.name+'" загружен','s');
+  };
+  input.click();
+}
+
+function uploadDoc(docType) {
+  const input = document.createElement('input');
+  input.type='file'; input.accept='.pdf,.jpg,.png,.docx';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const r = REGS[currentReg];
+    const doc = r.docs.find(d=>d.name.includes(docType));
+    if(doc) { doc.ok='ok'; doc.badge='ok'; doc.meta = file.name+' · '+Math.round(file.size/1024)+' КБ · только что'; }
+    r.history.push({dot:'rgba(26,124,62,.5)',ico:'📄',title:'Загружен: '+file.name,meta:new Date().toLocaleDateString('ru-RU')});
+    openReg(currentReg); // re-render
+    toast('✅ Документ "'+file.name+'" загружен','s');
+  };
+  input.click();
+}
 
 function toast(msg, type='i') {
   const t=document.getElementById('toast-el');
