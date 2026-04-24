@@ -220,9 +220,8 @@ textarea.fi{resize:vertical;min-height:90px}
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <span>🟢 ТЕСТОВЫЙ РЕЖИМ</span>
-  <span>nefteservicetrade.com — Личный кабинет поставщика</span>
-  <span>Апрель 2026</span>
+  <span>Нефтесервис Трейд — Личный кабинет поставщика</span>
+  <span><a href="catalog.html" style="color:rgba(255,255,255,.6);text-decoration:none;font-size:11px;">← Каталог</a></span>
 </div>
 
 <!-- HEADER -->
@@ -232,8 +231,15 @@ textarea.fi{resize:vertical;min-height:90px}
     <div><div class="logo-name">Нефтесервис Трейд</div><div class="logo-sub">Личный кабинет</div></div>
     <div class="h-user">
       <span>👤</span>
-      <div><div class="h-company">ООО ДемоБурТех</div><div style="font-size:10px;color:var(--text-3)">Директор: Иванов И.И.</div></div>
-      <button class="btn-exit" onclick="goPage('reg')">Выйти</button>
+      <div id="hdr-user-info" style="display:none">
+        <div class="h-company" id="hdr-company-name">—</div>
+        <div style="font-size:10px;color:var(--text-3)" id="hdr-user-email">—</div>
+      </div>
+      <div id="hdr-guest-info">
+        <div style="font-size:13px;color:var(--text-2)">Не авторизован</div>
+      </div>
+      <button class="btn-exit" id="btn-logout" onclick="doLogout()" style="display:none">Выйти из кабинета</button>
+      <button class="btn-exit" id="btn-login-header" onclick="goPage('landing')" style="border-color:var(--green);color:var(--green);">Войти / Регистрация</button>
     </div>
   </div>
 </header>
@@ -253,7 +259,7 @@ textarea.fi{resize:vertical;min-height:90px}
   <div class="nav-item" onclick="goPage('deals')" id="nav-deals"><span class="ico">🤝</span> Сделки</div>
   <div class="sidebar-section">Просмотр</div>
   <div class="nav-item" onclick="goPage('public')" id="nav-public"><span class="ico">🌐</span> Вид для покупателей</div>
-  <div class="nav-item" onclick="goPage('reg')" id="nav-reg"><span class="ico">📝</span> Регистрация</div>
+  <div class="nav-item" onclick="goPage('landing')" id="nav-landing"><span class="ico">🏠</span> Вход / Регистрация</div>
   <div class="verify-card">
     <h4>✓ Статус верификации</h4>
     <p>Добавьте сертификаты и 5+ SKU для статуса "Верифицирован".</p>
@@ -263,6 +269,53 @@ textarea.fi{resize:vertical;min-height:90px}
 </aside>
 
 <main class="main">
+
+<!-- ══════════ LANDING (стартовая) ══════════ -->
+<div class="page" id="page-landing">
+  <div style="max-width:480px;margin:40px auto;text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🏭</div>
+    <div style="font-size:26px;font-weight:800;color:var(--text);margin-bottom:8px">Личный кабинет поставщика</div>
+    <div style="font-size:14px;color:var(--text-3);margin-bottom:32px;line-height:1.6">
+      Управляйте карточкой компании, загружайте SKU-каталог с фото и ценами, получайте входящие запросы от покупателей
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="land-login-block" class="card" style="margin-bottom:16px;text-align:left">
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px">Войти в кабинет</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:16px">Для зарегистрированных и верифицированных поставщиков</div>
+      <div class="fg"><label>Email</label><input class="fi" id="landEmail" type="email" placeholder="your@company.ru"></div>
+      <div class="fg"><label>Пароль</label><input class="fi" id="landPass" type="password" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter')doLandLogin()"></div>
+      <div id="landErr" style="color:var(--red);font-size:12px;padding:8px 12px;background:rgba(192,57,43,.06);border-radius:7px;margin-bottom:10px;display:none"></div>
+      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="doLandLogin()" id="landLoginBtn">
+        Войти →
+      </button>
+      <div style="margin-top:10px;font-size:11px;color:var(--text-3);text-align:center">
+        Забыли пароль? <a href="mailto:v.grishankov@gmail.com" style="color:var(--green)">Написать менеджеру НТ</a>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="display:flex;align-items:center;gap:12px;margin:4px 0 16px;color:var(--text-3);font-size:12px">
+      <div style="flex:1;height:1px;background:var(--border)"></div>или<div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+
+    <!-- REGISTER BUTTON -->
+    <div class="card" style="text-align:left">
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px">Новый поставщик?</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:14px;line-height:1.5">
+        Зарегистрируйте компанию — разместите каталог, SKU и начните получать запросы от покупателей
+      </div>
+      <button class="btn btn-secondary" style="width:100%;padding:12px;font-size:13px" onclick="goPage('reg');wizardStep(1)">
+        Зарегистрировать компанию →
+      </button>
+    </div>
+
+    <div style="margin-top:20px;font-size:11px;color:var(--text-3);line-height:1.6">
+      После регистрации менеджер Нефтесервис Трейд проверит данные компании<br>и активирует доступ в течение 24 часов
+    </div>
+  </div>
+</div>
 
 <!-- ══════════ РЕГИСТРАЦИЯ ══════════ -->
 <div class="page active" id="page-reg">
@@ -282,7 +335,7 @@ textarea.fi{resize:vertical;min-height:90px}
     <div class="card">
       <div class="card-title"><span>🏢</span> Данные компании</div>
       <div class="form-grid">
-        <div class="fg"><label>Полное название <span>*</span></label><input class="fi" value="ООО ДемоБурТех" placeholder="ООО..."></div>
+        <div class="fg"><label>Полное название <span>*</span></label><input class="fi" id="reg_name" placeholder="ООО Название..."></div>
         <div class="fg"><label>ИНН <span>*</span></label><input class="fi" value="7701234567"></div>
         <div class="fg"><label>ОГРН</label><input class="fi" value="1027700000000"></div>
         <div class="fg"><label>Тип компании <span>*</span></label>
@@ -300,13 +353,13 @@ textarea.fi{resize:vertical;min-height:90px}
     <div class="card">
       <div class="card-title"><span>📞</span> Контактная информация</div>
       <div class="form-grid">
-        <div class="fg"><label>ФИО директора <span>*</span></label><input class="fi" value="Иванов Иван Иванович"></div>
-        <div class="fg"><label>Контактное лицо</label><input class="fi" value="Коммерческий директор"></div>
-        <div class="fg"><label>Телефон <span>*</span></label><input class="fi" value="+7 (495) 123-45-67" type="tel"></div>
-        <div class="fg"><label>Email <span>*</span></label><input class="fi" value="info@demoburtech.ru" type="email"></div>
-        <div class="fg"><label>Сайт</label><input class="fi" value="https://demoburtech.ru" type="url"></div>
-        <div class="fg"><label>Telegram / WhatsApp</label><input class="fi" value="@demoburtech"></div>
-        <div class="fg" style="grid-column:1/-1"><label>Юридический адрес</label><input class="fi" value="115054, г. Москва, ул. Бакунинская, д. 4-6, стр. 1"></div>
+        <div class="fg"><label>ФИО директора <span>*</span></label><input class="fi" id="reg_fio" placeholder="Иванов Иван Иванович"></div>
+        <div class="fg"><label>Контактное лицо</label><input class="fi" id="reg_contact" placeholder="Должность"></div>
+        <div class="fg"><label>Телефон <span>*</span></label><input class="fi" id="reg_phone" placeholder="+7 (___) ___-__-__" type="tel"></div>
+        <div class="fg"><label>Email <span>*</span></label><input class="fi" id="reg_email" placeholder="your@company.ru" type="email"></div>
+        <div class="fg"><label>Сайт</label><input class="fi" id="reg_site" placeholder="https://" type="url"></div>
+        <div class="fg"><label>Telegram / WhatsApp</label><input class="fi" id="reg_tg" placeholder="@username"></div>
+        <div class="fg" style="grid-column:1/-1"><label>Юридический адрес</label><input class="fi" id="reg_addr" placeholder="Индекс, город, улица..."></div>
         <div class="fg"><label>Регион работы <span>*</span></label>
           <select class="fi"><option selected>Москва</option><option>Тюменская область</option><option>ХМАО</option><option>ЯНАО</option></select></div>
         <div class="fg"><label>Федеральный округ</label>
@@ -1312,10 +1365,84 @@ function declineRFQ(rfq) {
   }
 }
 
+// ── LOGOUT ──
+function doLogout() {
+  if(!confirm('Выйти из личного кабинета?')) return;
+  sessionStorage.removeItem('nt_token');
+  sessionStorage.removeItem('nt_user');
+  sessionStorage.removeItem('nt_pending_inn');
+  // Reset header
+  document.getElementById('hdr-user-info').style.display = 'none';
+  document.getElementById('hdr-guest-info').style.display = '';
+  document.getElementById('btn-logout').style.display = 'none';
+  document.getElementById('btn-login-header').style.display = '';
+  showToast('Вы вышли из личного кабинета','');
+  goPage('landing');
+}
+
+// ── LANDING LOGIN ──
+async function doLandLogin() {
+  const email = document.getElementById('landEmail').value.trim();
+  const pass  = document.getElementById('landPass').value;
+  const errEl = document.getElementById('landErr');
+  const btn   = document.getElementById('landLoginBtn');
+  if(!email || !pass) { errEl.textContent='Введите email и пароль'; errEl.style.display=''; return; }
+  errEl.style.display='none';
+  btn.textContent='Входим...'; btn.disabled=true;
+  try {
+    const r = await fetch(URL_SB+'/auth/v1/token?grant_type=password', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':KEY},
+      body: JSON.stringify({email, password:pass})
+    });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error_description || data.msg || 'Неверный email или пароль');
+    // Save session
+    sessionStorage.setItem('nt_token', data.access_token);
+    sessionStorage.setItem('nt_user', JSON.stringify(data.user));
+    // Update header
+    applySession(data.user);
+    showToast('✅ Вы вошли в личный кабинет','success');
+    goPage('dashboard');
+  } catch(e) {
+    errEl.textContent = e.message.includes('credentials') ? 'Неверный email или пароль' : e.message;
+    errEl.style.display='';
+    btn.textContent='Войти →'; btn.disabled=false;
+  }
+}
+
+// ── APPLY SESSION TO HEADER ──
+function applySession(user) {
+  if(!user) return;
+  const companyName = user.user_metadata?.company_name || user.email?.split('@')[0] || 'Кабинет';
+  document.getElementById('hdr-company-name').textContent = companyName;
+  document.getElementById('hdr-user-email').textContent = user.email || '';
+  document.getElementById('hdr-user-info').style.display = '';
+  document.getElementById('hdr-guest-info').style.display = 'none';
+  document.getElementById('btn-logout').style.display = '';
+  document.getElementById('btn-login-header').style.display = 'none';
+}
+
 // ── INIT ──
-goPage('reg');
-wizardStep(2);
-buildPhotoGrid('profilePhotoGrid','profile',100);
+(function initLK() {
+  // Check existing session
+  const token = sessionStorage.getItem('nt_token');
+  const userStr = sessionStorage.getItem('nt_user');
+  if(token && userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      applySession(user);
+      goPage('dashboard');
+    } catch(e) {
+      sessionStorage.removeItem('nt_token');
+      sessionStorage.removeItem('nt_user');
+      goPage('landing');
+    }
+  } else {
+    goPage('landing');
+  }
+  buildPhotoGrid('profilePhotoGrid','profile',100);
+})();
 </script>
 </body>
 </html>
