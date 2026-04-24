@@ -722,7 +722,12 @@ function openReg(idx) {
     `<div class="ti"><div class="td" style="background:${h.dot};color:#fff;font-size:10px">${h.ico}</div>
     <div class="tc"><div class="tti">${h.title}</div><div class="ttm">${h.meta}</div></div></div>`).join('');
 
-  nav('verification-list');
+  // Navigate to DETAIL page (not list)
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pg-verification').classList.add('on');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('ni-verification-list')?.classList.add('active');
+  window.scrollTo(0,0);
 }
 
 function requestDocs(idx) { openReg(idx); }
@@ -753,6 +758,10 @@ function confirmSendDoc() {
   r.history.push({dot:'rgba(194,113,10,.3)',ico:'📧',title:'Запрос документа отправлен',meta:new Date().toLocaleDateString('ru-RU')});
   toast('📧 Запрос отправлен на '+document.getElementById('modoc-to').value,'s');
 }
+
+// ══════════════════════════════════════════
+// ── ALIAS: approveSupplier = openApprove (called from HTML buttons) ──
+function approveSupplier() { openApprove(); }
 
 // ══════════════════════════════════════════
 // APPROVE / REJECT
@@ -878,6 +887,8 @@ function openRFQRow(id) {
 // ══════════════════════════════════════════
 function openMatchDetail(rfq, title, buyer, deadline, sku, price, region) {
   currentMatchRFQ = rfq;
+  // nav FIRST — then override display (nav resets these)
+  nav('matching');
   document.getElementById('matching-list').style.display='none';
   document.getElementById('matching-detail').style.display='';
   document.getElementById('md-title').textContent = '#'+rfq.replace('RFQ-','')+' · '+title.split('·')[0].trim();
@@ -908,7 +919,7 @@ function openMatchDetail(rfq, title, buyer, deadline, sku, price, region) {
         <input type="checkbox" ${m.send?'checked':''} onchange="MATCH_DATA['${rfq}'][${i}].send=this.checked"> Включить
       </label>
     </div>`).join('');
-  nav('matching');
+  // nav already called above — don't call again
 }
 
 function openSendModal() {
