@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Личный кабинет — Нефтесервис Трейд</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1A2535;--green:#1A7C3E;--green-d:#136130;--green-dim:rgba(26,124,62,.09);
+  --bg:#F5F6F8;--surface:#fff;--surface-2:#EEF0F3;--border:rgba(0,0,0,.09);
+  --text:#1C1A17;--text-2:rgba(28,26,23,.62);--text-3:rgba(28,26,23,.38);
+  --amber:#C2710A;--blue:#2563A8;--red:#C0392B;
+  --radius:10px;--radius-lg:14px;--tr:.17s ease;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--navy);color:rgba(255,255,255,.7);font-size:11px;padding:6px 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar span{color:#fff;font-weight:600}
+
+/* ── HEADER ── */
+header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;backdrop-filter:blur(12px)}
+.h-inner{max-width:1380px;margin:0 auto;padding:0 32px;height:60px;display:flex;align-items:center;gap:20px}
+.logo-mark{width:34px;height:34px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.logo-name{font-size:14px;font-weight:700}
+.logo-sub{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.h-user{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2)}
+.h-company{font-weight:700;color:var(--green)}
+.btn-exit{padding:6px 12px;border:1px solid var(--border);border-radius:7px;font:500 12px Inter,sans-serif;cursor:pointer;background:transparent;color:var(--text-3);transition:all var(--tr)}
+.btn-exit:hover{border-color:var(--red);color:var(--red)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:240px 1fr;max-width:1380px;margin:0 auto;padding:24px 32px;gap:24px;min-height:calc(100vh - 130px)}
+
+/* ── SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:6px}
+.sidebar-section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);padding:6px 12px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);cursor:pointer;transition:all var(--tr);font-size:13px;font-weight:500;color:var(--text-2)}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.active{background:var(--green-dim);color:var(--green);font-weight:600}
+.nav-item .ico{font-size:16px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.verify-card{background:var(--green-dim);border:1px solid rgba(26,124,62,.2);border-radius:var(--radius-lg);padding:14px;margin-top:8px}
+.verify-card h4{font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px}
+.verify-card p{font-size:11px;color:var(--text-2);line-height:1.5;margin-bottom:10px}
+.progress-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .5s ease}
+.progress-label{font-size:10px;color:var(--text-3)}
+
+/* ── MAIN CONTENT ── */
+.main{min-width:0}
+.page{display:none}
+.page.active{display:block}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:24px}
+.page-title{font-size:22px;font-weight:800;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text-3)}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:18px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title span{font-size:16px}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px}
+.stat-num{font-size:28px;font-weight:800;color:var(--green);margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--text-3)}
+.stat-delta{font-size:11px;color:var(--text-3);margin-top:3px}
+
+/* ── STATUS BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-new{background:var(--surface-2);color:var(--text-3)}
+.badge-pending{background:rgba(194,113,10,.1);color:var(--amber)}
+.badge-verified{background:var(--green-dim);color:var(--green);border:1px solid rgba(26,124,62,.2)}
+.badge-in-stock{background:var(--green-dim);color:var(--green)}
+.badge-on-order{background:rgba(37,99,168,.1);color:var(--blue)}
+.badge-unavail{background:rgba(192,57,43,.1);color:var(--red)}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.fg label span{color:var(--green)}
+.fi{width:100%;padding:9px 13px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;font:14px Inter,sans-serif;color:var(--text);outline:none;transition:border-color var(--tr)}
+.fi:focus{border-color:var(--green);background:#fff}
+.fi::placeholder{color:var(--text-3)}
+select.fi{cursor:pointer}
+textarea.fi{resize:vertical;min-height:90px}
+.fi-file{padding:8px 13px;cursor:pointer;border-style:dashed;text-align:center;color:var(--text-3);font-size:12px}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:8px;font:600 13px Inter,sans-serif;cursor:pointer;border:none;transition:all var(--tr)}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:var(--green-d)}
+.btn-secondary{background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}.btn-secondary:hover{border-color:var(--border);color:var(--text)}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{opacity:.9}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-row{display:flex;gap:8px;margin-top:18px}
+
+/* ── WIZARD STEPS ── */
+.wizard{display:flex;gap:0;margin-bottom:28px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden}
+.wizard-step{flex:1;padding:14px 12px;text-align:center;font-size:12px;color:var(--text-3);border-right:1px solid var(--border);cursor:pointer;transition:all var(--tr)}
+.wizard-step:last-child{border-right:none}
+.wizard-step.done{color:var(--green);background:var(--green-dim)}
+.wizard-step.current{color:var(--navy);font-weight:700;background:var(--surface-2)}
+.wizard-step .step-num{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--surface-2);margin:0 auto 5px;font-weight:700;font-size:12px}
+.wizard-step.done .step-num{background:var(--green);color:#fff}
+.wizard-step.current .step-num{background:var(--navy);color:#fff}
+.wizard-panel{display:none}
+.wizard-panel.active{display:block}
+
+/* ── TABLE ── */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;padding:10px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);border-bottom:2px solid var(--border);background:var(--surface-2)}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--surface-2)}
+.sku-code{font-family:monospace;font-size:12px;color:var(--green);font-weight:700;background:var(--green-dim);padding:2px 7px;border-radius:4px}
+
+/* ── IMAGE UPLOAD ── */
+.photo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.photo-slot{aspect-ratio:1;border:1px dashed var(--border);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all var(--tr);background:var(--surface-2);font-size:10px;color:var(--text-3);gap:4px;overflow:hidden}
+.photo-slot:hover{border-color:var(--green);color:var(--green)}
+.photo-slot.filled{border-style:solid;border-color:var(--border);padding:0}
+.photo-slot.filled img{width:100%;height:100%;object-fit:cover;border-radius:7px}
+.photo-slot .ico{font-size:22px}
+
+/* ── PUBLIC VIEW ── */
+.company-hero{background:linear-gradient(135deg,var(--navy) 0%,#1E3A2A 100%);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;display:flex;gap:18px;align-items:flex-start}
+.company-ava-lg{width:72px;height:72px;border-radius:12px;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;flex-shrink:0}
+.company-name-lg{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.company-meta{font-size:12px;color:rgba(255,255,255,.55)}
+.sku-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.sku-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:box-shadow var(--tr)}
+.sku-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.sku-photo{aspect-ratio:16/10;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:36px}
+.sku-body{padding:12px}
+.sku-code-small{font-family:monospace;font-size:10px;color:var(--green);margin-bottom:4px}
+.sku-name{font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.3}
+.sku-price{font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px}
+.sku-status{font-size:11px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.1);opacity:0;transform:translateY(8px);transition:all .3s;z-index:999;max-width:360px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-left:3px solid var(--green)}
+.toast.info{border-left:3px solid var(--blue)}
+
+/* ── INCOMING RFQ ── */
+.rfq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:16px}
+.rfq-dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px}
+.rfq-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.rfq-meta{font-size:12px;color:var(--text-3)}
+.rfq-actions{margin-left:auto;display:flex;gap:6px}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>🟢 ТЕСТОВЫЙ РЕЖИМ</span>
+  <span>nefteservicetrade.com — Личный кабинет поставщика</span>
+  <span>Апрель 2026</span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="h-inner">
+    <div class="logo-mark">НТ</div>
+    <div>
+      <div class="logo-name">Нефтесервис Трейд</div>
+      <div class="logo-sub">Личный кабинет</div>
+    </div>
+    <div class="h-user">
+      <span>👤</span>
+      <div>
+        <div class="h-company" id="hdrCompany">ООО ДемоБурТех</div>
+        <div style="font-size:10px;color:var(--text-3)">Директор: Иванов И.И.</div>
+      </div>
+      <button class="btn-exit" onclick="goPage('reg')">Выйти</button>
+    </div>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">Аккаунт</div>
+  <div class="nav-item" onclick="goPage('dashboard')" id="nav-dashboard">
+    <span class="ico">📊</span> Дашборд
+  </div>
+  <div class="nav-item" onclick="goPage('profile')" id="nav-profile">
+    <span class="ico">🏢</span> Профиль компании
+  </div>
+
+  <div class="sidebar-section">Каталог</div>
+  <div class="nav-item" onclick="goPage('catalog')" id="nav-catalog">
+    <span class="ico">📦</span> Номенклатура (SKU)
+    <span class="nav-badge" id="skuCount">3</span>
+  </div>
+  <div class="nav-item" onclick="goPage('upload')" id="nav-upload">
+    <span class="ico">⬆️</span> Загрузить прайс
+  </div>
+
+  <div class="sidebar-section">Сделки</div>
+  <div class="nav-item" onclick="goPage('rfq')" id="nav-rfq">
+    <span class="ico">📋</span> Входящие запросы
+    <span class="nav-badge">2</span>
+  </div>
+  <div class="nav-item" onclick="goPage('deals')" id="nav-deals">
+    <span class="ico">🤝</span> Сделки
+  </div>
+
+  <div class="sidebar-section">Просмотр</div>
+  <div class="nav-item" onclick="goPage('public')" id="nav-public">
+    <span class="ico">🌐</span> Вид для покупателей
+  </div>
+  <div class="nav-item" onclick="goPage('reg')" id="nav-reg">
+    <span class="ico">📝</span> Регистрация (демо)
+  </div>
+
+  <!-- Verify card -->
+  <div class="verify-card">
+    <h4>✓ Статус верификации</h4>
+    <p>Профиль заполнен на 72%. Добавьте сертификаты и 5+ SKU для статуса "Верифицирован".</p>
+    <div class="progress-bar"><div class="progress-fill" style="width:72%"></div></div>
+    <div class="progress-label">72% заполнено</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ══ РЕГИСТРАЦИЯ ══ -->
+<div class="page active" id="page-reg">
+  <div class="page-header">
+    <div class="page-title">📝 Регистрация поставщика</div>
+    <div class="page-sub">Тестовый режим — заполните данные чтобы войти в личный кабинет</div>
+  </div>
+
+  <div class="wizard">
+    <div class="wizard-step done" id="ws1">
+      <div class="step-num">✓</div>Компания
+    </div>
+    <div class="wizard-step current" id="ws2">
+      <div class="step-num">2</div>Контакты
+    </div>
+    <div class="wizard-step" id="ws3">
+      <div class="step-num">3</div>Деятельность
+    </div>
+    <div class="wizard-step" id="ws4">
+      <div class="step-num">4</div>Документы
+    </div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="wizard-panel" id="wp1">
+    <div class="card">
+      <div class="card-title"><span>🏢</span> Данные компании</div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Полное название <span>*</span></label>
+          <input class="fi" id="r_name" value="Общество с ограниченной ответственностью «ДемоБурТех»" placeholder="ООО...">
+        </div>
+        <div class="fg">
+          <label>Краткое название</label>
+          <input class="fi" id="r_short" value="ООО ДемоБурТех" placeholder="ООО...">
+        </div>
+        <div class="fg">
+          <label>ИНН <span>*</span></label>
+          <input class="fi" id="r_inn" value="7701234567" placeholder="10 или 12 цифр">
+        </div>
+        <div class="fg">
+          <label>ОГРН</label>
+          <input class="fi" id="r_ogrn" value="1027700000000" placeholder="13 цифр">
+        </div>
+        <div class="fg">
+          <label>Тип компании <span>*</span></label>
+          <select class="fi" id="r_type">
+            <option value="supplier" selected>Поставщик</option>
+            <option value="manufacturer">Производитель</option>
+            <option value="service">Сервисная компания</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Год основания</label>
+          <input class="fi" id="r_year" value="2015" type="number">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="wizardStep(2)">Далее →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 (active) -->
+  <div class="wizard-panel active" id="wp2">
+    <div class="card">
+      <div class="card-title"><span>📞</span> Контактная информация</div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>ФИО директора <span>*</span></label>
+          <input class="fi" value="Иванов Иван Иванович" placeholder="ФИО">
+        </div>
+        <div class="fg">
+          <label>Должность контактного лица</label>
+          <input class="fi" value="Коммерческий директор" placeholder="Должность">
+        </div>
+        <div class="fg">
+          <label>Телефон <span>*</span></label>
+          <input class="fi" value="+7 (495) 123-45-67" type="tel">
+        </div>
+        <div class="fg">
+          <label>Email <span>*</span></label>
+          <input class="fi" value="info@demoburtech.ru" type="email">
+        </div>
+        <div class="fg">
+          <label>Сайт</label>
+          <input class="fi" value="https://demoburtech.ru" type="url">
+        </div>
+        <div class="fg">
+          <label>Telegram / WhatsApp</label>
+          <input class="fi" value="@demoburtech" placeholder="@username">
+        </div>
+        <div class="fg" style="grid-column:1/-1">
+          <label>Юридический адрес</label>
+          <input class="fi" value="115054, г. Москва, ул. Бакунинская, д. 4-6, стр. 1">
+        </div>
+        <div class="fg">
+          <label>Регион работы <span>*</span></label>
+          <select class="fi">
+            <option selected>Москва</option>
+            <option>Тюменская область</option>
+            <option>ХМАО — Югра</option>
+            <option>ЯНАО</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Федеральный округ</label>
+          <select class="fi">
+            <option selected>Центральный</option>
+            <option>Уральский</option>
+            <option>Сибирский</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="wizardStep(1)">← Назад</button>
+        <button class="btn btn-primary" onclick="wizardStep(3)">Далее →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="wizard-panel" id="wp3">
+    <div class="card">
+      <div class="card-title"><span>⚙️</span> Деятельность и категории</div>
+      <div class="fg">
+        <label>Описание компании <span>*</span></label>
+        <textarea class="fi" rows="4">Производство и поставка бурового оборудования: долота PDC и шарошечные, БКМ, бурильные трубы. Сервис: промывка скважин, ликвидация аварий. Работаем по всей России.</textarea>
+      </div>
+      <div class="fg">
+        <label>Категории продуктов/услуг <span>*</span></label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border)">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Бурение</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> КРС и ремонт</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Добыча</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Заканчивание</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Трубная продукция</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Услуги нефтесервиса</label>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Основные рынки сбыта</label>
+          <input class="fi" value="РФ, Казахстан, Беларусь">
+        </div>
+        <div class="fg">
+          <label>Число сотрудников</label>
+          <select class="fi">
+            <option>1–10</option>
+            <option selected>11–50</option>
+            <option>51–200</option>
+            <option>200+</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="wizardStep(2)">← Назад</button>
+        <button class="btn btn-primary" onclick="wizardStep(4)">Далее →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="wizard-panel" id="wp4">
+    <div class="card">
+      <div class="card-title"><span>📄</span> Документы и фотографии</div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Свидетельство ОГРН / ИНН <span>*</span></label>
+          <input type="file" class="fi fi-file" accept=".pdf,.jpg,.png">
+        </div>
+        <div class="fg">
+          <label>Сертификаты (API, ISO, ГОСТ)</label>
+          <input type="file" class="fi fi-file" accept=".pdf,.jpg,.png" multiple>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Фотографии продукции / офиса (до 10 штук)</label>
+        <div class="photo-grid">
+          <div class="photo-slot filled"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%231A2535' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' font-size='30' fill='%231A7C3E'%3E⛏️%3C/text%3E%3C/svg%3E" alt=""></div>
+          <div class="photo-slot filled"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23EEF0F3' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' font-size='30'%3E🔩%3C/text%3E%3C/svg%3E" alt=""></div>
+          <div class="photo-slot filled"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23EEF0F3' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' font-size='30'%3E🏭%3C/text%3E%3C/svg%3E" alt=""></div>
+          <div class="photo-slot" onclick="showToast('Нажмите для загрузки фото','info')"><div class="ico">📷</div>Добавить</div>
+          <div class="photo-slot"><div class="ico">📷</div>Добавить</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="wizardStep(3)">← Назад</button>
+        <button class="btn btn-primary btn-amber" onclick="submitReg()">✓ Отправить на верификацию</button>
+      </div>
+    </div>
+    <div class="card" style="background:var(--surface-2);border:none">
+      <div style="font-size:12px;color:var(--text-3);line-height:1.6">
+        <b>Что будет после отправки:</b><br>
+        1. Менеджер НТ свяжется с вами в течение 24 часов<br>
+        2. Проверим документы и подтвердим регистрацию<br>
+        3. Присвоим SKU-номера вашей номенклатуре<br>
+        4. Опубликуем профиль со статусом <span class="badge badge-verified">✓ Верифицирован</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ДАШБОРД ══ -->
+<div class="page" id="page-dashboard">
+  <div class="page-header">
+    <div class="page-title">📊 Дашборд</div>
+    <div class="page-sub">Добро пожаловать, ООО ДемоБурТех · Статус: <span class="badge badge-pending">⏳ На проверке</span></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-num">3</div>
+      <div class="stat-label">SKU позиций</div>
+      <div class="stat-delta">+ добавить ещё</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--amber)">2</div>
+      <div class="stat-label">Входящих запроса</div>
+      <div class="stat-delta">Требуют ответа</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--blue)">47</div>
+      <div class="stat-label">Просмотров профиля</div>
+      <div class="stat-delta">За последние 7 дней</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:var(--text-3)">0</div>
+      <div class="stat-label">Сделок закрыто</div>
+      <div class="stat-delta">Первая — уже скоро!</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📋</span> Последние входящие запросы</div>
+    <div class="rfq-item">
+      <div class="rfq-dot"></div>
+      <div>
+        <div class="rfq-title">Долото PDC 215.9мм — 3 шт. · ХМАО</div>
+        <div class="rfq-meta">От: Сургутнефтегаз (закупщик) · 2 часа назад · Срок: до 15 мая</div>
+      </div>
+      <div class="rfq-actions">
+        <button class="btn btn-primary btn-sm" onclick="goPage('rfq')">Ответить</button>
+        <button class="btn btn-secondary btn-sm">Отказать</button>
+      </div>
+    </div>
+    <div class="rfq-item">
+      <div class="rfq-dot" style="background:var(--amber)"></div>
+      <div>
+        <div class="rfq-title">Бурильные трубы 127мм — 1000м · Татарстан</div>
+        <div class="rfq-meta">От: ТНГ-Групп (верифицированный покупатель) · вчера · Срок: до 20 мая</div>
+      </div>
+      <div class="rfq-actions">
+        <button class="btn btn-primary btn-sm" onclick="goPage('rfq')">Ответить</button>
+        <button class="btn btn-secondary btn-sm">Отказать</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>✅</span> Чек-лист верификации</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+        <span style="font-size:16px">✅</span> Профиль компании заполнен
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+        <span style="font-size:16px">✅</span> ИНН проверен через ЕГРЮЛ
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+        <span style="font-size:16px">⏳</span> Документы на проверке (1-2 дня)
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-3)">
+        <span style="font-size:16px">⬜</span> Добавьте 5+ SKU в каталог
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-3)">
+        <span style="font-size:16px">⬜</span> Загрузите фото продукции (3+)
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn btn-primary btn-sm" onclick="goPage('catalog')">Добавить SKU →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ПРОФИЛЬ ══ -->
+<div class="page" id="page-profile">
+  <div class="page-header">
+    <div class="page-title">🏢 Профиль компании</div>
+    <div class="page-sub">Заполните максимально — это видят покупатели в каталоге</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>🖼️</span> Логотип и фотографии</div>
+    <div class="photo-grid">
+      <div class="photo-slot filled" title="Логотип"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%231A2535' width='100' height='100'/%3E%3Ctext x='50' y='60' text-anchor='middle' font-size='36' fill='%231A7C3E' font-weight='bold'%3EДБТ%3C/text%3E%3C/svg%3E" alt=""></div>
+      <div class="photo-slot filled"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23EEF0F3' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' font-size='30'%3E⛏️%3C/text%3E%3C/svg%3E" alt=""></div>
+      <div class="photo-slot filled"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23EEF0F3' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' font-size='30'%3E🏭%3C/text%3E%3C/svg%3E" alt=""></div>
+      <div class="photo-slot" onclick="showToast('Нажмите для загрузки','info')"><div class="ico">📷</div>Добавить</div>
+      <div class="photo-slot"><div class="ico">📷</div>Добавить</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>📝</span> Основная информация</div>
+    <div class="form-grid">
+      <div class="fg" style="grid-column:1/-1">
+        <label>Описание компании <span>*</span></label>
+        <textarea class="fi" rows="3">Производство и поставка бурового оборудования: долота PDC и шарошечные, БКМ, бурильные трубы. Сервис: промывка скважин, ликвидация аварий. Работаем по всей России.</textarea>
+      </div>
+      <div class="fg">
+        <label>Веб-сайт</label>
+        <input class="fi" value="https://demoburtech.ru">
+      </div>
+      <div class="fg">
+        <label>Telegram</label>
+        <input class="fi" value="@demoburtech">
+      </div>
+      <div class="fg">
+        <label>Минимальная сумма заказа</label>
+        <input class="fi" value="от ₽500 000">
+      </div>
+      <div class="fg">
+        <label>Условия оплаты</label>
+        <select class="fi">
+          <option selected>100% предоплата</option>
+          <option>50% предоплата + 50% по факту</option>
+          <option>Отсрочка 30 дней</option>
+          <option>Факторинг</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="showToast('Профиль сохранён','success')">💾 Сохранить</button>
+      <button class="btn btn-secondary" onclick="goPage('public')">👁 Просмотр как покупатель</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ КАТАЛОГ SKU ══ -->
+<div class="page" id="page-catalog">
+  <div class="page-header">
+    <div class="page-title">📦 Номенклатура (SKU)</div>
+    <div class="page-sub">3 позиции · Нажмите на позицию для редактирования</div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px">
+      <button class="btn btn-secondary btn-sm" onclick="goPage('upload')">⬆️ Загрузить Excel</button>
+      <button class="btn btn-primary btn-sm" onclick="addSKU()">+ Добавить позицию</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>SKU-код</th>
+          <th>Наименование</th>
+          <th>ГОСТ/ТУ</th>
+          <th>Цена</th>
+          <th>Кол-во</th>
+          <th>Статус</th>
+          <th>Фото</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody id="skuTable">
+        <tr>
+          <td><span class="sku-code">НТ-БУ-ДОЛ-0047</span></td>
+          <td><b>Долото PDC 215.9мм</b><br><span style="font-size:11px;color:var(--text-3)">Серия Iridium · 5-лопастное</span></td>
+          <td style="font-size:12px">ГОСТ Р 11059-2019</td>
+          <td style="font-weight:700">₽280 000/шт</td>
+          <td>12 шт</td>
+          <td><span class="badge badge-in-stock">● В наличии</span></td>
+          <td style="font-size:20px;text-align:center">⛏️</td>
+          <td><button class="btn btn-secondary btn-sm" onclick="editSKU(0)">✏️</button></td>
+        </tr>
+        <tr>
+          <td><span class="sku-code">НТ-БУ-ТРУ-0012</span></td>
+          <td><b>Бурильная труба 127×9мм</b><br><span style="font-size:11px;color:var(--text-3)">Группа прочности E, L=9м</span></td>
+          <td style="font-size:12px">ГОСТ Р 50278</td>
+          <td style="font-weight:700">₽45 000/м</td>
+          <td>500 м</td>
+          <td><span class="badge badge-in-stock">● В наличии</span></td>
+          <td style="font-size:20px;text-align:center">🔗</td>
+          <td><button class="btn btn-secondary btn-sm" onclick="editSKU(1)">✏️</button></td>
+        </tr>
+        <tr>
+          <td><span class="sku-code">НТ-КРС-ИНС-0003</span></td>
+          <td><b>Промывка скважины (услуга)</b><br><span style="font-size:11px;color:var(--text-3)">Депарафинизация НКТ, КРС</span></td>
+          <td style="font-size:12px">СТО Газпром 2-3.5</td>
+          <td style="font-weight:700">от ₽150 000</td>
+          <td>—</td>
+          <td><span class="badge badge-on-order">◌ Под заказ 5 дн</span></td>
+          <td style="font-size:20px;text-align:center">🔧</td>
+          <td><button class="btn btn-secondary btn-sm" onclick="editSKU(2)">✏️</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SKU EDIT MODAL (inline) -->
+  <div class="card" id="skuEditCard" style="display:none;border:2px solid var(--green)">
+    <div class="card-title"><span>✏️</span> Редактирование позиции</div>
+    <div class="form-grid">
+      <div class="fg">
+        <label>SKU-код (присваивает платформа)</label>
+        <input class="fi" id="edit_sku" value="НТ-БУ-ДОЛ-0047" readonly style="color:var(--green);font-family:monospace">
+      </div>
+      <div class="fg">
+        <label>Наименование <span>*</span></label>
+        <input class="fi" id="edit_name" value="Долото PDC 215.9мм">
+      </div>
+      <div class="fg">
+        <label>Тип позиции</label>
+        <select class="fi">
+          <option selected>Оборудование</option>
+          <option>Услуга</option>
+          <option>Расходный материал</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>ГОСТ / ТУ / API</label>
+        <input class="fi" value="ГОСТ Р 11059-2019">
+      </div>
+      <div class="fg">
+        <label>Цена (₽)</label>
+        <input class="fi" value="280000" type="number">
+      </div>
+      <div class="fg">
+        <label>Единица измерения</label>
+        <select class="fi">
+          <option selected>шт</option><option>м</option><option>кг</option><option>т</option><option>услуга</option><option>м³</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Количество в наличии</label>
+        <input class="fi" value="12" type="number">
+      </div>
+      <div class="fg">
+        <label>Статус</label>
+        <select class="fi" id="edit_status">
+          <option selected>В наличии</option>
+          <option>Под заказ</option>
+          <option>Срок изготовления (укажите дней)</option>
+          <option>Нет в наличии</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Срок изготовления / поставки (дней)</label>
+        <input class="fi" value="" placeholder="если не в наличии">
+      </div>
+      <div class="fg">
+        <label>Производитель / бренд</label>
+        <input class="fi" value="ДемоБурТех (собственное производство)">
+      </div>
+      <div class="fg" style="grid-column:1/-1">
+        <label>Технические характеристики</label>
+        <textarea class="fi" rows="3">Диаметр: 215.9мм; Тип: PDC; Лопастей: 5; Вооружение: цилиндрические резцы ⌀19мм; Присоединительная резьба: З-171; Масса: 38 кг</textarea>
+      </div>
+      <div class="fg" style="grid-column:1/-1">
+        <label>Фотографии позиции</label>
+        <div class="photo-grid">
+          <div class="photo-slot filled"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%231A2535' width='100' height='100'/%3E%3Ctext x='50' y='55' text-anchor='middle' font-size='40'%3E⛏️%3C/text%3E%3C/svg%3E" alt=""></div>
+          <div class="photo-slot" onclick="showToast('Нажмите для загрузки','info')"><div class="ico">📷</div>Главное</div>
+          <div class="photo-slot"><div class="ico">📷</div>Фото 2</div>
+          <div class="photo-slot"><div class="ico">📷</div>Фото 3</div>
+          <div class="photo-slot"><div class="ico">📷</div>Чертёж</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveSKU()">💾 Сохранить</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('skuEditCard').style.display='none'">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ЗАГРУЗКА ══ -->
+<div class="page" id="page-upload">
+  <div class="page-header">
+    <div class="page-title">⬆️ Загрузка прайс-листа</div>
+    <div class="page-sub">Загрузите Excel/CSV — мы автоматически присвоим SKU-номера</div>
+  </div>
+  <div class="card">
+    <div style="border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all var(--tr)"
+         onmouseenter="this.style.borderColor='var(--green)'" onmouseleave="this.style.borderColor='var(--border)'"
+         onclick="showToast('В тестовом режиме: загрузите файл для демонстрации','info')">
+      <div style="font-size:48px;margin-bottom:12px">📊</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px">Перетащите файл или нажмите для выбора</div>
+      <div style="font-size:12px;color:var(--text-3)">Поддерживаются: .xlsx, .xls, .csv (до 10 МБ)</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>📋</span> Шаблон для заполнения</div>
+    <p style="font-size:13px;color:var(--text-2);margin-bottom:16px">Скачайте шаблон Excel и заполните по образцу:</p>
+    <table class="data-table">
+      <thead><tr><th>Наименование *</th><th>Ед.изм *</th><th>Цена *</th><th>Кол-во</th><th>ГОСТ/ТУ</th><th>Статус</th><th>Срок (дн)</th><th>Описание</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Долото PDC 215.9мм</td><td>шт</td><td>280000</td><td>12</td>
+          <td>ГОСТ Р 11059</td><td>В наличии</td><td></td><td>5-лопастное, резцы 19мм</td>
+        </tr>
+        <tr>
+          <td>Бурильная труба 127×9мм</td><td>м</td><td>45000</td><td>500</td>
+          <td>ГОСТ Р 50278</td><td>В наличии</td><td></td><td>Группа E, L=9м</td>
+        </tr>
+        <tr style="color:var(--text-3)">
+          <td>Долото шарошечное 214.3мм</td><td>шт</td><td>95000</td><td>0</td>
+          <td>ГОСТ Р 11059</td><td>Под заказ</td><td>14</td><td>3-шарошечное, тип ГАУ</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-sm" onclick="showToast('Шаблон скачан','success')">⬇️ Скачать шаблон .xlsx</button>
+    </div>
+  </div>
+  <div class="card" style="background:var(--surface-2);border:none">
+    <b style="font-size:13px">Что происходит после загрузки:</b>
+    <div style="margin-top:10px;font-size:12px;color:var(--text-2);display:flex;flex-direction:column;gap:6px">
+      <div>1️⃣ Мы парсим файл и находим все позиции</div>
+      <div>2️⃣ Каждой позиции автоматически присваивается SKU-код: <span class="sku-code">НТ-БУ-ДОЛ-0048</span></div>
+      <div>3️⃣ Вы проверяете и редактируете в таблице (добавляете фото, уточняете параметры)</div>
+      <div>4️⃣ Позиции публикуются в каталоге и попадают в AI-матчинг</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ВХОДЯЩИЕ RFQ ══ -->
+<div class="page" id="page-rfq">
+  <div class="page-header">
+    <div class="page-title">📋 Входящие запросы</div>
+    <div class="page-sub">2 активных запроса · Ответьте в течение 24 часов</div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--green)">
+    <div style="display:flex;align-items:flex-start;gap:16px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span class="badge badge-in-stock">🔴 Срочный</span>
+          <b>Запрос #RFQ-2847</b>
+          <span style="font-size:11px;color:var(--text-3)">· 2 часа назад</span>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Долото PDC 215.9мм — 3 штуки</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.6">
+          <b>Покупатель:</b> Сургутнефтегаз (верифицирован ✓)<br>
+          <b>Регион:</b> ХМАО — Югра<br>
+          <b>SKU:</b> <span class="sku-code">НТ-БУ-ДОЛ-0047</span><br>
+          <b>Срок поставки:</b> до 15 мая 2026<br>
+          <b>Комментарий:</b> Нужны сертификаты API · Доставка включена в цену
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="showToast('КП отправлено покупателю','success')">📤 Отправить КП</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Запрос отклонён','info')">Отказать</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Менеджер НТ уведомлён','info')">📞 Позвонить менеджеру НТ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:flex-start;gap:16px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span class="badge badge-pending">Обычный</span>
+          <b>Запрос #RFQ-2851</b>
+          <span style="font-size:11px;color:var(--text-3)">· вчера</span>
+        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Бурильные трубы 127мм — 1000 метров</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.6">
+          <b>Покупатель:</b> ТНГ-Групп (верифицирован ✓)<br>
+          <b>Регион:</b> Республика Татарстан<br>
+          <b>SKU:</b> <span class="sku-code">НТ-БУ-ТРУ-0012</span><br>
+          <b>Срок поставки:</b> до 20 мая 2026<br>
+          <b>Комментарий:</b> Группа прочности E или G · Самовывоз · Нужен паспорт материала
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="showToast('КП отправлено покупателю','success')">📤 Отправить КП</button>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Запрос отклонён','info')">Отказать</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ПУБЛИЧНЫЙ ВИД ══ -->
+<div class="page" id="page-public">
+  <div class="page-header">
+    <div class="page-title">🌐 Вид для покупателей</div>
+    <div class="page-sub">Так выглядит ваша компания в каталоге nefteservicetrade.com</div>
+  </div>
+
+  <div class="company-hero">
+    <div class="company-ava-lg">ДБТ</div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div class="company-name-lg">ООО ДемоБурТех</div>
+        <span class="badge badge-verified">✓ Верифицирован</span>
+      </div>
+      <div class="company-meta">
+        📍 Москва · ⚙️ Производитель · ИНН 7701234567<br>
+        Производство и поставка бурового оборудования. Долота PDC, бурильные трубы, КРС-услуги.
+      </div>
+      <div style="display:flex;gap:12px;margin-top:14px;font-size:12px">
+        <span style="color:rgba(255,255,255,.6)">📞 +7 (495) 123-45-67</span>
+        <span style="color:rgba(255,255,255,.6)">✉️ info@demoburtech.ru</span>
+        <span style="color:rgba(255,255,255,.6)">🌐 demoburtech.ru</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-primary" onclick="showToast('Форма RFQ открыта','info')">📋 Отправить запрос</button>
+      <button class="btn btn-secondary" style="color:#fff;border-color:rgba(255,255,255,.2)" onclick="showToast('Контакты скопированы','success')">📞 Позвонить</button>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:14px;margin-bottom:20px">
+    <div class="card" style="flex:1;margin-bottom:0;text-align:center">
+      <div style="font-size:24px;font-weight:800;color:var(--green)">3</div>
+      <div style="font-size:11px;color:var(--text-3)">SKU позиций</div>
+    </div>
+    <div class="card" style="flex:1;margin-bottom:0;text-align:center">
+      <div style="font-size:24px;font-weight:800;color:var(--text)">8.5</div>
+      <div style="font-size:11px;color:var(--text-3)">Рейтинг</div>
+    </div>
+    <div class="card" style="flex:1;margin-bottom:0;text-align:center">
+      <div style="font-size:24px;font-weight:800;color:var(--text)">2015</div>
+      <div style="font-size:11px;color:var(--text-3)">Год основания</div>
+    </div>
+    <div class="card" style="flex:1;margin-bottom:0;text-align:center">
+      <div style="font-size:24px;font-weight:800;color:var(--blue)">0</div>
+      <div style="font-size:11px;color:var(--text-3)">Сделок на НТ</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📦</span> Каталог продуктов и услуг</div>
+    <div class="sku-grid">
+      <div class="sku-card">
+        <div class="sku-photo">⛏️</div>
+        <div class="sku-body">
+          <div class="sku-code-small">НТ-БУ-ДОЛ-0047</div>
+          <div class="sku-name">Долото PDC 215.9мм · 5-лопастное</div>
+          <div class="sku-price">₽280 000 / шт</div>
+          <div class="sku-status"><span class="badge badge-in-stock">● В наличии 12 шт</span></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-3)">ГОСТ Р 11059-2019 · З-171</div>
+          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="showToast('Запрос отправлен поставщику','success')">Запросить КП</button>
+        </div>
+      </div>
+      <div class="sku-card">
+        <div class="sku-photo">🔗</div>
+        <div class="sku-body">
+          <div class="sku-code-small">НТ-БУ-ТРУ-0012</div>
+          <div class="sku-name">Бурильная труба 127×9мм · Группа E</div>
+          <div class="sku-price">₽45 000 / м</div>
+          <div class="sku-status"><span class="badge badge-in-stock">● В наличии 500 м</span></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-3)">ГОСТ Р 50278 · L=9м</div>
+          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="showToast('Запрос отправлен поставщику','success')">Запросить КП</button>
+        </div>
+      </div>
+      <div class="sku-card">
+        <div class="sku-photo">🔧</div>
+        <div class="sku-body">
+          <div class="sku-code-small">НТ-КРС-ИНС-0003</div>
+          <div class="sku-name">Промывка скважины (депарафинизация НКТ)</div>
+          <div class="sku-price">от ₽150 000</div>
+          <div class="sku-status"><span class="badge badge-on-order">◌ Под заказ · 5 дней</span></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-3)">СТО Газпром 2-3.5</div>
+          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="showToast('Запрос отправлен поставщику','success')">Запросить КП</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🔬</span> Сертификаты и документы</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <div style="padding:8px 14px;background:var(--surface-2);border-radius:8px;font-size:12px;font-weight:600">📄 Свидетельство ОГРН</div>
+      <div style="padding:8px 14px;background:var(--green-dim);border-radius:8px;font-size:12px;font-weight:600;color:var(--green)">✓ ISO 9001:2015</div>
+      <div style="padding:8px 14px;background:var(--surface-2);border-radius:8px;font-size:12px;font-weight:600">📄 ТР ЕАЭС 010/2011</div>
+      <div style="padding:8px 14px;background:var(--surface-2);border-radius:8px;font-size:12px;font-weight:600">📄 Карточка предприятия</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ СДЕЛКИ ══ -->
+<div class="page" id="page-deals">
+  <div class="page-header">
+    <div class="page-title">🤝 Сделки</div>
+    <div class="page-sub">История и активные сделки</div>
+  </div>
+  <div class="card" style="text-align:center;padding:48px">
+    <div style="font-size:48px;margin-bottom:16px;opacity:.4">🤝</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px">Сделок пока нет</div>
+    <div style="font-size:13px;color:var(--text-3);margin-bottom:20px">Ответьте на входящие запросы чтобы начать первую сделку</div>
+    <button class="btn btn-primary" onclick="goPage('rfq')">Перейти к запросам →</button>
+  </div>
+</div>
+
+</main>
+</div><!-- /layout -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+const state = { company: 'ООО ДемоБурТех', step: 2 };
+
+// ── NAVIGATION ──
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-'+id);
+  const nav  = document.getElementById('nav-'+id);
+  if (page) page.classList.add('active');
+  if (nav)  nav.classList.add('active');
+}
+
+// ── WIZARD ──
+function wizardStep(n) {
+  document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('wp'+n).classList.add('active');
+  for (let i=1;i<=4;i++) {
+    const ws = document.getElementById('ws'+i);
+    ws.classList.remove('done','current');
+    if (i < n) ws.classList.add('done');
+    else if (i === n) ws.classList.add('current');
+  }
+  state.step = n;
+}
+
+function submitReg() {
+  showToast('✅ Заявка отправлена! Менеджер свяжется в течение 24 часов','success');
+  setTimeout(() => goPage('dashboard'), 2000);
+}
+
+// ── SKU EDIT ──
+function editSKU(idx) {
+  const card = document.getElementById('skuEditCard');
+  card.style.display = 'block';
+  card.scrollIntoView({behavior:'smooth'});
+}
+
+function addSKU() {
+  const card = document.getElementById('skuEditCard');
+  document.getElementById('edit_sku').value = 'НТ-БУ-ДОЛ-0048 (будет присвоен)';
+  document.getElementById('edit_name').value = '';
+  card.style.display = 'block';
+  card.scrollIntoView({behavior:'smooth'});
+}
+
+function saveSKU() {
+  document.getElementById('skuEditCard').style.display = 'none';
+  const count = document.getElementById('skuCount');
+  count.textContent = parseInt(count.textContent) + 1;
+  showToast('✅ Позиция сохранена и опубликована в каталоге','success');
+}
+
+// ── TOAST ──
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className='toast', 4000);
+}
+
+// ── INIT ──
+goPage('reg');
+</script>
+</body>
+</html>
