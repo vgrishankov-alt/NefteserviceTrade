@@ -117,6 +117,11 @@ textarea.fi{resize:vertical;min-height:80px}
 .toast.s{border-left:3px solid var(--green)}
 .toast.i{border-left:3px solid var(--blu)}
 .toast.w{border-left:3px solid var(--amb)}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
@@ -142,6 +147,7 @@ textarea.fi{resize:vertical;min-height:80px}
   <div class="ni" onclick="nav('registrations')" id="ni-registrations">📝 Заявки<span class="nb nb-r">3</span></div>
   <div class="ni" onclick="nav('verification-list')" id="ni-verification-list">🔍 Верификация<span class="nb nb-a">2</span></div>
   <div class="ni" onclick="nav('suppliers')" id="ni-suppliers">🏭 Поставщики<span class="nb nb-g">0</span></div>
+  <div class="ni" onclick="nav('history')" id="ni-history">📁 История заявок<span class="nb nb-g" id="history-count">0</span></div>
   <div class="sep"></div>
   <div class="ss">RFQ / Сделки</div>
   <div class="ni" onclick="nav('rfq')" id="ni-rfq">📋 RFQ Пайплайн<span class="nb nb-b">4</span></div>
@@ -197,35 +203,7 @@ textarea.fi{resize:vertical;min-height:80px}
   <div class="card">
     <table class="dt">
       <thead><tr><th>Компания</th><th>ИНН</th><th>Категории</th><th>Дата</th><th>Документы</th><th>Статус</th><th></th></tr></thead>
-      <tbody>
-        <tr onclick="openReg(0)">
-          <td><b>ООО ДемоБурТех</b><br><span style="font-size:10px;color:var(--tx3)">Иванов И.И. · +7 495 123-45-67</span></td>
-          <td style="font-family:monospace">7701234567</td>
-          <td>Бурение, КРС</td>
-          <td>24.04.2026<br><span style="font-size:10px;color:var(--tx3)">2 ч. назад</span></td>
-          <td><span style="font-size:10px;color:var(--green)">✓ ОГРН ✓ ИНН</span> <span style="color:var(--red)">✗ Довер.</span></td>
-          <td><span class="badge bb">На рассм.</span></td>
-          <td><button class="btn bp bsm" onclick="event.stopPropagation();openReg(0)">Открыть</button></td>
-        </tr>
-        <tr onclick="openReg(1)">
-          <td><b>ИП Смирнов А.В.</b><br><span style="font-size:10px;color:var(--tx3)">Смирнов А.В. · +7 917 000-11-22</span></td>
-          <td style="font-family:monospace">631234567890</td>
-          <td>Нефтепромысловая химия</td>
-          <td>23.04.2026<br><span style="font-size:10px;color:var(--tx3)">вчера</span></td>
-          <td><span style="font-size:10px;color:var(--green)">✓ ОГРН ✓ ИНН ✓ Лиц. ✓ Довер.</span></td>
-          <td><span class="badge bb">На рассм.</span></td>
-          <td><button class="btn bp bsm" onclick="event.stopPropagation();openReg(1)">Открыть</button></td>
-        </tr>
-        <tr onclick="openReg(2)">
-          <td><b>ООО НефтеХимСервис</b><br><span style="font-size:10px;color:var(--tx3)">Петров К.В. · +7 812 111-22-33</span></td>
-          <td style="font-family:monospace">7807654321</td>
-          <td>Хим. · Услуги нефтесервиса</td>
-          <td>22.04.2026</td>
-          <td><span style="font-size:10px;color:var(--amb)">⚠ 2 документа не загружены</span></td>
-          <td><span class="badge ba">Ждёт докум.</span></td>
-          <td><button class="btn bs bsm" onclick="event.stopPropagation();requestDocs(2)">📧 Запросить</button></td>
-        </tr>
-      </tbody>
+      <tbody id="reg-tbody"></tbody>
     </table>
   </div>
 </div>
@@ -299,6 +277,21 @@ textarea.fi{resize:vertical;min-height:80px}
       <tbody id="sup-tbody"></tbody>
     </table>
   </div>
+</div>
+
+<!-- ══ HISTORY ══ -->
+<div class="pg" id="pg-history">
+  <div class="ph"><div class="pt">📁 История обработки заявок</div><div class="ps">Все обработанные заявки с историей корреспонденции</div></div>
+
+  <!-- Фильтры -->
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="btn bs bsm hist-filter active" data-filter="all" onclick="filterHistory('all')">Все</button>
+    <button class="btn bs bsm hist-filter" data-filter="approved" onclick="filterHistory('approved')">✅ Одобрены</button>
+    <button class="btn bs bsm hist-filter" data-filter="rejected" onclick="filterHistory('rejected')">✗ Отклонены</button>
+    <button class="btn bs bsm hist-filter" data-filter="waiting" onclick="filterHistory('waiting')">⚠ Ожидают</button>
+  </div>
+
+  <div id="history-list"></div>
 </div>
 
 <!-- ══ RFQ PIPELINE ══ -->
@@ -682,11 +675,119 @@ function nav(id) {
 
   if(id==='rfq') renderRFQ('all');
   if(id==='suppliers') renderSuppliers();
+  if(id==='registrations') renderRegistrations();
+  if(id==='history') renderHistory('all');
   if(id==='verification-list') renderVerificationList();
   if(id==='matching') {
     document.getElementById('matching-list').style.display='';
     document.getElementById('matching-detail').style.display='none';
   }
+}
+
+// ══════════════════════════════════════════
+// REGISTRATIONS DYNAMIC RENDER
+// ══════════════════════════════════════════
+function renderRegistrations() {
+  const active = REGS.filter(r => r.status === 'review' || r.status === 'waiting');
+  const tbody = document.getElementById('reg-tbody');
+  if(!tbody) return;
+
+  if(active.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--tx3)">Нет активных заявок</td></tr>';
+  } else {
+    tbody.innerHTML = '';
+    active.forEach(r => {
+      const noCount = r.docs.filter(d=>d.ok==='no').length;
+      const tr = document.createElement('tr');
+      tr.style.cursor='pointer';
+      tr.innerHTML = `
+        <td><b>${r.name}</b><br><span style="font-size:10px;color:var(--tx3)">${r.contact} · ${r.email}</span></td>
+        <td style="font-family:monospace">${r.inn}</td>
+        <td>${r.cats}</td>
+        <td>${r.date}<br><span style="font-size:10px;color:var(--tx3)">${r.id===0?'2 ч. назад':r.id===1?'вчера':'3 дня назад'}</span></td>
+        <td>${r.docs.filter(d=>d.ok==='ok').length} ✓${noCount>0?` <span style="color:var(--red)">✗ ${noCount} нет</span>`:''}</td>
+        <td><span class="badge ${r.status==='review'?'bb':'ba'}">${r.status==='review'?'На рассм.':'Ждёт докум.'}</span></td>
+        <td><button class="btn bp bsm reg-open-btn" data-idx="${r.id}">Открыть</button></td>`;
+      tr.addEventListener('click', () => openReg(r.id));
+      tr.querySelector('.reg-open-btn').addEventListener('click', e => { e.stopPropagation(); openReg(r.id); });
+      tbody.appendChild(tr);
+    });
+  }
+  // Update badge count in sidebar
+  const nb = document.querySelector('#ni-registrations .nb');
+  if(nb) nb.textContent = active.length;
+}
+
+// ══════════════════════════════════════════
+// HISTORY (PROCESSED REGISTRATIONS)
+// ══════════════════════════════════════════
+function renderHistory(filter) {
+  const items = filter === 'all'
+    ? REGS.filter(r=>r.status !== 'review' && r.status !== 'waiting')
+    : REGS.filter(r=>r.status===filter);
+
+  const container = document.getElementById('history-list');
+  if(!container) return;
+
+  if(items.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx3)"><div style="font-size:36px;margin-bottom:12px">📁</div><div>Нет записей в истории</div></div>';
+    return;
+  }
+
+  container.innerHTML = items.map(r => `
+    <div class="card" style="margin-bottom:12px;border-left:3px solid ${r.status==='approved'?'var(--green)':r.status==='rejected'?'var(--red)':'var(--amb)'}">
+      <div style="display:flex;align-items:flex-start;gap:16px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <b>${r.name}</b>
+            <span class="badge ${r.status==='approved'?'bg':r.status==='rejected'?'br':'ba'}">
+              ${r.status==='approved'?'✅ Авторизован':r.status==='rejected'?'✗ Отклонён':'⚠ Ожидает документов'}
+            </span>
+          </div>
+          <div style="font-size:12px;color:var(--tx3)">ИНН: ${r.inn} · ${r.cats} · Заявка от ${r.date}</div>
+
+          <!-- История корреспонденции -->
+          <div style="margin-top:12px">
+            <div style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">История</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              ${r.history.map(h=>`
+                <div style="display:flex;gap:8px;font-size:12px">
+                  <span style="font-size:14px">${h.ico}</span>
+                  <div>
+                    <span style="font-weight:600">${h.title}</span>
+                    <span style="color:var(--tx3);margin-left:8px">${h.meta}</span>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+          ${r.status==='rejected'?`<button class="btn bs bsm" onclick="openReg(${r.id})">Просмотр</button>
+            <button class="btn bp bsm" onclick="reconsiderReg(${r.id})">↩ Пересмотреть</button>`:''}
+          ${r.status==='approved'?`<button class="btn bs bsm" onclick="nav('suppliers')">Профиль →</button>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Update counter
+  const cnt = document.getElementById('history-count');
+  if(cnt) cnt.textContent = REGS.filter(r=>r.status!=='review'&&r.status!=='waiting').length;
+}
+
+function filterHistory(filter) {
+  document.querySelectorAll('.hist-filter').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.hist-filter[data-filter="${filter}"]`)?.classList.add('active');
+  renderHistory(filter);
+}
+
+function reconsiderReg(idx) {
+  const r = REGS[idx];
+  r.status = 'review';
+  r.history.push({dot:'rgba(37,99,168,.3)',ico:'↩',title:'Заявка возвращена на рассмотрение',meta:new Date().toLocaleDateString('ru-RU')});
+  renderRegistrations();
+  renderHistory('all');
+  toast('Заявка '+r.name+' возвращена на рассмотрение','i');
+  nav('registrations');
 }
 
 // ══════════════════════════════════════════
@@ -885,6 +986,7 @@ function confirmApprove() {
   const message = `✅ Поставщик авторизован\nКомпания: ${r.name}\nИНН: ${r.inn}\nКатегории: ${r.cats}\n\nКомпания опубликована в каталоге`;
   sendTelegramNotification(message);
 
+  renderRegistrations();
   toast('✅ '+r.name+' авторизован и опубликован в каталоге!','s');
   setTimeout(()=>nav('suppliers'),1500);
 }
@@ -898,11 +1000,14 @@ function confirmReject() {
   closeModal('mo-reject');
   const r = REGS[currentReg];
   const reason = document.getElementById('mo-rej-reason')?.value || 'Не указана';
+  r.status = 'rejected';
+  r.history.push({dot:'rgba(192,57,43,.5)',ico:'✗',title:'Отклонена',meta:new Date().toLocaleDateString('ru-RU')});
 
   // FIXED: Added Telegram notification when registration is rejected
   const message = `✗ Заявка отклонена\nКомпания: ${r.name}\nПричина: ${reason}`;
   sendTelegramNotification(message);
 
+  renderRegistrations();
   toast('Заявка отклонена. Уведомление отправлено.','w');
   setTimeout(()=>nav('registrations'),1200);
 }
@@ -1076,17 +1181,18 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 // AI ПОВТОРНЫЙ МАТЧИНГ (до 100 компаний)
 // ══════════════════════════════════════════
 function requestRematch(rfqId, count) {
-  const rfq = RFQ_DATA.find(r=>r.id===rfqId);
-  if(!rfq) return;
+  closeModal('mo-rematch');
+  const rfq = RFQ_DATA.find(r=>r.id===rfqId || r.id===String(rfqId));
+  if(!rfq) { toast('RFQ не найден','w'); return; }
 
-  // FIXED: Added Telegram notification when starting rematch
-  const message = `🤖 Запущен AI-матчинг для RFQ #${rfqId}\nПродукт: ${rfq.product}\nПоиск: до ${count} компаний`;
-  sendTelegramNotification(message);
+  // Send Telegram BEFORE simulation
+  const startMsg = `🤖 Запущен повторный AI-матчинг\n\nRFQ #${rfqId}: ${rfq.product} (${rfq.qty})\nПокупатель: ${rfq.buyer}\nЦель: ${count} компаний\nРегион: ${rfq.region}`;
+  sendTelegramNotification(startMsg, 'info');
 
-  toast('🤖 Запускаем AI-матчинг: '+count+' компаний по категории "'+rfq.product+'"...','i');
+  toast('🤖 AI-матчинг запущен для '+count+' компаний...','i');
 
-  // Simulate AI rematch with more companies
-  setTimeout(()=>{
+  // Simulate matching
+  setTimeout(async () => {
     const rfqKey = 'RFQ-'+rfqId;
     const existing = MATCH_DATA[rfqKey] || [];
     // Add more simulated matches
@@ -1099,6 +1205,8 @@ function requestRematch(rfqId, count) {
     ].slice(0, Math.max(0, count - existing.length));
 
     MATCH_DATA[rfqKey] = [...existing, ...newMatches];
+    const finalCount = MATCH_DATA[rfqKey].length;
+
     // Re-render if currently viewing this RFQ
     if(currentMatchRFQ === rfqKey) {
       const matches = MATCH_DATA[rfqKey];
@@ -1121,12 +1229,10 @@ function requestRematch(rfqId, count) {
         </div>`).join('');
     }
 
-    const finalCount = MATCH_DATA[rfqKey].length;
-    const resultMsg = `✅ AI-матчинг завершён\nRFQ #${rfqId}: найдено ${finalCount} поставщиков`;
-    sendTelegramNotification(resultMsg);
+    const resultMsg = `✅ AI-матчинг завершён\n\nRFQ #${rfqId}: ${rfq.product}\nНайдено поставщиков: ${finalCount}\nНовых добавлено: ${finalCount - existing.length}`;
+    sendTelegramNotification(resultMsg, 'success');
 
-    toast('✅ AI-матчинг завершён: найдено '+finalCount+' поставщиков','s');
-    closeModal('mo-rematch');
+    toast('✅ Матчинг завершён: '+finalCount+' поставщиков','s');
   }, 2000);
 }
 
@@ -1147,44 +1253,54 @@ function openRematch() {
 // ══════════════════════════════════════════
 const SUPABASE_URL = 'https://eiwbcjausfeyzjysvubs.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpd2JjamF1c2ZleXpqeXN2dWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDMyMzAsImV4cCI6MjA5MTIxOTIzMH0.5P0r5qApvRd3EdLuL9IlxOd1YLjDNHb5VAqRZvsUj_Q';
-// Telegram chat_id менеджера — узнать через @userinfobot в Telegram
-// Пока используем Edge Function tg-webhook который сам знает chat_id из env
-const TG_CHAT_ID = null; // Set via Supabase env var TELEGRAM_CHAT_ID
 
 async function sendTelegramNotification(message, type='info') {
-  // FIXED: Added Telegram notification function with two fallback methods
+  const emoji = type==='success'?'✅':type==='warn'?'⚠️':type==='error'?'❌':'ℹ️';
+  const text = `${emoji} <b>НТ Менеджер</b>\n\n${message}\n\n<i>${new Date().toLocaleString('ru-RU')}</i>`;
+
   try {
-    // Method 1: Try Supabase Edge Function
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/tg-webhook`, {
+    // Send via Supabase Edge Function tg-webhook
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/tg-webhook`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: message, chat_id: TG_CHAT_ID })
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        message: {
+          text: text.replace(/<[^>]+>/g,''), // plain text fallback
+          chat: { id: 'manager' }
+        },
+        text: text,
+        parse_mode: 'HTML'
+      })
     });
-    if (response.ok) {
-      console.log('Telegram notification sent via Edge Function');
+
+    if(r.ok) {
+      console.log('✅ Telegram sent via tg-webhook');
+      showTelegramStatus('✅ Уведомление отправлено в Telegram');
       return true;
     }
-  } catch (e) {
-    console.warn('Edge Function failed, trying Telegram Bot API');
+
+    const errData = await r.text();
+    console.warn('tg-webhook response:', r.status, errData);
+  } catch(e) {
+    console.warn('tg-webhook error:', e.message);
   }
 
-  // Method 2: Fallback to direct Telegram API (requires bot token)
-  try {
-    const botToken = 'BOT_TOKEN_HERE'; // Replace with actual token from env
-    const tgResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT_ID, text: message, parse_mode: 'HTML' })
-    });
-    if (tgResponse.ok) {
-      console.log('Telegram notification sent via Bot API');
-      return true;
-    }
-  } catch (e) {
-    console.warn('Telegram Bot API also failed');
-  }
-
+  // Visual fallback - show in UI that notification would be sent
+  showTelegramStatus('📱 Уведомление: ' + message.slice(0,60)+'...');
   return false;
+}
+
+function showTelegramStatus(msg) {
+  // Show a small notification that Telegram was triggered
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;bottom:80px;left:20px;background:#1A2535;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;z-index:998;max-width:300px;animation:slideIn .3s ease';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 4000);
 }
 
 // ══════════════════════════════════════════
@@ -1335,6 +1451,10 @@ document.addEventListener('DOMContentLoaded', () => {
       openMatchById(btn.dataset.rfq);
     });
   });
+
+  // Initialize registrations render
+  renderRegistrations();
+  renderHistory('all');
 });
 
 // INIT
