@@ -341,8 +341,8 @@ textarea.fi{resize:vertical;min-height:90px}
       <div class="card-title"><span>🏢</span> Данные компании</div>
       <div class="form-grid">
         <div class="fg"><label>Полное название <span>*</span></label><input class="fi" id="reg_name" placeholder="ООО Название..."></div>
-        <div class="fg"><label>ИНН <span>*</span></label><input class="fi" value="7701234567"></div>
-        <div class="fg"><label>ОГРН</label><input class="fi" value="1027700000000"></div>
+        <div class="fg"><label>ИНН <span>*</span></label><input class="fi" placeholder="10 или 12 цифр"></div>
+        <div class="fg"><label>ОГРН</label><input class="fi" placeholder="15 цифр"></div>
         <div class="fg"><label>Тип компании <span>*</span></label>
           <select class="fi"><option selected>Поставщик</option><option>Производитель</option><option>Сервисная компания</option></select></div>
         <div class="fg"><label>Год основания</label><input class="fi" value="2015" type="number"></div>
@@ -382,7 +382,7 @@ textarea.fi{resize:vertical;min-height:90px}
     <div class="card">
       <div class="card-title"><span>⚙️</span> Деятельность и категории</div>
       <div class="fg"><label>Описание <span>*</span></label>
-        <textarea class="fi" rows="4">Производство и поставка бурового оборудования: долота PDC, бурильные трубы, БКМ. Сервис: промывка скважин, ликвидация аварий. Работаем по всей России.</textarea></div>
+        <textarea class="fi" rows="4" placeholder="Опишите основную деятельность вашей компании..."></textarea></div>
       <div class="fg"><label>Категории <span>*</span></label>
         <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border)">
           <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Бурение</label>
@@ -410,6 +410,14 @@ textarea.fi{resize:vertical;min-height:90px}
             <div>📄 Нажмите для загрузки PDF/JPG</div>
             <div style="font-size:10px;color:var(--text-3);margin-top:4px">до 10 МБ</div>
           </div></div>
+        <div class="fg" style="grid-column:1/-1">
+          <label style="color:var(--red)">Карточка предприятия (реквизиты) <span>*</span> — ОБЯЗАТЕЛЬНО</label>
+          <div class="photo-zone" onclick="document.getElementById('docInput').click()" style="padding:14px;border-color:rgba(192,57,43,.4);background:rgba(192,57,43,.03)">
+            <div>📋 Карточка предприятия с реквизитами</div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:4px">ИНН, КПП, ОГРН, банковские реквизиты, адрес, подпись и печать · PDF/JPG</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:5px">Требуется для заключения договоров поставки и проведения платежей</div>
+        </div>
         <div class="fg" style="grid-column:1/-1">
           <label style="color:var(--red)">Доверенность от Генерального Директора <span>*</span> — ОБЯЗАТЕЛЬНО</label>
           <div class="photo-zone" onclick="document.getElementById('docInput').click()" style="padding:14px;border-color:rgba(192,57,43,.4);background:rgba(192,57,43,.03)">
@@ -524,12 +532,12 @@ textarea.fi{resize:vertical;min-height:90px}
     <div class="card-title"><span>📝</span> Основная информация</div>
     <div class="form-grid">
       <div class="fg" style="grid-column:1/-1"><label>Описание <span>*</span></label>
-        <textarea class="fi" rows="3">Производство и поставка бурового оборудования. Долота PDC, бурильные трубы, КРС-услуги.</textarea></div>
-      <div class="fg"><label>Сайт</label><input class="fi" value="https://demoburtech.ru"></div>
-      <div class="fg"><label>Telegram</label><input class="fi" value="@demoburtech"></div>
-      <div class="fg"><label>Минимальная сумма</label><input class="fi" value="от ₽500 000"></div>
+        <textarea class="fi" rows="3" placeholder="Опишите деятельность компании..."></textarea></div>
+      <div class="fg"><label>Сайт</label><input class="fi" placeholder="https://..." type="url"></div>
+      <div class="fg"><label>Telegram</label><input class="fi" placeholder="@username"></div>
+      <div class="fg"><label>Минимальная сумма</label><input class="fi" placeholder="от ₽..."></div>
       <div class="fg"><label>Условия оплаты</label>
-        <select class="fi"><option selected>100% предоплата</option><option>50/50</option><option>Отсрочка 30 дней</option></select></div>
+        <select class="fi"><option>100% предоплата</option><option>50/50</option><option>Отсрочка 30 дней</option></select></div>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="showToast('Профиль сохранён','success')">💾 Сохранить</button>
@@ -542,42 +550,21 @@ textarea.fi{resize:vertical;min-height:90px}
 <div class="page" id="page-catalog">
   <div class="page-header">
     <div class="page-title">📦 Номенклатура (SKU)</div>
-    <div class="page-sub">3 позиции · Нажмите на позицию для просмотра/редактирования</div>
+    <div class="page-sub" id="catalog-sub">SKU позиций пока нет</div>
   </div>
   <div class="card">
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px">
       <button class="btn btn-secondary btn-sm" onclick="goPage('upload')">⬆️ Загрузить Excel</button>
       <button class="btn btn-primary btn-sm" onclick="openSkuDetail(-1)">+ Новая позиция</button>
     </div>
-    <table class="data-table">
-      <thead><tr><th>SKU-код</th><th>Наименование</th><th>Цена</th><th>Кол-во</th><th>Статус</th><th>Фото</th><th></th></tr></thead>
-      <tbody>
-        <tr onclick="openSkuDetail(0)" style="cursor:pointer">
-          <td><span class="sku-code">НТ-БУ-ДОЛ-0047</span></td>
-          <td><b>Долото PDC 215.9мм</b><br><span style="font-size:11px;color:var(--text-3)">5-лопастное · Серия Iridium</span></td>
-          <td style="font-weight:700">₽280 000/шт</td><td>12 шт</td>
-          <td><span class="badge badge-in-stock">● В наличии</span></td>
-          <td style="font-size:20px">⛏️</td>
-          <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openSkuDetail(0)">✏️ Изменить</button></td>
-        </tr>
-        <tr onclick="openSkuDetail(1)" style="cursor:pointer">
-          <td><span class="sku-code">НТ-БУ-ТРУ-0012</span></td>
-          <td><b>Бурильная труба 127×9мм</b><br><span style="font-size:11px;color:var(--text-3)">Группа E · L=9м</span></td>
-          <td style="font-weight:700">₽45 000/м</td><td>500 м</td>
-          <td><span class="badge badge-in-stock">● В наличии</span></td>
-          <td style="font-size:20px">🔗</td>
-          <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openSkuDetail(1)">✏️ Изменить</button></td>
-        </tr>
-        <tr onclick="openSkuDetail(2)" style="cursor:pointer">
-          <td><span class="sku-code">НТ-КРС-ИНС-0003</span></td>
-          <td><b>Промывка скважины (услуга)</b><br><span style="font-size:11px;color:var(--text-3)">Депарафинизация НКТ</span></td>
-          <td style="font-weight:700">от ₽150 000</td><td>—</td>
-          <td><span class="badge badge-on-order">◌ Под заказ 5 дн</span></td>
-          <td style="font-size:20px">🔧</td>
-          <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openSkuDetail(2)">✏️ Изменить</button></td>
-        </tr>
-      </tbody>
-    </table>
+    <div id="catalog-content">
+      <div style="text-align:center;padding:40px;color:var(--text-3)">
+        <div style="font-size:36px;margin-bottom:12px">📦</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px">SKU позиций пока нет</div>
+        <div style="font-size:12px;margin-bottom:16px">Добавьте первую позицию в каталог — она появится в поиске покупателей</div>
+        <button class="btn btn-primary btn-sm" onclick="openSkuDetail(-1)">+ Добавить первую позицию</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -588,16 +575,14 @@ textarea.fi{resize:vertical;min-height:90px}
     <span style="font-size:13px;color:var(--text-3)" id="detailBreadcrumb">Каталог › Бурение › Долота</span>
   </div>
 
-  <div style="font-size:22px;font-weight:800;margin-bottom:16px" id="detailTitle">Долото PDC 215.9мм</div>
+  <div style="font-size:22px;font-weight:800;margin-bottom:16px" id="detailTitle">—</div>
 
   <div class="detail-layout">
     <!-- GALLERY -->
     <div class="detail-gallery">
-      <div class="detail-main-img" id="detailMainImg">⛏️</div>
+      <div class="detail-main-img" id="detailMainImg">📦</div>
       <div class="detail-thumbs" id="detailThumbs">
-        <div class="detail-thumb active">⛏️</div>
-        <div class="detail-thumb">📐</div>
-        <div class="detail-thumb">📋</div>
+        <div class="detail-thumb active" style="border-style:dashed">📦</div>
         <div class="detail-thumb" style="border-style:dashed;cursor:pointer" onclick="triggerSkuPhoto()">+</div>
       </div>
       <!-- Upload more photos -->
@@ -611,10 +596,10 @@ textarea.fi{resize:vertical;min-height:90px}
 
     <!-- SIDE PANEL -->
     <div class="detail-side">
-      <div class="detail-sku" id="detailSku">НТ-БУ-ДОЛ-0047</div>
+      <div class="detail-sku" id="detailSku">—</div>
       <div class="detail-price-label">Цена (от)</div>
-      <div class="detail-price" id="detailPrice">₽280 000</div>
-      <div class="detail-price-unit" id="detailUnit">за штуку · НДС не облагается</div>
+      <div class="detail-price" id="detailPrice">—</div>
+      <div class="detail-price-unit" id="detailUnit">—</div>
 
       <div class="config-box">
         <div class="config-title">⚙️ Настроить позицию</div>
@@ -684,25 +669,19 @@ textarea.fi{resize:vertical;min-height:90px}
 
   <div class="tab-panel active" id="tab-allinfo">
     <div class="card">
-      <div class="card-title"><span>📋</span> Общая информация</div>
-      <table class="specs-table">
+      <div class="card-title"><span>📋</span> Основная информация</div>
+      <table class="specs-table" id="sku-allinfo-table">
         <tbody>
-          <tr><td>SKU-код платформы</td><td><span class="sku-code">НТ-БУ-ДОЛ-0047</span></td></tr>
-          <tr><td>Производитель</td><td>ООО ДемоБурТех</td></tr>
-          <tr><td>Бренд / серия</td><td>Iridium Pro Series</td></tr>
-          <tr><td>Страна производства</td><td>Россия</td></tr>
-          <tr><td>Диаметр</td><td>215.9 мм (8½")</td></tr>
-          <tr><td>Тип</td><td>PDC (Polycrystalline Diamond Compact)</td></tr>
-          <tr><td>Число лопастей</td><td>5</td></tr>
-          <tr><td>Диаметр резца</td><td>19 мм (¾")</td></tr>
-          <tr><td>Присоединительная резьба</td><td>З-171 (API REG 6⅝")</td></tr>
-          <tr><td>Тип матрицы</td><td>Твёрдосплавная</td></tr>
-          <tr><td>Масса</td><td>38 кг</td></tr>
-          <tr><td>ГОСТ / ТУ</td><td>ГОСТ Р 11059-2019</td></tr>
-          <tr><td>Цена</td><td style="font-weight:700;color:var(--green)">₽280 000 / шт</td></tr>
-          <tr><td>В наличии</td><td><span class="badge badge-in-stock">● 12 шт</span></td></tr>
-          <tr><td>Срок поставки</td><td>1–3 рабочих дня (самовывоз) / 5–7 дней (доставка)</td></tr>
-          <tr><td>Минимальный заказ</td><td>1 шт</td></tr>
+          <tr><td>SKU-код платформы</td><td><span class="sku-code" id="allinfo-sku">—</span></td></tr>
+          <tr><td>Наименование</td><td id="allinfo-name">—</td></tr>
+          <tr><td>Производитель</td><td id="allinfo-mfg">—</td></tr>
+          <tr><td>Цена</td><td style="font-weight:700;color:var(--green)" id="allinfo-price">—</td></tr>
+          <tr><td>Единица измерения</td><td id="allinfo-unit">—</td></tr>
+          <tr><td>В наличии</td><td id="allinfo-qty">—</td></tr>
+          <tr><td>Статус</td><td id="allinfo-status">—</td></tr>
+          <tr><td>Срок поставки</td><td id="allinfo-delivery">—</td></tr>
+          <tr><td>Минимальный заказ</td><td id="allinfo-minorder">—</td></tr>
+          <tr><td>ГОСТ / ТУ / API</td><td id="allinfo-gost">—</td></tr>
         </tbody>
       </table>
     </div>
@@ -712,28 +691,8 @@ textarea.fi{resize:vertical;min-height:90px}
     <div class="card">
       <div class="card-title"><span>⚙️</span> Технические характеристики</div>
       <table class="specs-table">
-        <tbody>
-          <tr><td>Диаметр долота</td><td>215.9 мм (8½")</td></tr>
-          <tr><td>Тип вооружения</td><td>PDC — поликристаллические алмазные резцы</td></tr>
-          <tr><td>Число лопастей</td><td>5</td></tr>
-          <tr><td>Диаметр резца PDC</td><td>19 мм (¾")</td></tr>
-          <tr><td>Число резцов (всего)</td><td>40</td></tr>
-          <tr><td>Присоединительная резьба</td><td>З-171 (6⅝" REG API)</td></tr>
-          <tr><td>Тип калибрующих элементов</td><td>Твёрдосплавные вставки (ВК8)</td></tr>
-          <tr><td>Тип матрицы тела</td><td>Твёрдосплавная (WC-Co)</td></tr>
-          <tr><td>Число промывочных каналов</td><td>5</td></tr>
-          <tr><td>Тип насадок</td><td>Сменные · Ø 12–16 мм</td></tr>
-          <tr><td>Перепад давления</td><td>5–12 МПа</td></tr>
-          <tr><td>Расход бурового раствора</td><td>25–45 л/с</td></tr>
-          <tr><td>Рекомендуемая нагрузка на долото</td><td>5–15 т</td></tr>
-          <tr><td>Рекомендуемая частота вращения</td><td>40–200 об/мин</td></tr>
-          <tr><td>Осевая длина</td><td>290 мм</td></tr>
-          <tr><td>Масса</td><td>38 кг</td></tr>
-          <tr><td>Область применения</td><td>Вертикальные, наклонные, горизонтальные скважины · Мягкие и средние породы</td></tr>
-          <tr><td>Температура применения</td><td>до +150 °C</td></tr>
-          <tr><td>Тип бурового раствора</td><td>Водные, нефтяные, синтетические системы</td></tr>
-          <tr><td>ГОСТ / ТУ</td><td>ГОСТ Р 11059-2019</td></tr>
-          <tr><td>Наработка (типовая)</td><td>50–150 м проходки</td></tr>
+        <tbody id="sku-specs-body">
+          <tr><td colspan="2" style="text-align:center;color:var(--text-3);padding:24px">Добавьте техническую информацию в форму ниже</td></tr>
         </tbody>
       </table>
       <div class="btn-row" style="margin-top:14px">
@@ -746,29 +705,16 @@ textarea.fi{resize:vertical;min-height:90px}
   <div class="tab-panel" id="tab-desc">
     <div class="card">
       <div class="card-title"><span>📝</span> Описание</div>
-      <div style="font-size:14px;line-height:1.8;color:var(--text-2)">
-        <p style="margin-bottom:12px">Долото PDC серии Iridium Pro предназначено для бурения нефтегазовых скважин в мягких и средних горных породах. Разработано на основе передовых технологий поликристаллического алмазного бурения с применением современного термостойкого вооружения.</p>
-        <p style="font-weight:700;margin-bottom:8px;color:var(--text)">Особенности и преимущества:</p>
-        <ul style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
-          <li>Оптимизированная гидравлика промывки обеспечивает эффективное удаление шлама</li>
-          <li>Упрочнённые PDC-резцы с термостойким покрытием повышают ресурс долота</li>
-          <li>Пятилопастная конструкция обеспечивает устойчивость при бурении наклонно-направленных скважин</li>
-          <li>Совместимость с винтовыми забойными двигателями и роторными управляемыми системами (RSS)</li>
-          <li>Применяется в системах РУБ и при бурении горизонтальных стволов</li>
-          <li>Оптимизировано под российские геологические условия Западной Сибири, Татарстана и Оренбуржья</li>
-        </ul>
-        <p style="font-weight:700;margin-top:14px;margin-bottom:8px;color:var(--text)">Область применения:</p>
-        <ul style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
-          <li>Бурение вертикальных, наклонных и горизонтальных скважин</li>
-          <li>Мягкие породы: глины, известняки, мел, алевролиты</li>
-          <li>Средние породы: песчаники, доломиты, мергели</li>
-          <li>Совместимость с роторным бурением и телесистемами</li>
-        </ul>
+      <div id="sku-desc-view" style="font-size:14px;line-height:1.8;color:var(--text-2);min-height:100px;display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center;color:var(--text-3)">
+          <div style="font-size:16px;margin-bottom:6px">📝</div>
+          <div>Описание позиции появится здесь после сохранения</div>
+        </div>
       </div>
       <!-- Editable in LK -->
       <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
         <div style="font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:8px">РЕДАКТИРОВАНИЕ ОПИСАНИЯ</div>
-        <textarea class="fi" rows="5" style="font-size:13px">Долото PDC серии Iridium Pro предназначено для бурения нефтегазовых скважин в мягких и средних горных породах...</textarea>
+        <textarea class="fi" id="sku-desc-edit" rows="5" style="font-size:13px" placeholder="Добавьте подробное описание позиции..."></textarea>
         <div class="btn-row"><button class="btn btn-primary btn-sm" onclick="showToast('Описание сохранено','success')">💾 Сохранить</button></div>
       </div>
     </div>
@@ -777,22 +723,7 @@ textarea.fi{resize:vertical;min-height:90px}
   <div class="tab-panel" id="tab-docs">
     <div class="card">
       <div class="card-title"><span>📄</span> Документы и сертификаты</div>
-      <div class="doc-list">
-        <div class="doc-item">
-          <div class="doc-ico">📋</div>
-          <div class="doc-info"><div class="doc-name">Паспорт изделия · Долото PDC 215.9мм</div><div class="doc-meta">PDF · 2.4 МБ · Обновлён: Апрель 2026</div></div>
-          <button class="doc-btn" onclick="showToast('Файл скачан','success')">⬇️ Скачать</button>
-        </div>
-        <div class="doc-item">
-          <div class="doc-ico">✅</div>
-          <div class="doc-info"><div class="doc-name">Сертификат соответствия ГОСТ Р 11059-2019</div><div class="doc-meta">PDF · 1.1 МБ · Действителен до: 31.12.2026</div></div>
-          <button class="doc-btn" onclick="showToast('Сертификат скачан','success')">⬇️ Скачать</button>
-        </div>
-        <div class="doc-item">
-          <div class="doc-ico">📐</div>
-          <div class="doc-info"><div class="doc-name">Чертёж · Сборочный 215.9мм.dwg</div><div class="doc-meta">DWG · 890 КБ</div></div>
-          <button class="doc-btn" onclick="showToast('Чертёж скачан','success')">⬇️ Скачать</button>
-        </div>
+      <div class="doc-list" id="sku-docs-list">
         <div class="doc-item" style="border:1px dashed var(--border);background:var(--surface-2);cursor:pointer" onclick="document.getElementById('docInput').click()">
           <div class="doc-ico">➕</div>
           <div class="doc-info"><div class="doc-name" style="color:var(--text-3)">Добавить документ...</div><div class="doc-meta">PDF, DWG, XLSX, JPG</div></div>
@@ -813,18 +744,18 @@ textarea.fi{resize:vertical;min-height:90px}
   <div class="card" style="margin-top:20px;border:2px solid var(--green)">
     <div class="card-title"><span>✏️</span> Редактирование позиции</div>
     <div class="form-grid">
-      <div class="fg"><label>SKU-код (присвоен платформой)</label><input class="fi" value="НТ-БУ-ДОЛ-0047" readonly style="color:var(--green);font-family:monospace"></div>
-      <div class="fg"><label>Наименование <span>*</span></label><input class="fi" value="Долото PDC 215.9мм"></div>
-      <div class="fg"><label>Цена (₽) <span>*</span></label><input class="fi" value="280000" type="number"></div>
+      <div class="fg"><label>SKU-код (присвоен платформой)</label><input class="fi" id="sku-code-field" readonly style="color:var(--green);font-family:monospace" placeholder="Будет присвоен автоматически"></div>
+      <div class="fg"><label>Наименование <span>*</span></label><input class="fi" id="sku-name-field" placeholder="Наименование продукции"></div>
+      <div class="fg"><label>Цена (₽) <span>*</span></label><input class="fi" id="sku-price-field" type="number" placeholder="Цена"></div>
       <div class="fg"><label>Единица измерения</label>
-        <select class="fi"><option selected>шт</option><option>м</option><option>кг</option><option>т</option><option>услуга</option></select></div>
-      <div class="fg"><label>Количество в наличии</label><input class="fi" value="12" type="number"></div>
+        <select class="fi" id="sku-unit-field"><option selected>шт</option><option>м</option><option>кг</option><option>т</option><option>услуга</option></select></div>
+      <div class="fg"><label>Количество в наличии</label><input class="fi" id="sku-qty-field" type="number" placeholder="Кол-во"></div>
       <div class="fg"><label>Статус</label>
-        <select class="fi"><option selected>В наличии</option><option>Под заказ</option><option>Нет в наличии</option></select></div>
-      <div class="fg"><label>Срок поставки (дней)</label><input class="fi" value="3" type="number" placeholder="если под заказ"></div>
-      <div class="fg"><label>ГОСТ / ТУ / API</label><input class="fi" value="ГОСТ Р 11059-2019"></div>
-      <div class="fg"><label>Минимальный заказ</label><input class="fi" value="1 шт"></div>
-      <div class="fg"><label>Производитель / бренд</label><input class="fi" value="ООО ДемоБурТех"></div>
+        <select class="fi" id="sku-status-field"><option selected>В наличии</option><option>Под заказ</option><option>Нет в наличии</option></select></div>
+      <div class="fg"><label>Срок поставки (дней)</label><input class="fi" id="sku-delivery-field" type="number" placeholder="если под заказ"></div>
+      <div class="fg"><label>ГОСТ / ТУ / API</label><input class="fi" id="sku-gost-field" placeholder="Стандарт/TU"></div>
+      <div class="fg"><label>Минимальный заказ</label><input class="fi" id="sku-minorder-field" placeholder="Минимальный заказ"></div>
+      <div class="fg"><label>Производитель / бренд</label><input class="fi" id="sku-manufacturer-field" placeholder="Название производителя"></div>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="showToast('Позиция сохранена','success')">💾 Сохранить изменения</button>
@@ -906,28 +837,28 @@ textarea.fi{resize:vertical;min-height:90px}
     <!-- KP Step 1 -->
     <div id="kp-panel1">
       <div style="font-size:16px;font-weight:800;margin-bottom:4px">📋 Коммерческое предложение</div>
-      <div style="font-size:12px;color:var(--text-3);margin-bottom:18px">Запрос <b id="kp-rfq-num">#RFQ-2847</b> · <span id="kp-product">Долото PDC 215.9мм</span></div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:18px">Запрос <b id="kp-rfq-num">—</b> · <span id="kp-product">—</span></div>
 
       <div style="background:var(--surface-2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px">
         <div style="font-weight:700;margin-bottom:6px">Параметры запроса от покупателя:</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;color:var(--text-2)">
-          <div>Количество: <b id="kp-qty">3 шт</b></div>
-          <div>Срок: <b id="kp-deadline" style="color:var(--red)">до 15 мая</b></div>
-          <div>Покупатель: <b id="kp-buyer">Сургутнефтегаз</b></div>
-          <div>Регион: ХМАО</div>
+          <div>Количество: <b id="kp-qty">—</b></div>
+          <div>Срок: <b id="kp-deadline" style="color:var(--red)">—</b></div>
+          <div>Покупатель: <b id="kp-buyer">—</b></div>
+          <div>Регион: <b id="kp-region">—</b></div>
         </div>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="fg"><label>Цена за единицу (₽) <span>*</span></label><input class="fi" id="kp_price" value="280000" type="number"></div>
+        <div class="fg"><label>Цена за единицу (₽) <span>*</span></label><input class="fi" id="kp_price" type="number" placeholder="Цена"></div>
         <div class="fg"><label>Единица измерения</label><select class="fi"><option selected>шт</option><option>м</option><option>кг</option></select></div>
-        <div class="fg"><label>Количество (доступно) <span>*</span></label><input class="fi" id="kp_qty" value="3" type="number"></div>
-        <div class="fg"><label>Итого (₽)</label><input class="fi" id="kp_total" value="840 000" readonly style="font-weight:700;color:var(--green)"></div>
+        <div class="fg"><label>Количество (доступно) <span>*</span></label><input class="fi" id="kp_qty" type="number" placeholder="Количество"></div>
+        <div class="fg"><label>Итого (₽)</label><input class="fi" id="kp_total" readonly style="font-weight:700;color:var(--green)" placeholder="Рассчитывается"></div>
         <div class="fg"><label>Срок поставки <span>*</span></label>
           <select class="fi" id="kp_delivery">
             <option selected>3 рабочих дня</option><option>5 рабочих дней</option><option>7 рабочих дней</option><option>По согласованию</option>
           </select></div>
-        <div class="fg"><label>Дата готовности</label><input class="fi" type="date" value="2026-05-08"></div>
+        <div class="fg"><label>Дата готовности</label><input class="fi" type="date"></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="kpStep(2)">Далее: Условия →</button>
@@ -943,11 +874,11 @@ textarea.fi{resize:vertical;min-height:90px}
           <select class="fi"><option selected>100% предоплата</option><option>50%+50%</option><option>Отсрочка 30 дней</option></select></div>
         <div class="fg"><label>Условия доставки</label>
           <select class="fi"><option selected>Включена в цену</option><option>Самовывоз</option><option>За счёт покупателя</option></select></div>
-        <div class="fg"><label>Гарантия</label><input class="fi" value="12 месяцев"></div>
+        <div class="fg"><label>Гарантия</label><input class="fi" placeholder="Период гарантии"></div>
         <div class="fg"><label>Сертификаты</label>
-          <select class="fi"><option selected>API + ГОСТ Р 11059</option><option>Только ГОСТ</option><option>Нет</option></select></div>
+          <select class="fi"><option selected>Не указано</option><option>API</option><option>ГОСТ</option><option>Другое</option></select></div>
         <div class="fg" style="grid-column:1/-1"><label>Комментарий к КП</label>
-          <textarea class="fi" rows="3">Цена действительна 5 рабочих дней. Возможна доставка в ХМАО собственным транспортом. Полный комплект документов (паспорт, сертификат) прилагается при отгрузке.</textarea></div>
+          <textarea class="fi" rows="3" placeholder="Добавьте условия и примечания..."></textarea></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="kpStep(1)">← Назад</button>
@@ -963,30 +894,30 @@ textarea.fi{resize:vertical;min-height:90px}
       <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">
         <div style="background:var(--navy);color:#fff;padding:14px 18px">
           <div style="font-size:14px;font-weight:800;margin-bottom:2px">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</div>
-          <div style="font-size:11px;opacity:.6">Нефтесервис Трейд Platform · <span id="kp-preview-num">#RFQ-2847</span></div>
+          <div style="font-size:11px;opacity:.6">Нефтесервис Трейд Platform · <span id="kp-preview-num">—</span></div>
         </div>
         <div style="padding:16px;font-size:13px">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-            <div><span style="color:var(--text-3)">Поставщик:</span><br><b>ООО ДемоБурТех</b></div>
-            <div><span style="color:var(--text-3)">Покупатель:</span><br><b id="kp-prev-buyer">Сургутнефтегаз</b></div>
-            <div><span style="color:var(--text-3)">Дата КП:</span><br><b>24.04.2026</b></div>
-            <div><span style="color:var(--text-3)">Действительно до:</span><br><b>29.04.2026</b></div>
+            <div><span style="color:var(--text-3)">Поставщик:</span><br><b id="kp-preview-supplier">—</b></div>
+            <div><span style="color:var(--text-3)">Покупатель:</span><br><b id="kp-prev-buyer">—</b></div>
+            <div><span style="color:var(--text-3)">Дата КП:</span><br><b id="kp-prev-date">—</b></div>
+            <div><span style="color:var(--text-3)">Действительно до:</span><br><b id="kp-prev-valid-until">—</b></div>
           </div>
           <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px">
             <thead><tr style="background:var(--surface-2)"><th style="padding:8px;text-align:left">Наименование</th><th style="padding:8px">SKU</th><th style="padding:8px">Кол-во</th><th style="padding:8px">Цена</th><th style="padding:8px">Итого</th></tr></thead>
             <tbody><tr>
-              <td style="padding:8px;font-weight:600" id="kp-prev-product">Долото PDC 215.9мм</td>
-              <td style="padding:8px;font-family:monospace;font-size:11px;color:var(--green)">НТ-БУ-ДОЛ-0047</td>
-              <td style="padding:8px;text-align:center" id="kp-prev-qty">3 шт</td>
-              <td style="padding:8px;text-align:right" id="kp-prev-price">₽280 000</td>
-              <td style="padding:8px;text-align:right;font-weight:700;color:var(--green)" id="kp-prev-total">₽840 000</td>
+              <td style="padding:8px;font-weight:600" id="kp-prev-product">—</td>
+              <td style="padding:8px;font-family:monospace;font-size:11px;color:var(--green)" id="kp-prev-sku">—</td>
+              <td style="padding:8px;text-align:center" id="kp-prev-qty">—</td>
+              <td style="padding:8px;text-align:right" id="kp-prev-price">—</td>
+              <td style="padding:8px;text-align:right;font-weight:700;color:var(--green)" id="kp-prev-total">—</td>
             </tr></tbody>
           </table>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--text-2)">
-            <div>Срок поставки: <b>3 рабочих дня</b></div>
-            <div>Оплата: <b>100% предоплата</b></div>
-            <div>Доставка: <b>Включена</b></div>
-            <div>Гарантия: <b>12 месяцев</b></div>
+            <div>Срок поставки: <b id="kp-prev-delivery-term">—</b></div>
+            <div>Оплата: <b id="kp-prev-payment">—</b></div>
+            <div>Доставка: <b id="kp-prev-shipping">—</b></div>
+            <div>Гарантия: <b id="kp-prev-warranty">—</b></div>
           </div>
         </div>
         <div style="background:var(--surface-2);padding:10px 16px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border)">
@@ -1016,50 +947,23 @@ textarea.fi{resize:vertical;min-height:90px}
 <!-- ══════════ ПУБЛИЧНЫЙ ВИД ══════════ -->
 <div class="page" id="page-public">
   <div class="page-header"><div class="page-title">🌐 Вид для покупателей</div><div class="page-sub">Так выглядит ваша компания на nefteservicetrade.com</div></div>
-  <div class="company-hero">
-    <div class="company-ava-lg">ДБТ</div>
+  <div class="company-hero" id="pub-hero" style="display:none">
+    <div class="company-ava-lg" id="pub-avatar">—</div>
     <div style="flex:1">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <div style="font-size:22px;font-weight:800;color:#fff">ООО ДемоБурТех</div>
-        <span class="badge badge-verified">✓ Верифицирован</span>
+        <div style="font-size:22px;font-weight:800;color:#fff"><span id="pub-company-name">Название компании</span></div>
+        <span class="badge badge-pending" id="pub-status">⏳ На проверке</span>
       </div>
-      <div style="font-size:12px;color:rgba(255,255,255,.55)">📍 Москва · ⚙️ Производитель · ИНН 7701234567</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.55)"><span id="pub-info">—</span></div>
     </div>
     <button class="btn btn-primary" onclick="showToast('Форма RFQ открыта','info')">📋 Отправить запрос</button>
   </div>
   <div class="card">
     <div class="card-title"><span>📦</span> Каталог позиций</div>
-    <div class="sku-grid">
-      <div class="sku-card" onclick="openSkuDetail(0)">
-        <div class="sku-photo">⛏️</div>
-        <div class="sku-body">
-          <div class="sku-code-small">НТ-БУ-ДОЛ-0047</div>
-          <div class="sku-name">Долото PDC 215.9мм · 5-лопастное</div>
-          <div class="sku-price">₽280 000 / шт</div>
-          <div><span class="badge badge-in-stock">● В наличии 12 шт</span></div>
-          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="event.stopPropagation();showToast('Запрос отправлен','success')">Запросить КП</button>
-        </div>
-      </div>
-      <div class="sku-card" onclick="openSkuDetail(1)">
-        <div class="sku-photo">🔗</div>
-        <div class="sku-body">
-          <div class="sku-code-small">НТ-БУ-ТРУ-0012</div>
-          <div class="sku-name">Бурильная труба 127×9мм · Группа E</div>
-          <div class="sku-price">₽45 000 / м</div>
-          <div><span class="badge badge-in-stock">● В наличии 500 м</span></div>
-          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="event.stopPropagation();showToast('Запрос отправлен','success')">Запросить КП</button>
-        </div>
-      </div>
-      <div class="sku-card" onclick="openSkuDetail(2)">
-        <div class="sku-photo">🔧</div>
-        <div class="sku-body">
-          <div class="sku-code-small">НТ-КРС-ИНС-0003</div>
-          <div class="sku-name">Промывка скважины (депарафинизация)</div>
-          <div class="sku-price">от ₽150 000</div>
-          <div><span class="badge badge-on-order">◌ Под заказ · 5 дн</span></div>
-          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="event.stopPropagation();showToast('Запрос отправлен','success')">Запросить КП</button>
-        </div>
-      </div>
+    <div id="pub-catalog" style="text-align:center;padding:40px;color:var(--text-3)">
+      <div style="font-size:36px;margin-bottom:12px">📦</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Позиций пока нет</div>
+      <div style="font-size:12px">Добавьте SKU позиции в Номенклатуру — они появятся здесь</div>
     </div>
   </div>
 </div>
@@ -1235,11 +1139,8 @@ function updateProgress() {
 }
 
 // ── SKU DETAIL ──
-const skuData = [
-  { title:'Долото PDC 215.9мм', sku:'НТ-БУ-ДОЛ-0047', price:'₽280 000', unit:'за штуку', avail:'В наличии · 12 шт', ico:'⛏️', cat:'Бурение › Долота' },
-  { title:'Бурильная труба 127×9мм', sku:'НТ-БУ-ТРУ-0012', price:'₽45 000', unit:'за метр', avail:'В наличии · 500 м', ico:'🔗', cat:'Бурение › Трубы' },
-  { title:'Промывка скважины', sku:'НТ-КРС-ИНС-0003', price:'₽150 000', unit:'за скважину (мин)', avail:'Под заказ · 5 дней', ico:'🔧', cat:'КРС › Услуги' },
-];
+// Загружается из сессии пользователя при входе
+const skuData = [];
 
 function openSkuDetail(idx) {
   const d = idx >= 0 ? skuData[idx] : {title:'Новая позиция',sku:'НТ-БУ-ХХХ-ХXXX (будет присвоен)',price:'0',unit:'шт',avail:'—',ico:'📦',cat:'Выберите категорию'};
