@@ -140,7 +140,7 @@ textarea.fi{resize:vertical;min-height:80px}
   <div class="sep"></div>
   <div class="ss">Поставщики</div>
   <div class="ni" onclick="nav('registrations')" id="ni-registrations">📝 Заявки<span class="nb nb-r">3</span></div>
-  <div class="ni" onclick="nav('verification')" id="ni-verification">🔍 Верификация<span class="nb nb-a">2</span></div>
+  <div class="ni" onclick="nav('verification-list')" id="ni-verification-list">🔍 Верификация<span class="nb nb-a">2</span></div>
   <div class="ni" onclick="nav('suppliers')" id="ni-suppliers">🏭 Поставщики<span class="nb nb-g">0</span></div>
   <div class="sep"></div>
   <div class="ss">RFQ / Сделки</div>
@@ -158,7 +158,7 @@ textarea.fi{resize:vertical;min-height:80px}
   <div class="ph"><div class="pt">📊 Дашборд</div><div class="ps">Нефтесервис Трейд · Апрель 2026</div></div>
   <div class="sg">
     <div class="sb2" onclick="nav('registrations')"><div class="sn" style="color:var(--red)">3</div><div class="sl">Новые заявки</div></div>
-    <div class="sb2" onclick="nav('verification')"><div class="sn" style="color:var(--amb)">2</div><div class="sl">На верификации</div></div>
+    <div class="sb2" onclick="nav('verification-list')"><div class="sn" style="color:var(--amb)">2</div><div class="sl">На верификации</div></div>
     <div class="sb2" onclick="nav('suppliers')"><div class="sn" style="color:var(--green)">0</div><div class="sl">Верифицировано</div></div>
     <div class="sb2" onclick="nav('rfq')"><div class="sn" style="color:var(--blu)">4</div><div class="sl">Активных RFQ</div></div>
     <div class="sb2" onclick="nav('deals')"><div class="sn" style="color:var(--tx3)">0</div><div class="sl">Сделок</div></div>
@@ -231,10 +231,20 @@ textarea.fi{resize:vertical;min-height:80px}
 </div>
 
 <!-- ══ VERIFICATION (динамическая) ══ -->
+<!-- Верификация: список -->
+<div class="pg" id="pg-verification-list">
+  <div class="ph"><div class="pt">🔍 Очередь верификации</div><div class="ps">Компании с загруженными документами — нажмите для проверки</div></div>
+  <div class="card"><table class="dt" id="vf-list-table">
+    <thead><tr><th>Компания</th><th>ИНН</th><th>Документы</th><th>Статус</th><th></th></tr></thead>
+    <tbody id="vf-list-body"></tbody>
+  </table></div>
+</div>
+
+<!-- Верификация: детальная форма -->
 <div class="pg" id="pg-verification">
   <div class="ph">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-      <button class="btn bs bsm" onclick="nav('registrations')">← Список</button>
+      <button class="btn bs bsm" onclick="nav('verification-list')">← Очередь</button>
       <div class="pt" style="margin:0" id="vf-title">Верификация: ...</div>
       <span class="badge bb" id="vf-status">На рассмотрении</span>
     </div>
@@ -324,19 +334,19 @@ textarea.fi{resize:vertical;min-height:80px}
       <table class="dt">
         <thead><tr><th>#RFQ</th><th>Запрос</th><th>Покупатель</th><th>Найдено совпадений</th><th></th></tr></thead>
         <tbody>
-          <tr onclick="openMatchDetail('RFQ-2847','Долото PDC 215.9мм · 3 шт','Сургутнефтегаз','до 15 мая','НТ-БУ-ДОЛ-0047','до ₽320 000/шт','ХМАО')">
+          <tr class="match-list-row" data-rfq="2847" style="cursor:pointer">
             <td style="font-family:monospace;font-weight:700">#2847</td>
             <td><b>Долото PDC 215.9мм</b><br><span style="font-size:10px;color:var(--tx3)">3 шт · SKU: НТ-БУ-ДОЛ-0047</span></td>
             <td>Сургутнефтегаз<br><span style="font-size:10px;color:var(--green)">✓ Верифицирован</span></td>
             <td><span class="badge bg">✓ 8 поставщиков</span></td>
-            <td><button class="btn bb2 bsm" onclick="event.stopPropagation();openMatchDetail('RFQ-2847','Долото PDC 215.9мм · 3 шт','Сургутнефтегаз','до 15 мая','НТ-БУ-ДОЛ-0047','до ₽320 000/шт','ХМАО')">Рассмотреть</button></td>
+            <td><button class="btn bb2 bsm match-open-btn" data-rfq="2847">Рассмотреть</button></td>
           </tr>
-          <tr onclick="openMatchDetail('RFQ-2851','Бурильные трубы 127мм · 1000м','ТНГ-Групп','до 20 мая','НТ-БУ-ТРУ-0012','договорная','Татарстан')">
+          <tr class="match-list-row" data-rfq="2851" style="cursor:pointer">
             <td style="font-family:monospace;font-weight:700">#2851</td>
             <td><b>Бурильные трубы 127мм</b><br><span style="font-size:10px;color:var(--tx3)">1000м · SKU: НТ-БУ-ТРУ-0012</span></td>
             <td>ТНГ-Групп<br><span style="font-size:10px;color:var(--green)">✓ Верифицирован</span></td>
             <td><span class="badge bg">✓ 5 поставщиков</span></td>
-            <td><button class="btn bb2 bsm" onclick="event.stopPropagation();openMatchDetail('RFQ-2851','Бурильные трубы 127мм · 1000м','ТНГ-Групп','до 20 мая','НТ-БУ-ТРУ-0012','договорная','Татарстан')">Рассмотреть</button></td>
+            <td><button class="btn bb2 bsm match-open-btn" data-rfq="2851">Рассмотреть</button></td>
           </tr>
         </tbody>
       </table>
@@ -590,16 +600,63 @@ const MATCH_DATA = {
 function nav(id) {
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
-  document.getElementById('pg-'+id)?.classList.add('on');
-  document.getElementById('ni-'+id)?.classList.add('active');
+  // Handle sub-pages (verification-list, verification)
+  const pageId = 'pg-'+id;
+  const el = document.getElementById(pageId);
+  if(el) el.classList.add('on');
+  // Highlight sidebar item (try exact then parent)
+  const niEl = document.getElementById('ni-'+id) || document.getElementById('ni-'+id.split('-')[0]);
+  if(niEl) niEl.classList.add('active');
   window.scrollTo(0,0);
 
   if(id==='rfq') renderRFQ('all');
   if(id==='suppliers') renderSuppliers();
+  if(id==='verification-list') renderVerificationList();
   if(id==='matching') {
     document.getElementById('matching-list').style.display='';
     document.getElementById('matching-detail').style.display='none';
   }
+}
+
+// ══════════════════════════════════════════
+// VERIFICATION LIST
+// ══════════════════════════════════════════
+function renderVerificationList() {
+  const pending = REGS.filter(r=>r.status==='review'||r.status==='waiting');
+  const tbody = document.getElementById('vf-list-body');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  pending.forEach(r => {
+    const noCount = r.docs.filter(d=>d.ok==='no').length;
+    const warnCount = r.docs.filter(d=>d.ok==='warn').length;
+    const allOk = noCount===0 && warnCount===0;
+    const tr = document.createElement('tr');
+    tr.style.cursor='pointer';
+    tr.innerHTML = `
+      <td><b>${r.name}</b><br><span style="font-size:10px;color:var(--tx3)">${r.contact} · ${r.email}</span></td>
+      <td style="font-family:monospace">${r.inn}</td>
+      <td>
+        ${r.docs.filter(d=>d.ok==='ok').length} ✓ OK
+        ${noCount>0?`<span style="color:var(--red);margin-left:6px">✗ ${noCount} отсутств.</span>`:''}
+        ${warnCount>0?`<span style="color:var(--amb);margin-left:6px">⚠ ${warnCount} уточнить</span>`:''}
+      </td>
+      <td>${allOk
+        ?'<span class="badge bg">✓ Готово к верификации</span>'
+        :noCount>0
+        ?'<span class="badge br">✗ Нужны документы</span>'
+        :'<span class="badge ba">⚠ Уточнить</span>'
+      }</td>
+      <td><button class="btn bp bsm vf-open-btn" data-idx="${r.id}">Открыть →</button></td>`;
+    tr.addEventListener('click', ()=>openReg(r.id));
+    tbody.appendChild(tr);
+  });
+  // Button handlers
+  tbody.querySelectorAll('.vf-open-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openReg(parseInt(btn.dataset.idx));
+    });
+  });
 }
 
 // ══════════════════════════════════════════
@@ -665,7 +722,7 @@ function openReg(idx) {
     `<div class="ti"><div class="td" style="background:${h.dot};color:#fff;font-size:10px">${h.ico}</div>
     <div class="tc"><div class="tti">${h.title}</div><div class="ttm">${h.meta}</div></div></div>`).join('');
 
-  nav('verification');
+  nav('verification-list');
 }
 
 function requestDocs(idx) { openReg(idx); }
@@ -770,8 +827,13 @@ function renderRFQ(filter) {
   const idx=stageOrder.indexOf(filter);
   if(idx>=0) document.querySelectorAll('#rfq-stages .sb2')[idx].classList.add('sel');
 
-  document.getElementById('rfq-tbody').innerHTML = data.map(r=>`
-    <tr onclick="openRFQRow('${r.id}')">
+  const tbody = document.getElementById('rfq-tbody');
+  tbody.innerHTML = '';
+  data.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.dataset.rfqId = r.id;
+    tr.innerHTML = `
       <td style="font-family:monospace;font-weight:700">#${r.id}</td>
       <td><b>${r.product}</b><br><span style="font-size:10px;color:var(--tx3)">${r.qty} · SKU: ${r.sku}</span></td>
       <td>${r.buyer}<br><span style="font-size:10px;color:var(--green)">✓ Верифицирован</span></td>
@@ -779,12 +841,31 @@ function renderRFQ(filter) {
       <td style="${r.stage==='pending'?'color:var(--red);font-weight:600':''}">${r.deadline}</td>
       <td><span class="badge ${STAGE_BADGES[r.stage]}">✓ ${r.matches} совп.</span></td>
       <td><span class="badge ${STAGE_BADGES[r.stage]}">${STAGE_NAMES[r.stage]}</span></td>
-      <td>${r.stage==='pending'?`<button class="btn bb2 bsm" onclick="event.stopPropagation();openMatchDetail('RFQ-${r.id}','${r.product} · ${r.qty}','${r.buyer}','${r.deadline}','${r.sku}','${r.price}','${r.region}')">Рассмотреть</button>`
-        :r.stage==='sent'?`<button class="btn bs bsm">Детали рассылки</button>`
-        :`<button class="btn bs bsm">Просмотр</button>`}</td>
-    </tr>`).join('');
+      <td><button class="btn ${r.stage==='pending'?'bb2':'bs'} bsm rfq-action-btn" data-rfq="${r.id}" data-stage="${r.stage}">
+        ${r.stage==='pending'?'Рассмотреть':r.stage==='sent'?'Детали рассылки':'Просмотр'}
+      </button></td>`;
+    tr.addEventListener('click', () => openRFQRow(r.id));
+    tbody.appendChild(tr);
+  });
+  // Attach button handlers after render
+  tbody.querySelectorAll('.rfq-action-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = btn.dataset.rfq;
+      const stage = btn.dataset.stage;
+      if(stage === 'pending') openMatchById(id);
+      else toast('RFQ #'+id+': '+STAGE_NAMES[stage],'i');
+    });
+  });
 }
 function filterRFQ(f) { renderRFQ(f); }
+// Open match detail by RFQ id (no string params)
+function openMatchById(id) {
+  const r = RFQ_DATA.find(x=>x.id===id);
+  if(!r) return;
+  openMatchDetail('RFQ-'+r.id, r.product+' · '+r.qty, r.buyer, r.deadline, r.sku, r.price, r.region);
+}
+
 function openRFQRow(id) {
   const r = RFQ_DATA.find(x=>x.id===id);
   if(!r) return;
@@ -863,6 +944,20 @@ function toast(msg, type='i') {
   t.textContent=msg; t.className=`toast on ${type}`;
   setTimeout(()=>t.className='toast',4500);
 }
+
+// ── Attach AI matching row/button listeners on DOMContentLoaded ──
+document.addEventListener('DOMContentLoaded', () => {
+  // AI matching list rows
+  document.querySelectorAll('.match-list-row').forEach(row => {
+    row.addEventListener('click', () => openMatchById(row.dataset.rfq));
+  });
+  document.querySelectorAll('.match-open-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openMatchById(btn.dataset.rfq);
+    });
+  });
+});
 
 // INIT
 nav('dashboard');
