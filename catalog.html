@@ -6,32 +6,51 @@
   <script>
   (function(){
     var PWD='NT2026',KEY='nt_access_granted';
-    if(sessionStorage.getItem(KEY)===PWD)return;
-    document.write('<style id="nt-g">body{visibility:hidden!important}</style>');
-    document.addEventListener('DOMContentLoaded',function(){
+    if(sessionStorage.getItem(KEY)==='1')return;
+    // Guard: скрываем body, но исключение для модального окна
+    var guardEl=document.createElement('style');
+    guardEl.textContent='body{visibility:hidden!important}#pw-ov,#pw-ov *{visibility:visible!important;pointer-events:all!important}';
+    document.head.appendChild(guardEl);
+    function unlock(){
+      sessionStorage.setItem(KEY,'1');
+      if(guardEl&&guardEl.parentNode)guardEl.parentNode.removeChild(guardEl);
+      var m=document.getElementById('pw-ov');
+      if(m&&m.parentNode)m.parentNode.removeChild(m);
+    }
+    function buildModal(){
+      if(!document.body){setTimeout(buildModal,30);return;}
       var ov=document.createElement('div');
       ov.id='pw-ov';
       ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:-apple-system,BlinkMacSystemFont,"Inter",sans-serif';
-      ov.innerHTML='<div style="background:#ffffff;border:1px solid rgba(0,0,0,0.12);border-radius:18px;padding:40px 44px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.12)"><div style="width:52px;height:52px;background:rgba(26,124,62,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:24px">🔒</div><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#1a7c3e;font-weight:700;margin-bottom:10px">Нефтесервис Трейд</div><div style="color:#1C1A17;font-size:19px;font-weight:700;margin-bottom:6px">Каталог поставщиков</div><div style="color:rgba(28,26,23,0.55);font-size:13px;margin-bottom:28px">Доступ ограничён. Введите пароль для входа.</div><form id="pw-f" style="display:flex;flex-direction:column;gap:10px"><input id="pw-i" type="password" placeholder="Пароль" autocomplete="current-password" style="background:#EEF0F3;border:1.5px solid rgba(0,0,0,0.12);color:#1C1A17;border-radius:10px;padding:13px 16px;font-size:15px;outline:none;width:100%;transition:border-color .2s;box-sizing:border-box" /><div id="pw-e" style="display:none;color:#e74c3c;font-size:12px;text-align:left;padding:0 2px">❌ Неверный пароль. Попробуйте ещё раз.</div><button type="submit" style="background:#1a7c3e;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#136130'" onmouseout="this.style.background='#1a7c3e'">Войти</button><button type="button" id="pw-c" style="background:transparent;color:rgba(28,26,23,0.45);border:1px solid rgba(0,0,0,0.12);border-radius:10px;padding:10px;font-size:13px;cursor:pointer">Нет доступа</button></form><div style="margin-top:20px;color:rgba(28,26,23,0.35);font-size:11px">Запросить доступ: <a href="mailto:manager@nefteservicetrade.com" style="color:#1a7c3e;text-decoration:none">manager@nefteservicetrade.com</a></div></div>';
+      ov.innerHTML='<div style="background:#ffffff;border:1px solid rgba(0,0,0,0.12);border-radius:18px;padding:40px 44px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.12)">'
+        +'<div style="width:52px;height:52px;background:rgba(26,124,62,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:24px">\uD83D\uDD12</div>'
+        +'<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#1a7c3e;font-weight:700;margin-bottom:10px">\u041d\u0435\u0444\u0442\u0435\u0441\u0435\u0440\u0432\u0438\u0441 \u0422\u0440\u0435\u0439\u0434</div>'
+        +'<div style="color:#1C1A17;font-size:19px;font-weight:700;margin-bottom:6px">\u041a\u0430\u0442\u0430\u043b\u043e\u0433 \u043f\u043e\u0441\u0442\u0430\u0432\u0449\u0438\u043a\u043e\u0432</div>'
+        +'<div style="color:rgba(28,26,23,0.55);font-size:13px;margin-bottom:28px">\u0414\u043e\u0441\u0442\u0443\u043f \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0451\u043d. \u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u044c \u0434\u043b\u044f \u0432\u0445\u043e\u0434\u0430.</div>'
+        +'<form id="pw-f" style="display:flex;flex-direction:column;gap:10px">'
+        +'<input id="pw-i" type="password" placeholder="\u041f\u0430\u0440\u043e\u043b\u044c" autocomplete="current-password" style="background:#EEF0F3;border:1.5px solid rgba(0,0,0,0.12);color:#1C1A17;border-radius:10px;padding:13px 16px;font-size:15px;outline:none;width:100%;transition:border-color .2s;box-sizing:border-box" />'
+        +'<div id="pw-e" style="display:none;color:#e74c3c;font-size:12px;text-align:left;padding:0 2px">\u274c \u041d\u0435\u0432\u0435\u0440\u043d\u044b\u0439 \u043f\u0430\u0440\u043e\u043b\u044c. \u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437.</div>'
+        +'<button type="submit" style="background:#1a7c3e;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#136130\'" onmouseout="this.style.background=\'#1a7c3e\'">\u0412\u043e\u0439\u0442\u0438</button>'
+        +'<button type="button" id="pw-c" style="background:transparent;color:rgba(28,26,23,0.45);border:1px solid rgba(0,0,0,0.12);border-radius:10px;padding:10px;font-size:13px;cursor:pointer">\u041d\u0435\u0442 \u0434\u043e\u0441\u0442\u0443\u043f\u0430</button>'
+        +'</form>'
+        +'<div style="margin-top:20px;color:rgba(28,26,23,0.35);font-size:11px">\u0417\u0430\u043f\u0440\u043e\u0441\u0438\u0442\u044c \u0434\u043e\u0441\u0442\u0443\u043f: <a href="mailto:manager@nefteservicetrade.com" style="color:#1a7c3e;text-decoration:none">manager@nefteservicetrade.com</a></div>'
+        +'</div>';
       document.body.appendChild(ov);
       var inp=document.getElementById('pw-i');
-      inp.focus();
+      setTimeout(function(){if(inp)inp.focus();},150);
       inp.addEventListener('focus',function(){this.style.borderColor='#1a7c3e'});
       inp.addEventListener('blur',function(){this.style.borderColor='rgba(0,0,0,0.12)'});
       document.getElementById('pw-f').addEventListener('submit',function(e){
         e.preventDefault();
-        if(inp.value===PWD){
-          sessionStorage.setItem(KEY,PWD);
-          // ИСПРАВЛЕНИЕ: убираем guard-стиль, иначе body остаётся скрытым
-          var g=document.getElementById('nt-g');if(g)g.remove();
-          ov.remove();
-        }else{document.getElementById('pw-e').style.display='block';inp.value='';inp.focus();}
+        if(inp.value===PWD){unlock();}
+        else{document.getElementById('pw-e').style.display='block';inp.value='';inp.focus();}
       });
       document.getElementById('pw-c').addEventListener('click',function(){
-        var g=document.getElementById('nt-g');if(g)g.remove();
-        document.body.innerHTML='<div style="font-family:sans-serif;text-align:center;padding:80px;color:#666"><h2>🔒 Доступ ограничён</h2><p style="margin-top:12px">Запросить доступ: <a href="mailto:manager@nefteservicetrade.com">manager@nefteservicetrade.com</a></p></div>';
+        if(guardEl&&guardEl.parentNode)guardEl.parentNode.removeChild(guardEl);
+        document.body.innerHTML='<div style="font-family:sans-serif;text-align:center;padding:80px;color:#666"><h2>\uD83D\uDD12 \u0414\u043e\u0441\u0442\u0443\u043f \u043e\u0433\u0440\u0430\u043d\u0438\u0447\u0451\u043d</h2><p style="margin-top:12px">\u0417\u0430\u043f\u0440\u043e\u0441\u0438\u0442\u044c \u0434\u043e\u0441\u0442\u0443\u043f: <a href="mailto:manager@nefteservicetrade.com">manager@nefteservicetrade.com</a></p></div>';
       });
-    });
+    }
+    if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',buildModal);}else{buildModal();}
   })();
   </script>
   <title>Каталог поставщиков — Нефтесервис Трейд</title>
