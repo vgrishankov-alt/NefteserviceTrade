@@ -3,6 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  (function(){
+    var PWD='NT2026';
+    var KEY='nt_access_granted';
+    if(sessionStorage.getItem(KEY)===PWD)return;
+    document.addEventListener('DOMContentLoaded',function(){
+      document.body.style.display='none';
+    });
+    var ok=false;
+    while(!ok){
+      var p=prompt('🔒 Нефтесервис Трейд\n\nДоступ ограничён. Введите пароль:');
+      if(p===null){document.write('<div style="font-family:sans-serif;text-align:center;padding:80px;color:#666"><h2>🔒 Доступ ограничён</h2><p>Обратитесь к администратору: v.grishankov@gmail.com</p></div>');break;}
+      if(p===PWD){sessionStorage.setItem(KEY,PWD);ok=true;document.body&&(document.body.style.display='');}
+      else{alert('❌ Неверный пароль. Попробуйте ещё раз.');}
+    }
+  })();
+  </script>
   <title>Каталог поставщиков — Нефтесервис Трейд</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
