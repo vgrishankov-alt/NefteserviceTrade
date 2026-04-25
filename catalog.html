@@ -7,25 +7,29 @@
   (function(){
     var PWD='NT2026',KEY='nt_access_granted';
     if(sessionStorage.getItem(KEY)===PWD)return;
-    document.write('<style>body{visibility:hidden!important}</style>');
+    document.write('<style id="nt-g">body{visibility:hidden!important}</style>');
     document.addEventListener('DOMContentLoaded',function(){
       var ov=document.createElement('div');
       ov.id='pw-ov';
       ov.style.cssText='position:fixed;inset:0;background:rgba(17,17,19,.97);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:-apple-system,BlinkMacSystemFont,"Inter",sans-serif';
-      ov.innerHTML='<div style="background:#18181c;border:1px solid #2a2a30;border-radius:20px;padding:40px 44px;max-width:380px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.7)"><div style="width:52px;height:52px;background:rgba(26,124,62,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:24px">🔒</div><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#2ecc71;font-weight:700;margin-bottom:10px">Нефтесервис Трейд</div><div style="color:#fff;font-size:19px;font-weight:700;margin-bottom:6px">Каталог поставщиков</div><div style="color:#555;font-size:13px;margin-bottom:28px">Доступ ограничён. Введите пароль для входа.</div><form id="pw-f" style="display:flex;flex-direction:column;gap:10px"><input id="pw-i" type="password" placeholder="Пароль" autocomplete="current-password" style="background:#111113;border:1.5px solid #2a2a30;color:#fff;border-radius:10px;padding:13px 16px;font-size:15px;outline:none;width:100%;transition:border-color .2s" /><div id="pw-e" style="display:none;color:#e74c3c;font-size:12px;text-align:left;padding:0 2px">❌ Неверный пароль. Попробуйте ещё раз.</div><button type="submit" style="background:#1a7c3e;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#136130\'" onmouseout="this.style.background=\'#1a7c3e\'">Войти</button><button type="button" id="pw-c" style="background:transparent;color:#555;border:1px solid #2a2a30;border-radius:10px;padding:10px;font-size:13px;cursor:pointer">Нет доступа</button></form><div style="margin-top:20px;color:#444;font-size:11px">Обратитесь: <a href="mailto:v.grishankov@gmail.com" style="color:#2ecc71;text-decoration:none">v.grishankov@gmail.com</a></div></div>';
+      ov.innerHTML='<div style="background:#18181c;border:1px solid #2a2a30;border-radius:20px;padding:40px 44px;max-width:380px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.7)"><div style="width:52px;height:52px;background:rgba(26,124,62,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:24px">🔒</div><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#2ecc71;font-weight:700;margin-bottom:10px">Нефтесервис Трейд</div><div style="color:#fff;font-size:19px;font-weight:700;margin-bottom:6px">Каталог поставщиков</div><div style="color:#555;font-size:13px;margin-bottom:28px">Доступ ограничён. Введите пароль для входа.</div><form id="pw-f" style="display:flex;flex-direction:column;gap:10px"><input id="pw-i" type="password" placeholder="Пароль" autocomplete="current-password" style="background:#111113;border:1.5px solid #2a2a30;color:#fff;border-radius:10px;padding:13px 16px;font-size:15px;outline:none;width:100%;transition:border-color .2s" /><div id="pw-e" style="display:none;color:#e74c3c;font-size:12px;text-align:left;padding:0 2px">❌ Неверный пароль. Попробуйте ещё раз.</div><button type="submit" style="background:#1a7c3e;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#136130\'" onmouseout="this.style.background=\'#1a7c3e\'">Войти</button><button type="button" id="pw-c" style="background:transparent;color:#555;border:1px solid #2a2a30;border-radius:10px;padding:10px;font-size:13px;cursor:pointer">Нет доступа</button></form><div style="margin-top:20px;color:#444;font-size:11px">Запросить доступ: <a href="mailto:manager@nefteservicetrade.com" style="color:#2ecc71;text-decoration:none">manager@nefteservicetrade.com</a></div></div>';
       document.body.appendChild(ov);
-      document.body.style.visibility='';
       var inp=document.getElementById('pw-i');
       inp.focus();
       inp.addEventListener('focus',function(){this.style.borderColor='#1a7c3e'});
       inp.addEventListener('blur',function(){this.style.borderColor='#2a2a30'});
       document.getElementById('pw-f').addEventListener('submit',function(e){
         e.preventDefault();
-        if(inp.value===PWD){sessionStorage.setItem(KEY,PWD);ov.remove();}
-        else{document.getElementById('pw-e').style.display='block';inp.value='';inp.focus();}
+        if(inp.value===PWD){
+          sessionStorage.setItem(KEY,PWD);
+          // ИСПРАВЛЕНИЕ: убираем guard-стиль, иначе body остаётся скрытым
+          var g=document.getElementById('nt-g');if(g)g.remove();
+          ov.remove();
+        }else{document.getElementById('pw-e').style.display='block';inp.value='';inp.focus();}
       });
       document.getElementById('pw-c').addEventListener('click',function(){
-        document.body.innerHTML='<div style="font-family:sans-serif;text-align:center;padding:80px;color:#666"><h2>🔒 Доступ ограничён</h2><p style="margin-top:12px">Обратитесь к администратору: <a href="mailto:v.grishankov@gmail.com">v.grishankov@gmail.com</a></p></div>';
+        var g=document.getElementById('nt-g');if(g)g.remove();
+        document.body.innerHTML='<div style="font-family:sans-serif;text-align:center;padding:80px;color:#666"><h2>🔒 Доступ ограничён</h2><p style="margin-top:12px">Запросить доступ: <a href="mailto:manager@nefteservicetrade.com">manager@nefteservicetrade.com</a></p></div>';
       });
     });
   })();
